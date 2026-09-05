@@ -43,6 +43,18 @@
   function nt(p) { return (S.lang === 'pl' && p.note_pl) ? p.note_pl : (p.note || ''); }
   function vl(v) { return (S.lang === 'pl' && v.label_pl) ? v.label_pl : v.label; }
 
+  /* Ваги й одиниці ціни відрізняються тільки скороченням, число те саме,
+     тож тримати для них окремі поля в даних нема сенсу. Порядок важливий:
+     «кг» треба замінити до того, як дійде черга до самотнього «г». */
+  function units(s) {
+    if (S.lang !== 'pl' || !s) return s;
+    return String(s)
+      .replace(/кг/g, 'kg')
+      .replace(/мл/g, 'ml')
+      .replace(/шт/g, 'szt')
+      .replace(/(\d\s*)г(?=$|\/|\s)/g, '$1g');
+  }
+
   function qs(k) {
     var m = new RegExp('[?&]' + k + '=([^&]*)').exec(location.search);
     return m ? decodeURIComponent(m[1].replace(/\+/g, ' ')) : '';
@@ -74,7 +86,7 @@
         if (o && o.price != null) price = o.price;
       });
     }
-    return price + ' zł' + (p.unit || '');
+    return price + ' zł' + units(p.unit || '');
   }
 
   /* Назва товару з урахуванням варіанта, який її змінює (зефір поштучно). */
@@ -84,7 +96,7 @@
         var v = p.variants[i];
         if (v.id !== p.photoVar) continue;
         var o = v.options[(sel || {})[v.id] || 0];
-        if (o && o.title) return o.title;
+        if (o && o.title) return (S.lang === 'pl' && o.title_pl) ? o.title_pl : o.title;
       }
     }
     return nm(p);
@@ -102,7 +114,7 @@
   function contactRows(list) {
     return (list || CONTACTS).map(function (c) {
       return '<a class="t-micro' + (c.href ? '' : ' is-empty') + '"' + cAttrs(c) + '>'
-        + esc(c.label) + '<span class="arrow" aria-hidden="true">&rarr;</span></a>';
+        + esc(vl(c)) + '<span class="arrow" aria-hidden="true">&rarr;</span></a>';
     }).join('');
   }
   /* Короткий список під кнопкою «Замовити» на сторінці товару —
@@ -292,8 +304,11 @@
     var li = parts.map(function (t) {
       return '<li class="t-sklad"><i>&middot;</i><span>' + esc(t) + '</span></li>';
     }).join('');
+    /* Трайфли міряються в мілілітрах — це об'єм, а не вага. */
     var w = p.weight
-      ? '<span class="t-sklad muted">' + esc(L('weight')) + ': ' + esc(p.weight) + '</span>' : '';
+      ? '<span class="t-sklad muted">'
+        + esc(L(/мл/.test(p.weight) ? 'volume' : 'weight')) + ': ' + esc(units(p.weight))
+        + '</span>' : '';
     return '<div class="sklad sklad-' + where + '">'
       + '<span class="t-micro muted">' + esc(L('sklad')) + '</span>'
       + '<ul>' + li + '</ul>' + w + '</div>';

@@ -26,11 +26,11 @@
   /* ---------- категорії ---------- */
 
   var CATS = [
-    { id: 'cakes',       name: 'Торти',    name_pl: '', hero: img('Cakes', 'Фісташка малина.jpg') },
-    { id: 'cheesecakes', name: 'Чізкейки', name_pl: '', hero: img('Cheesecakes', 'Фісташка-малина.jpg') },
-    { id: 'mousse',      name: 'Мусові',   name_pl: '', hero: img('Мусові', 'Полуничний.jpg') },
-    { id: 'zefir',       name: 'Зефір',    name_pl: '', hero: img('Zefiry', '20см букет.jpg') },
-    { id: 'candybar',    name: 'Кендібар', name_pl: '', hero: img('Кендібар', 'Червоний оксамит.jpg') }
+    { id: 'cakes',       name: 'Торти',    name_pl: 'Torty',      hero: img('Cakes', 'Фісташка малина.jpg') },
+    { id: 'cheesecakes', name: 'Чізкейки', name_pl: 'Serniki',    hero: img('Cheesecakes', 'Фісташка-малина.jpg') },
+    { id: 'mousse',      name: 'Мусові',   name_pl: 'Musowe',     hero: img('Мусові', 'Полуничний.jpg') },
+    { id: 'zefir',       name: 'Зефір',    name_pl: 'Pianki',     hero: img('Zefiry', '20см букет.jpg') },
+    { id: 'candybar',    name: 'Кендібар', name_pl: 'Candy bar',  hero: img('Кендібар', 'Червоний оксамит.jpg') }
   ];
 
   /* ---------- підкатегорії ----------
@@ -40,9 +40,9 @@
 
   var SUBCATS = {
     zefir: [
-      { id: 'pieces',   name: 'Поштучно',  name_pl: '' },
-      { id: 'bouquets', name: 'Букети',    name_pl: '' },
-      { id: 'boxes',    name: 'Коробочки', name_pl: '' }
+      { id: 'pieces',   name: 'Поштучно',  name_pl: 'Na sztuki' },
+      { id: 'bouquets', name: 'Букети',    name_pl: 'Bukiety' },
+      { id: 'boxes',    name: 'Коробочки', name_pl: 'Pudełka' }
     ]
   };
 
@@ -57,7 +57,7 @@
     { id: 'instagram', label: 'Instagram', href: '' },
     { id: 'facebook',  label: 'Facebook',  href: '' },
     { id: 'telegram',  label: 'Telegram',  href: '' },
-    { id: 'phone',     label: 'Телефон',   href: '' }
+    { id: 'phone',     label: 'Телефон',   label_pl: 'Telefon', href: '' }
   ];
 
   var P = [];
@@ -115,8 +115,8 @@
       vars.push({
         id: 'choc', label: 'Шоколад', label_pl: 'Czekolada',
         options: [
-          { label: 'Молочний', label_pl: '' },
-          { label: 'Темний',   label_pl: '' }
+          { label: 'Молочний', label_pl: 'Mleczna' },
+          { label: 'Темний',   label_pl: 'Gorzka' }
         ]
       });
     }
@@ -150,17 +150,18 @@
 
   /* ---------- 4. Зефір ---------- */
 
-  /* 9 смаків — спільні для «поштучно» і «морозива» */
+  /* 9 смаків — спільні для «поштучно» і «морозива».
+     Колонки: [підпис UA, фото, назва товару UA, підпис PL, назва PL] */
   var FL = [
-    ['Класичний (яблучний)', 'Зефір класичний.jpg', 'Зефір класичний (яблучний)'],
-    ['Вишня',    'Зефір вишня.jpg',    'Зефір вишня'],
-    ['Полуниця', 'Зефір полуниця.jpg', 'Зефір полуниця'],
-    ['Бурувка',  'Зефір бурувка.jpg',  'Зефір бурувка'],
-    ['Банан',    'Зефір банан.jpg',    'Зефір банан'],
-    ['Персик',   'Зефір персик.jpg',   'Зефір персик'],
-    ['Абрикос',  'Зефір абрикос.jpg',  'Зефір абрикос'],
-    ['Кава',     'Зефір кава.jpg',     'Зефір кава'],
-    ['Слива',    'Зефір слива.jpg',    'Зефір слива']
+    ['Класичний (яблучний)', 'Зефір класичний.jpg', 'Зефір класичний (яблучний)', 'Klasyczna (jabłkowa)', 'Pianka klasyczna (jabłkowa)'],
+    ['Вишня',    'Зефір вишня.jpg',    'Зефір вишня',    'Wiśnia',      'Pianka wiśniowa'],
+    ['Полуниця', 'Зефір полуниця.jpg', 'Зефір полуниця', 'Truskawka',   'Pianka truskawkowa'],
+    ['Бурувка',  'Зефір бурувка.jpg',  'Зефір бурувка',  'Borówka',     'Pianka borówkowa'],
+    ['Банан',    'Зефір банан.jpg',    'Зефір банан',    'Banan',       'Pianka bananowa'],
+    ['Персик',   'Зефір персик.jpg',   'Зефір персик',   'Brzoskwinia', 'Pianka brzoskwiniowa'],
+    ['Абрикос',  'Зефір абрикос.jpg',  'Зефір абрикос',  'Morela',      'Pianka morelowa'],
+    ['Кава',     'Зефір кава.jpg',     'Зефір кава',     'Kawa',        'Pianka kawowa'],
+    ['Слива',    'Зефір слива.jpg',    'Зефір слива',    'Śliwka',      'Pianka śliwkowa']
   ];
 
   /* а) одна сторінка на 9 смаків — вибір міняє фото і назву */
@@ -173,7 +174,9 @@
     photoVar: 'flavor',
     variants: [{
       id: 'flavor', label: 'Смак', label_pl: 'Smak',
-      options: FL.map(function (f, i) { return { label: f[0], label_pl: '', photo: i, title: f[2] }; })
+      options: FL.map(function (f, i) {
+        return { label: f[0], label_pl: f[3], photo: i, title: f[2], title_pl: f[4] };
+      })
     }]
   });
 
@@ -194,14 +197,14 @@
       {
         id: 'choc', label: 'Шоколад', label_pl: 'Czekolada',
         options: [
-          { label: 'Молочний', label_pl: '', photo: 0 },
-          { label: 'Білий',    label_pl: '', photo: 1 },
-          { label: 'Темний',   label_pl: '', photo: 2 }
+          { label: 'Молочний', label_pl: 'Mleczna', photo: 0 },
+          { label: 'Білий',    label_pl: 'Biała',   photo: 1 },
+          { label: 'Темний',   label_pl: 'Gorzka',  photo: 2 }
         ]
       },
       {
         id: 'flavor', label: 'Смак зефіру', label_pl: 'Smak pianki',
-        options: FL.map(function (f) { return { label: f[0], label_pl: '' }; })
+        options: FL.map(function (f) { return { label: f[0], label_pl: f[3] }; })
       }
     ]
   });
@@ -270,6 +273,95 @@
       photos: [img(c[1], c[2])],
       price: null
     });
+  });
+
+  /* ---------- польські назви й склади ----------
+     Ключ — «категорія|українська назва» (назви повторюються між
+     категоріями: «Снікерс» є і в тортах, і в чізкейках, і в мусових).
+     Значення — [назва PL, склад PL].
+
+     ⚠ ЧЕРНЕТКОВИЙ ПЕРЕКЛАД. Кондитерські терміни варто вичитати
+     носієві мови — особливо назви-бренди («Damskie kaprysy»,
+     «Leśny mech», «Pianka na patyku») і те, як місцевий покупець
+     називає зефір: тут скрізь «pianka».                              */
+
+  var PL = {
+    /* торти */
+    'cakes|Апельсиновий': ['Pomarańczowy', 'Biszkopt ze skórką pomarańczową, lekki krem czekoladowy, mus pomarańczowy, konfitura pomarańczowa'],
+    'cakes|Вишня шоколад': ['Wiśnia i czekolada', 'Biszkopt na czekoladzie mlecznej, czekoladowy krem serkowy, wiśnie'],
+    'cakes|Дубайський шоколад': ['Czekolada dubajska', 'Biszkopt czekoladowy, cremeux czekoladowe, nadzienie dubajskie, krem pistacjowy'],
+    'cakes|Кокос чорниця': ['Kokos i jagoda', 'Biszkopt kokosowy, mus kokosowy, konfitura jagodowa, jagodowy krem serkowy'],
+    'cakes|Малина шоколад': ['Malina i czekolada', 'Biszkopt czekoladowy, mus malinowy z maliną w białej czekoladzie, konfitura malinowa, krem serkowy'],
+    'cakes|Малиновий рай': ['Malinowy raj', 'Biszkopt z przecierem malinowym, mus malinowy, warstwa kokosowa, krem malinowy'],
+    'cakes|Мед груша горгонзола': ['Miód, gruszka i gorgonzola', 'Cienkie blaty miodowo-migdałowe, karmelizowana gruszka, ser gorgonzola, krem śmietankowo-miodowy'],
+    'cakes|Медовик класичний': ['Miodownik klasyczny', 'Blaty miodowe, krem śmietankowy'],
+    'cakes|Молочна дівчинка': ['Mleczna dziewczynka', 'Blaty na mleku skondensowanym, krem serkowy, mascarpone, konfitura z porzeczek'],
+    'cakes|Наполеон': ['Napoleonka', 'Blaty z ciasta francuskiego, krem plombir'],
+    'cakes|Орео': ['Oreo', 'Biszkopt czekoladowy, sernik Oreo, mus Oreo, krem serkowy'],
+    'cakes|Полуничне тріо': ['Truskawkowe trio', 'Biszkopt mleczny, mus truskawkowy, konfitura truskawkowa, coulis truskawkowe, krem serkowy'],
+    'cakes|Снікерс': ['Snickers', 'Biszkopt czekoladowy, solony karmel, orzeszki ziemne, krem serkowy'],
+    'cakes|Фісташка малина': ['Pistacja i malina', 'Biszkopt pistacjowy, mus pistacjowy, konfitura malinowa, pistacjowy krem serkowy'],
+    'cakes|Червоний оксамит': ['Red Velvet', 'Biszkopt Red Velvet, konfitura wiśniowa, ganache truskawkowy, krem serkowy, mascarpone'],
+    'cakes|Чорниця лимон': ['Jagoda i cytryna', 'Biszkopt cytrynowy, mus jagodowy, konfitura jagodowa, ganache cytrynowy, krem serkowy'],
+    'cakes|Шпинат полуниця': ['Szpinak i truskawka', 'Biszkopt szpinakowy, mus miętowy, konfitura truskawkowa, krem serkowy z mascarpone'],
+    'cakes|Жіночі примхи': ['Damskie kaprysy', 'Biszkopt czekoladowy, orzechowy, z makiem, z rodzynkami, krem śmietankowy'],
+    'cakes|Лайм абрикос': ['Limonka i morela', 'Biszkopt szpinakowo-limonkowy, krem śmietankowy, konfitura morelowa'],
+    'cakes|Монастирська вежа': ['Wieża klasztorna', 'Kruche rurki z wiśniami, krem śmietankowy'],
+    'cakes|Лісові ягоди - шоколад': ['Owoce leśne i czekolada', 'Biszkopt mleczny, konfitura z owoców leśnych, mus na gorzkiej czekoladzie'],
+
+    /* чізкейки */
+    'cheesecakes|Полуниця-лайм': ['Truskawka-limonka', 'Kruchy spód, sernik ze skórką z limonki, konfitura truskawkowa'],
+    'cheesecakes|Вишня-шоколад': ['Wiśnia-czekolada', 'Kruchy spód, sernik na czekoladzie mlecznej lub gorzkiej do wyboru, konfitura wiśniowa'],
+    'cheesecakes|Фісташка-малина': ['Pistacja-malina', 'Kruchy spód z pistacjami, sernik pistacjowy, konfitura malinowa'],
+    'cheesecakes|Снікерс': ['Snickers', 'Spód czekoladowy, sernik z masłem orzechowym, solony karmel i orzeszki ziemne, polewa czekoladowa'],
+    'cheesecakes|Лохина-мигдаль': ['Borówka-migdał', 'Kruchy spód z kawałkami migdałów, sernik z pastą migdałową, konfitura z borówek'],
+
+    /* мусові */
+    'mousse|Полуничний': ['Truskawkowy', 'Biszkopt dacquoise z wiórkami kokosowymi, nadzienie truskawkowe, mus truskawkowy'],
+    'mousse|Баунті': ['Bounty', 'Biszkopt czekoladowy, nadzienie kokosowe, mus na gorzkiej czekoladzie'],
+    'mousse|Фісташка малина': ['Pistacja i malina', 'Biszkopt pistacjowy, nadzienie malinowe, mus pistacjowy'],
+    'mousse|Снікерс': ['Snickers', 'Biszkopt czekoladowy, solony karmel, orzeszki ziemne, mus na czekoladzie mlecznej'],
+    'mousse|Апельсинова ніжність': ['Pomarańczowa delikatność', 'Biszkopt mleczny, krem pomarańczowy, chrupiąca warstwa, mus jogurtowy'],
+    'mousse|Лимонно полуничний': ['Cytrynowo-truskawkowy', 'Biszkopt mleczny, konfitura truskawkowa, mus truskawkowy, mus cytrynowy'],
+
+    /* зефір */
+    'zefir|Зефір поштучно': ['Pianki na sztuki', 'Cukier, woda, syrop inwertowany, przecier owocowy, agar-agar'],
+    'zefir|Морозиво зефір': ['Pianka na patyku', 'Pianka klasyczna lub owocowa do wyboru, czekolada, posypka'],
+    'zefir|Букет зефіру 20 см': ['Bukiet z pianek 20 cm', 'Kwiaty z pianek, średnica 20 cm'],
+    'zefir|Букет зефіру 25 см': ['Bukiet z pianek 25 cm', 'Kwiaty z pianek, średnica 25 cm'],
+    'zefir|Дитячий букет': ['Bukiet dziecięcy', 'Figurki i kwiaty z pianek, średnica 16 cm'],
+    'zefir|Зефірне печиво': ['Ciasteczka z pianką', 'Kanapeczki z pianek z kwiatami'],
+    'zefir|Сумочка з зефіром дитяча': ['Torebka z piankami, dziecięca', 'Pianki w torebce prezentowej, rozmiar 13×13 cm'],
+    'zefir|Коробочка зефіру 12х15 см': ['Pudełko pianek 12×15 cm', 'Pianki w pudełku, rozmiar 12×15 cm'],
+    'zefir|Коробочка зефіру 16 см': ['Pudełko pianek 16 cm', 'Pianki w pudełku, średnica 16 cm'],
+    'zefir|Коробочка «Дитяча» тематична': ['Pudełko tematyczne «Dziecięce»', 'Dekoracja tematyczna, zawartość zależy od średnicy'],
+    'zefir|Квіти на коробці': ['Kwiaty na pudełku', 'Kwiaty z pianek na pudełku, średnica 12 cm'],
+    'zefir|Коробочка на 8 завитків': ['Pudełko na 8 pianek', '8 pianek, smak do wyboru'],
+    'zefir|Коробочка подвійна 16 см': ['Pudełko podwójne 16 cm', 'Na dole pianki, na górze kwiaty z pianek, średnica 16 cm'],
+    'zefir|Коробочка подвійна 18 см': ['Pudełko podwójne 18 cm', 'Na dole pianki, na górze kwiaty z pianek, średnica 18 cm'],
+    'zefir|Подвійна коробочка 15х15 см': ['Podwójne pudełko 15×15 cm', 'Na dole pianki, na górze kwiaty z pianek, rozmiar 15×15 cm'],
+
+    /* кендібар */
+    'candybar|Трайфл «Молочний з полуницею»': ['Trifle «Mleczny z truskawką»', 'Biszkopt mleczny, konfitura truskawkowa, krem'],
+    'candybar|Трайфл «Лісовий мох з малиною»': ['Trifle «Leśny mech z maliną»', 'Biszkopt szpinakowy, konfitura malinowa, krem malinowy'],
+    'candybar|Трайфл «Лісовий мох з полуницею»': ['Trifle «Leśny mech z truskawką»', 'Biszkopt szpinakowo-limonkowy, truskawki, krem'],
+    'candybar|Трайфл «Вишня-шоколад»': ['Trifle «Wiśnia-czekolada»', 'Biszkopt czekoladowy, nadzienie wiśniowe, krem biały lub czekoladowy'],
+    'candybar|Трайфл «Снікерс»': ['Trifle «Snickers»', 'Biszkopt czekoladowy, solony karmel, orzeszki ziemne, krem'],
+    'candybar|Трайфл «Червоний оксамит»': ['Trifle «Red Velvet»', 'Biszkopt Red Velvet, truskawki, krem'],
+    'candybar|Капкейки класичні': ['Babeczki klasyczne', 'Biszkopt klasyczny, nadzienie truskawkowe, krem'],
+    'candybar|Капкейки шоколадні': ['Babeczki czekoladowe', 'Biszkopt czekoladowy, nadzienie wiśniowe, krem czekoladowy']
+  };
+
+  /* Примітки, які пишуться прямо в даних товару. */
+  var NOTE_PL = {
+    'Мінімальне замовлення 5 шт': 'Minimalne zamówienie 5 szt',
+    'Ціна залежить від діаметра': 'Cena zależy od średnicy'
+  };
+
+  P.forEach(function (p) {
+    var t = PL[p.cat + '|' + p.name];
+    if (t) { p.name_pl = t[0]; p.desc_pl = t[1]; }
+    if (p.note && !p.note_pl && NOTE_PL[p.note]) p.note_pl = NOTE_PL[p.note];
   });
 
   /* ---------- експорт ---------- */
