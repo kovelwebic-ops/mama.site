@@ -22,7 +22,22 @@
     volume:      'Об’єм',
     other:       'Інші товари',
     contacts:    'Контакти',
-    categories:  'Категорії',
+
+    /* ⚠ ЧЕРНЕТКА. Умови вигадані як заглушка — замовниця має
+       підтвердити терміни, розмір передоплати й зону доставки. */
+    orderTerms:    'Умови замовлення',
+    orderList: [
+      'Замовлення приймаємо щонайменше за 3 дні',
+      'Складний декор і великі торти — за 7 днів',
+      'Замовлення підтверджуємо після узгодження деталей'
+    ],
+    deliveryTerms: 'Умови доставки',
+    deliveryList: [
+      'Самовивіз — за попередньою домовленістю',
+      'Доставка по місту — вартість узгоджуємо окремо',
+      'Торти видаємо у спеціальній упаковці'
+    ],
+
     language:    'Мова',
     menu:        'Меню',
     close:       'Закрити',
@@ -49,7 +64,20 @@
     volume:      'Objętość',
     other:       'Inne produkty',
     contacts:    'Kontakt',
-    categories:  'Kategorie',
+
+    orderTerms:    'Warunki zamówienia',
+    orderList: [
+      'Zamówienia przyjmujemy minimum 3 dni wcześniej',
+      'Skomplikowany dekor i duże torty — 7 dni wcześniej',
+      'Zamówienie potwierdzamy po ustaleniu szczegółów'
+    ],
+    deliveryTerms: 'Warunki dostawy',
+    deliveryList: [
+      'Odbiór osobisty po wcześniejszym uzgodnieniu',
+      'Dostawa na terenie miasta — koszt ustalamy indywidualnie',
+      'Torty wydajemy w specjalnym opakowaniu'
+    ],
+
     language:    'Język',
     menu:        'Menu',
     close:       'Zamknij',

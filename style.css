@@ -342,19 +342,47 @@ input { font-family: inherit; color: inherit; }
 
 /* ---------- футер ---------- */
 
+/* Чорний блок на всю ширину: фон малюємо на самому <footer>, а колонки
+   тримаємо у внутрішньому контейнері тієї ж ширини, що й решта сайту. */
 .ftr {
-  max-width: var(--max); margin: clamp(96px, 11vw, 160px) auto 0;
-  padding: clamp(40px, 5vw, 72px) var(--pad) clamp(40px, 5vw, 64px);
-  border-top: 1px solid var(--line);
+  margin-top: clamp(96px, 11vw, 160px);
+  background: var(--ink); color: #FFF;
+  padding: clamp(48px, 6vw, 80px) 0 clamp(40px, 5vw, 64px);
+}
+.ftr-in {
+  max-width: var(--max); margin: 0 auto; padding: 0 var(--pad);
   display: flex; flex-wrap: wrap; gap: 48px 64px; justify-content: space-between;
 }
-.ftr-col { display: flex; flex-direction: column; gap: 10px; flex: 0 1 auto; }
-.ftr-col.brand { gap: 12px; flex: 1 1 240px; }
+.ftr a { color: rgba(255, 255, 255, .75); }
+.ftr a:hover { color: #FFF; }
+.ftr .muted { color: rgba(255, 255, 255, .45); }
+
+.ftr-col { display: flex; flex-direction: column; gap: 12px; flex: 0 1 auto; }
+.ftr-col.brand { gap: 14px; flex: 1 1 260px; }
+.ftr-col.brand b {
+  font-size: 17px; font-weight: 900; text-transform: uppercase;
+  letter-spacing: -.01em; color: #FFF;
+}
+
+/* Умови — цілі речення, тож не капсом: у верхньому регістрі вони
+   читаються погано, а це саме той текст, який мають прочитати. */
+.ftr-terms { display: flex; flex-direction: column; gap: 7px; max-width: 34ch; }
+.ftr-terms li {
+  font-size: 12px; line-height: 1.55;
+  color: rgba(255, 255, 255, .75);
+}
+
+.ftr-links { gap: 10px; }
 .ftr-links a { display: inline-flex; align-items: baseline; gap: 6px; width: fit-content; }
 .ftr-links a .arrow { display: inline-block; transition: transform 150ms ease; }
 .ftr-links a:hover .arrow { transform: translateX(3px); }
-.ftr-links a.is-empty { color: var(--muted); }
-.ftr-col.brand b { font-size: 17px; font-weight: 900; text-transform: uppercase; letter-spacing: -.01em; }
+.ftr-links a.is-empty { color: rgba(255, 255, 255, .4); }
+.ftr-links .cval { color: rgba(255, 255, 255, .5); letter-spacing: .02em; text-transform: none; }
+.ftr-links .lang { margin-top: 8px; }
+
+.ftr .lang button { color: rgba(255, 255, 255, .45); }
+.ftr .lang button.on { color: #FFF; }
+.ftr .lang .sep { color: rgba(255, 255, 255, .25); }
 
 /* ---------- оверлеї ---------- */
 

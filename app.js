@@ -111,17 +111,20 @@
   }
   /* Простий рядок-заклик «Facebook →», без окремого підпису значення:
      сам URL/tel: живе в href, поки контакту немає — лінк приглушений. */
-  function contactRows(list) {
+  function contactRows(list, withValue) {
     return (list || CONTACTS).map(function (c) {
+      var val = (withValue && c.value) ? '<span class="cval">' + esc(c.value) + '</span>' : '';
       return '<a class="t-micro' + (c.href ? '' : ' is-empty') + '"' + cAttrs(c) + '>'
-        + esc(vl(c)) + '<span class="arrow" aria-hidden="true">&rarr;</span></a>';
+        + esc(vl(c)) + '<span class="arrow" aria-hidden="true">&rarr;</span>' + val + '</a>';
     }).join('');
   }
   /* Короткий список під кнопкою «Замовити» на сторінці товару —
      лише два найшвидші канали зв'язку, решта каналів лишається
      в шапці/футері/модалці (contactRows() без аргументу). */
   function quickContacts() {
-    return CONTACTS.filter(function (c) { return c.id === 'facebook' || c.id === 'phone'; });
+    return CONTACTS.filter(function (c) {
+      return c.id === 'facebook' || c.id === 'telegram' || c.id === 'phone';
+    });
   }
 
   /* ---------------- іконки ---------------- */
@@ -175,20 +178,27 @@
       + '</div></div>';
   }
 
-  function renderFooter() {
-    var cats = CATS.map(function (c) {
-      return '<a class="t-micro" href="' + catHref(c.id) + '">' + esc(nm(c)) + '</a>';
-    }).join('');
+  function termsCol(titleKey, listKey) {
+    var li = L(listKey).map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('');
+    return '<div class="ftr-col">'
+      + '<span class="t-micro muted">' + esc(L(titleKey)) + '</span>'
+      + '<ul class="ftr-terms">' + li + '</ul></div>';
+  }
 
+  function renderFooter() {
     document.getElementById('ftr').innerHTML =
-      '<div class="ftr-col brand">'
+      '<div class="ftr-in">'
+      + '<div class="ftr-col brand">'
       + '<b>SŁODKIE MARZENIA</b>'
       + '<span class="t-micro muted">' + esc(L('tagline')) + '</span>'
       + '</div>'
-      + '<div class="ftr-col"><span class="t-micro muted">' + esc(L('categories')) + '</span>' + cats + '</div>'
-      + '<div class="ftr-col ftr-links"><span class="t-micro muted">' + esc(L('contacts')) + '</span>' + contactRows() + '</div>'
-      + '<div class="ftr-col"><span class="t-micro muted">' + esc(L('language')) + '</span>'
-      + '<div class="lang">' + langHTML() + '</div></div>';
+      + termsCol('orderTerms', 'orderList')
+      + termsCol('deliveryTerms', 'deliveryList')
+      + '<div class="ftr-col ftr-links">'
+      + '<span class="t-micro muted">' + esc(L('contacts')) + '</span>' + contactRows(null, true)
+      + '<div class="lang">' + langHTML() + '</div>'
+      + '</div>'
+      + '</div>';
   }
 
   /* ---------------- головна ---------------- */
@@ -217,7 +227,7 @@
     var hero = findProd('cakes', 'Фісташка малина');
 
     var a = PRODUCTS.filter(function (p) { return p.cat === 'cakes'; }).slice(0, 10);
-    var b = PRODUCTS.filter(function (p) { return p.cat !== 'cakes' && !p.draft; }).slice(0, 10);
+    var b = PRODUCTS.filter(function (p) { return p.cat !== 'cakes'; }).slice(0, 10);
 
     document.getElementById('main').innerHTML =
       '<section class="hero">'
@@ -239,7 +249,12 @@
   function sortItems(arr) {
     var loc = S.lang === 'pl' ? 'pl' : 'uk';
     if (S.sort === 'name') {
-      arr.sort(function (x, y) { return nm(x).localeCompare(nm(y), loc); });
+      /* Там, де замовник задав порядок вручну (поле order), він головніший
+         за алфавіт — інакше найефектніші позиції тонули б у списку. */
+      arr.sort(function (x, y) {
+        if (x.order != null && y.order != null) return x.order - y.order;
+        return nm(x).localeCompare(nm(y), loc);
+      });
     } else {
       var dir = S.sort === 'priceUp' ? 1 : -1;
       arr.sort(function (x, y) {
