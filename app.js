@@ -8,6 +8,7 @@
   'use strict';
 
   var CATS = window.SM_CATS;
+  var SUBCATS = window.SM_SUBCATS;
   var PRODUCTS = window.SM_PRODUCTS;
   var CONTACTS = window.SM_CONTACTS;
 
@@ -255,6 +256,22 @@
       return '<button type="button" data-act="sort" data-v="' + s[0] + '" class="' + (S.sort === s[0] ? 'on' : '') + '">' + esc(L(s[1])) + '</button>';
     }).join('');
 
+    /* Категорії з підкатегоріями (зефір) показуємо секціями, решту —
+       однією сіткою. Сортування діє всередині кожної секції. */
+    var subs = catId && SUBCATS[catId];
+    var body;
+    if (subs) {
+      body = subs.map(function (s) {
+        var part = items.filter(function (p) { return p.sub === s.id; });
+        if (!part.length) return '';
+        return '<div class="sub">'
+          + '<span class="sub-head t-micro muted">' + esc(nm(s)) + '</span>'
+          + '<div class="grid">' + part.map(cardHTML).join('') + '</div></div>';
+      }).join('');
+    } else {
+      body = '<div class="grid">' + items.map(cardHTML).join('') + '</div>';
+    }
+
     document.getElementById('main').innerHTML =
       '<section class="wrap">'
       + '<h1 class="t-hero cat-head">' + esc(cat ? nm(cat) : L('allProducts')) + '</h1>'
@@ -262,7 +279,7 @@
       + '<div class="chips">' + chips + '</div>'
       + '<div class="bar-r"><div class="sorts">' + sorts + '</div></div>'
       + '</div>'
-      + '<div class="grid">' + items.map(cardHTML).join('') + '</div>'
+      + body
       + '</section>';
 
     document.title = (cat ? nm(cat) : L('allProducts')) + ' — Słodkie Marzenia';

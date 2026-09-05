@@ -193,6 +193,16 @@ input { font-family: inherit; color: inherit; }
 @media (max-width: 1024px) { .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 640px)  { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 20px; row-gap: 44px; } }
 
+/* Секції підкатегорій (зефір): волосяна лінія + дрібний підпис —
+   ділить сітку, не сперечаючись за увагу з заголовком сторінки. */
+.sub-head {
+  display: block; padding-bottom: 12px;
+  border-bottom: 1px solid var(--line);
+}
+.sub .grid { margin-top: clamp(28px, 3vw, 44px); }
+.sub { margin-top: clamp(40px, 5vw, 72px); }
+.sub + .sub { margin-top: clamp(56px, 7vw, 96px); }
+
 .card { display: flex; flex-direction: column; gap: 14px; }
 .card:hover { color: inherit; }
 .card-ph { display: block; position: relative; width: 100%; aspect-ratio: 1; overflow: hidden; }
