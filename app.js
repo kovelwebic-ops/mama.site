@@ -16,7 +16,6 @@
   var S = {
     lang: 'ua',
     sort: 'name',
-    density: 5,
     q: '',
     gi: 0,          // індекс поточного фото в галереї
     sel: {},        // вибрані варіанти на сторінці товару
@@ -199,18 +198,13 @@
       + '</div></div>';
   }
 
+  /* Головна поки що коротка: герой → дві стрічки → футер. Блоки категорій
+     і заклик «Всі товари» прибрані — на їх місце піде інший контент. */
   function renderHome() {
     var hero = findProd('cakes', 'Фісташка малина');
 
     var a = PRODUCTS.filter(function (p) { return p.cat === 'cakes'; }).slice(0, 10);
     var b = PRODUCTS.filter(function (p) { return p.cat !== 'cakes' && !p.draft; }).slice(0, 10);
-
-    var rows = CATS.map(function (c) {
-      return '<a class="cat-row" href="' + catHref(c.id) + '">'
-        + '<img src="' + esc(c.hero) + '" alt="' + esc(nm(c)) + '" loading="lazy">'
-        + '<div><h2 class="t-cat">' + esc(nm(c)) + '</h2>'
-        + '<span class="t-micro muted">' + esc(plural(inCat(c.id).length)) + '</span></div></a>';
-    }).join('');
 
     document.getElementById('main').innerHTML =
       '<section class="hero">'
@@ -222,14 +216,7 @@
       + '<div class="hero-scroll"><i></i><span class="t-micro muted">' + esc(L('scroll')) + '</span></div>'
       + '</section>'
 
-      + '<section class="strips">' + stripHTML(a, 'l') + stripHTML(b, 'r') + '</section>'
-
-      + '<section class="wrap cat-list">' + rows + '</section>'
-
-      + '<section class="wrap all-cta">'
-      + '<a href="' + catHref('') + '"><b>' + esc(L('allProducts')) + '</b>'
-      + '<span class="t-micro muted">' + esc(plural(PRODUCTS.length)) + '</span></a>'
-      + '</section>';
+      + '<section class="strips">' + stripHTML(a, 'l') + stripHTML(b, 'r') + '</section>';
 
     document.title = 'Słodkie Marzenia — ' + L('tagline');
   }
@@ -268,21 +255,14 @@
       return '<button type="button" data-act="sort" data-v="' + s[0] + '" class="' + (S.sort === s[0] ? 'on' : '') + '">' + esc(L(s[1])) + '</button>';
     }).join('');
 
-    var dens = [4, 5, 6].map(function (d) {
-      return '<button type="button" data-act="dens" data-v="' + d + '" class="' + (S.density === d ? 'on' : '') + '">' + d + '</button>';
-    }).join('');
-
     document.getElementById('main').innerHTML =
       '<section class="wrap">'
       + '<h1 class="t-hero cat-head">' + esc(cat ? nm(cat) : L('allProducts')) + '</h1>'
       + '<div class="bar">'
       + '<div class="chips">' + chips + '</div>'
-      + '<div class="bar-r">'
-      + '<span class="t-micro muted">' + esc(plural(items.length)) + '</span>'
-      + '<div class="sorts">' + sorts + '</div>'
-      + '<div class="dens">' + dens + '</div>'
-      + '</div></div>'
-      + '<div class="grid" data-density="' + S.density + '">' + items.map(cardHTML).join('') + '</div>'
+      + '<div class="bar-r"><div class="sorts">' + sorts + '</div></div>'
+      + '</div>'
+      + '<div class="grid">' + items.map(cardHTML).join('') + '</div>'
       + '</section>';
 
     document.title = (cat ? nm(cat) : L('allProducts')) + ' — Słodkie Marzenia';
@@ -538,7 +518,6 @@
     if (act === 'backdrop') { if (e.target === el) { S.open = null; renderOverlays(); } return; }
 
     if (act === 'sort') { S.sort = el.dataset.v; renderCatalog(); return; }
-    if (act === 'dens') { S.density = +el.dataset.v; renderCatalog(); return; }
 
     if (act === 'gal') { step(+el.dataset.v); return; }
     if (act === 'dot') { S.gi = +el.dataset.v; syncPhotoVar(); renderProduct(); return; }

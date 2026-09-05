@@ -63,7 +63,6 @@ input { font-family: inherit; color: inherit; }
 .t-hero  { font-size: clamp(48px, 8vw, 120px); font-weight: 900; text-transform: uppercase; letter-spacing: -.03em; line-height: .9; }
 .t-prod  { font-size: clamp(36px, 5vw, 72px);  font-weight: 900; text-transform: uppercase; letter-spacing: -.03em; line-height: .92; }
 .t-sect  { font-size: clamp(28px, 4vw, 48px);  font-weight: 900; text-transform: uppercase; letter-spacing: -.02em; line-height: 1; }
-.t-cat   { font-size: clamp(34px, 6.5vw, 96px);font-weight: 900; text-transform: uppercase; letter-spacing: -.03em; line-height: .9; }
 .t-micro { font-size: 12px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; line-height: 1.2; }
 .t-sklad { font-size: 12px; font-weight: 500; letter-spacing: .02em; text-transform: uppercase; line-height: 1.65; }
 .muted   { color: var(--muted); }
@@ -88,7 +87,7 @@ input { font-family: inherit; color: inherit; }
 .hdr-l { display: flex; align-items: center; gap: 20px; min-width: 0; }
 .hdr-r { display: flex; align-items: center; justify-content: flex-end; gap: 18px; }
 
-.hdr-cats { display: flex; gap: 20px; min-width: 0; }
+.hdr-cats { display: flex; gap: 16px; min-width: 0; font-size: 11px; }
 .hdr-cats a { white-space: nowrap; }
 
 /* вордмарк: замінюється на <img> без переїзду сусідів */
@@ -154,54 +153,45 @@ input { font-family: inherit; color: inherit; }
   .strip-track { animation: none !important; }
 }
 
-/* блоки категорій */
-.cat-list { margin-top: var(--sect); display: flex; flex-direction: column; gap: clamp(56px, 7vw, 104px); }
-.cat-row  { display: flex; flex-wrap: wrap; align-items: center; gap: clamp(20px, 4vw, 64px); }
-.cat-row img { width: clamp(160px, 26vw, 380px); aspect-ratio: 1; object-fit: contain; flex: 0 0 auto; }
-.cat-row div { display: flex; flex-direction: column; gap: 14px; min-width: 0; flex: 1 1 280px; }
-
-.all-cta { margin-top: clamp(96px, 11vw, 160px); }
-.all-cta b { display: block; font-size: clamp(44px, 13vw, 190px); font-weight: 900; text-transform: uppercase; letter-spacing: -.04em; line-height: .86; }
-.all-cta span { display: block; margin-top: 18px; }
-
 /* ---------- каталог ---------- */
 
-.cat-head { margin-top: clamp(40px, 5vw, 72px); }
+/* Заголовок каталогу дрібніший за герой на головній — на сторінці зі
+   списком він не має перебивати самі товари. */
+.cat-head {
+  margin-top: clamp(40px, 5vw, 72px);
+  font-size: clamp(36px, 5.5vw, 84px);
+}
 
 .bar {
-  margin-top: clamp(28px, 4vw, 48px);
+  margin-top: clamp(24px, 3vw, 40px);
   display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
-  gap: 20px 32px;
+  gap: 16px 32px;
 }
 .chips { display: flex; flex-wrap: wrap; gap: 8px; }
 .chip {
-  display: inline-flex; align-items: center; height: 36px; padding: 0 15px;
+  display: inline-flex; align-items: center; height: 32px; padding: 0 13px;
   border-radius: 6px; border: 1px solid var(--line); white-space: nowrap;
+  font-size: 11px;
 }
 .chip:hover { border-color: var(--ink); }
-.chip.on { border-color: var(--ink); border-width: 1.5px; font-weight: 700; }
+.chip.on { border-color: var(--ink); font-weight: 700; }
 
 .bar-r { display: flex; flex-wrap: wrap; align-items: center; gap: 22px; }
-.sorts, .dens { display: flex; align-items: center; gap: 14px; }
-.dens { gap: 10px; padding-left: 22px; border-left: 1px solid var(--line); }
-.sorts button, .dens button { font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
-.sorts button.on, .dens button.on { color: var(--ink); font-weight: 700; }
-@media (max-width: 1400px) { .dens { display: none; } }
+.sorts { display: flex; align-items: center; gap: 14px; }
+.sorts button { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+.sorts button.on { color: var(--ink); font-weight: 700; }
 
 /* ---------- сітка товарів ---------- */
 
+/* 4 колонки на десктопі — товар крупніший, ніж був у п'ятиколонковій
+   сітці. Перемикача щільності більше немає. */
 .grid {
   margin-top: clamp(40px, 5vw, 72px);
   display: grid; column-gap: var(--gap-x); row-gap: var(--gap-y);
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 }
-@media (max-width: 1400px) { .grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 @media (max-width: 1024px) { .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 640px)  { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 20px; row-gap: 44px; } }
-@media (min-width: 1401px) {
-  .grid[data-density="4"] { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-  .grid[data-density="6"] { grid-template-columns: repeat(6, minmax(0, 1fr)); }
-}
 
 .card { display: flex; flex-direction: column; gap: 14px; }
 .card:hover { color: inherit; }
@@ -210,7 +200,7 @@ input { font-family: inherit; color: inherit; }
 .card-ph .card-alt { opacity: 0; transition: opacity 200ms linear; }
 .card:hover .card-alt { opacity: 1; }
 .card-txt { display: flex; flex-direction: column; gap: 5px; }
-.card-name  { font-size: 14px; font-weight: 500; line-height: 1.4; }
+.card-name  { font-size: 14px; font-weight: 600; line-height: 1.4; }
 .card-price { font-size: 14px; font-weight: 400; line-height: 1.4; color: var(--muted); }
 
 .empty { margin-top: clamp(40px, 5vw, 72px); }
@@ -260,11 +250,15 @@ input { font-family: inherit; color: inherit; }
 
 .price { font-size: 32px; font-weight: 700; letter-spacing: -.01em; line-height: 1.2; }
 
-.varblock { display: flex; flex-direction: column; gap: 12px; }
-.pills { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+/* Компактні пігулки: min-height замість фіксованої висоти, щоб довгі
+   підписи на кшталт «Класичний (яблучний)» переносились у два рядки,
+   а не обрізались. */
+.varblock { display: flex; flex-direction: column; gap: 8px; }
+.pills { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
 .pill {
-  height: 44px; padding: 0 8px; border-radius: 6px; background: var(--bg);
-  border: 1px solid var(--line); font-size: 13px; font-weight: 500; line-height: 1.2;
+  display: flex; align-items: center; justify-content: center; text-align: center;
+  min-height: 34px; padding: 5px 7px; border-radius: 6px; background: var(--bg);
+  border: 1px solid var(--line); font-size: 12px; font-weight: 500; line-height: 1.2;
 }
 .pill:hover { border-color: var(--ink); }
 .pill.on { border-color: var(--ink); border-width: 1.5px; font-weight: 600; }
@@ -326,8 +320,8 @@ input { font-family: inherit; color: inherit; }
   /* Щільніші інтервали: у референсі ціна, варіанти й кнопка стоять
      майже впритул, без зайвого повітря між ними. */
   .pdp-l { gap: clamp(14px, 1.6vw, 24px); }
-  .pdp-r { gap: clamp(14px, 1.5vw, 22px); }
-  .pdp .varblock { gap: 10px; }
+  .pdp-r { gap: clamp(12px, 1.2vw, 18px); }
+  .pdp .varblock { gap: 8px; }
   .pdp .sklad    { gap: 10px; }
   .pdp .links    { gap: 10px; }
 
