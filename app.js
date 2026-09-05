@@ -97,14 +97,19 @@
       ? ' href="' + esc(c.href) + '" target="_blank" rel="noopener"'
       : ' href="#" aria-disabled="true"';
   }
-  function cValue(c) {
-    return c.value ? esc(c.value) : '<span class="muted">' + esc(L('notSet')) + '</span>';
-  }
-  function contactRows() {
-    return CONTACTS.map(function (c) {
-      return '<a class="t-micro"' + cAttrs(c) + '><span>' + esc(c.label) + ' &rarr;</span>'
-        + '<span>' + cValue(c) + '</span></a>';
+  /* Простий рядок-заклик «Facebook →», без окремого підпису значення:
+     сам URL/tel: живе в href, поки контакту немає — лінк приглушений. */
+  function contactRows(list) {
+    return (list || CONTACTS).map(function (c) {
+      return '<a class="t-micro' + (c.href ? '' : ' is-empty') + '"' + cAttrs(c) + '>'
+        + esc(c.label) + '<span class="arrow" aria-hidden="true">&rarr;</span></a>';
     }).join('');
+  }
+  /* Короткий список під кнопкою «Замовити» на сторінці товару —
+     лише два найшвидші канали зв'язку, решта каналів лишається
+     в шапці/футері/модалці (contactRows() без аргументу). */
+  function quickContacts() {
+    return CONTACTS.filter(function (c) { return c.id === 'facebook' || c.id === 'phone'; });
   }
 
   /* ---------------- іконки ---------------- */
@@ -372,7 +377,7 @@
       + '<button class="btn-order" type="button" data-act="modal">' + esc(L('order')) + '</button>'
       /* на мобільному склад стоїть між кнопкою і соцмережами, на десктопі — у лівій колонці */
       + skladHTML(p, 'mob')
-      + '<div class="links">' + contactRows() + '</div>'
+      + '<div class="links">' + contactRows(quickContacts()) + '</div>'
       + '</div>'
 
       + '</section>'

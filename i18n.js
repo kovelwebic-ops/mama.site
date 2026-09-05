@@ -32,7 +32,6 @@
     priceDown:   'Ціна ↓',
     density:     'Щільність',
     nothing:     'Нічого не знайдено',
-    notSet:      'вказати',
     notFound:    'Товар не знайдено'
   };
 
@@ -59,7 +58,6 @@
     priceDown:   'Cena ↓',
     density:     'Gęstość',
     nothing:     'Nic nie znaleziono',
-    notSet:      'uzupełnić',
     notFound:    'Nie znaleziono produktu'
   };
 

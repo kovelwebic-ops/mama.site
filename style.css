@@ -22,6 +22,16 @@
 
 html { -webkit-text-size-adjust: 100%; }
 
+/* Ніде на сайті не показуємо смугу прокрутки браузера — сторінка й
+   так «плаває» на білому, зайва темна риска праворуч зайва. Прокрутка
+   й далі працює (колесо миші, свайп, стрілки), просто без візуальної
+   доріжки. Застосовано і до горизонтальних стрічок («Інші товари»). */
+html, .rail {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+html::-webkit-scrollbar, .rail::-webkit-scrollbar { width: 0; height: 0; }
+
 body {
   margin: 0;
   background: var(--bg);
@@ -208,23 +218,31 @@ input { font-family: inherit; color: inherit; }
 /* ---------- сторінка товару ---------- */
 
 .pdp {
-  margin-top: clamp(28px, 4vw, 56px);
-  display: grid; grid-template-columns: 28fr 46fr 26fr;
-  gap: clamp(32px, 4vw, 56px); align-items: start;
+  margin-top: clamp(48px, 6vw, 96px);
+  display: grid; grid-template-columns: 20fr 54fr 26fr;
+  gap: clamp(40px, 5vw, 72px); align-items: start;
 }
 /* без min-width:0 довге слово в назві розпирає ліву колонку і ламає пропорції */
 .pdp > * { min-width: 0; }
 
 /* Назву міряємо від ширини самої колонки, а не від вікна: українські
-   слова довгі, і при фіксованому 5vw «МОНАСТИРСЬКА» ламалася б посеред
-   слова. 11.4cqi — найбільший кегль, при якому найдовше слово каталогу
-   ще вміщається в рядок цілим. */
-.pdp-l { container-type: inline-size; }
-.pdp .t-prod { font-size: clamp(28px, 11.4cqi, 64px); overflow-wrap: break-word; }
-.pdp-l { display: flex; flex-direction: column; gap: clamp(24px, 3vw, 40px); }
-.pdp-r { display: flex; flex-direction: column; gap: clamp(22px, 2.5vw, 32px); }
+   слова довгі, і при фіксованому vw «МОНАСТИРСЬКА» ламалася б посеред
+   слова (дефіс — не рахуємо, по ньому браузер сам переносить рядок).
+   11.2cqi — найбільший кегль, при якому це слово ще ціле в рядку;
+   максимум навмисно нижчий, ніж у брифі (46px замість 64px) — за
+   проханням зробити текст менш «кричущим», а фото — головним акцентом. */
+.pdp .t-prod { font-size: clamp(20px, 11.2cqi, 46px); overflow-wrap: break-word; }
 
-.gal { position: relative; width: 100%; max-width: 760px; margin: 0 auto; }
+/* Лівий блок «спускаємо» до нижнього краю фото: більше повітря зверху,
+   акцент лишається на продукті, а не на заголовку. */
+.pdp-l {
+  container-type: inline-size;
+  display: flex; flex-direction: column; gap: clamp(24px, 3vw, 40px);
+  align-self: end;
+}
+.pdp-r { display: flex; flex-direction: column; gap: clamp(26px, 3vw, 40px); }
+
+.gal { position: relative; width: 100%; max-width: 900px; margin: 0 auto; }
 .gal img { width: 100%; aspect-ratio: 1; object-fit: contain; touch-action: pan-y; }
 .gal-arrow {
   position: absolute; top: 50%; transform: translateY(-50%);
@@ -259,16 +277,21 @@ input { font-family: inherit; color: inherit; }
 }
 .btn-order:hover { background: var(--ink-hover); color: #FFF; }
 
-.links { display: flex; flex-direction: column; }
-.links a {
-  display: flex; justify-content: space-between; align-items: baseline; gap: 16px;
-  padding: 14px 0; border-bottom: 1px solid var(--line);
-}
-.links a > span:last-child { color: var(--muted); letter-spacing: .02em; text-transform: none; }
+/* Прості лінки-заклики, без рамок і без окремої колонки значення —
+   сама стрілка й ховер-зсув дають досить контакту з елементом. */
+.links { display: flex; flex-direction: column; gap: 14px; }
+.links a { display: inline-flex; align-items: baseline; gap: 6px; width: fit-content; }
+.links a .arrow { display: inline-block; transition: transform 150ms ease; }
+.links a:hover .arrow { transform: translateX(3px); }
+.links a.is-empty { color: var(--muted); }
 
-/* «Склад» показуємо зліва на десктопі, у правій колонці — на мобільному */
+/* «Склад» показуємо зліва на десктопі, у правій колонці — на мобільному.
+   Поріг 1100px (не 900px) навмисно високий: 20%-ва ліва колонка вужча
+   за 900–1100px аж так, що найдовші назви ламались би посеред слова —
+   на цих ширинах вигідніше одразу перейти на мобільну одноколонкову
+   верстку, ніж тримати тісний триколонковий десктопний варіант. */
 .sklad-mob { display: none; }
-@media (max-width: 900px) {
+@media (max-width: 1100px) {
   .pdp { grid-template-columns: 1fr; }
   .sklad-desk { display: none; }
   .sklad-mob  { display: flex; }
@@ -290,8 +313,10 @@ input { font-family: inherit; color: inherit; }
 }
 .ftr-col { display: flex; flex-direction: column; gap: 10px; flex: 0 1 auto; }
 .ftr-col.brand { gap: 12px; flex: 1 1 240px; }
-.ftr-links a { display: flex; align-items: baseline; gap: 8px; }
-.ftr-links a > span:last-child { color: var(--muted); letter-spacing: .02em; text-transform: none; }
+.ftr-links a { display: inline-flex; align-items: baseline; gap: 6px; width: fit-content; }
+.ftr-links a .arrow { display: inline-block; transition: transform 150ms ease; }
+.ftr-links a:hover .arrow { transform: translateX(3px); }
+.ftr-links a.is-empty { color: var(--muted); }
 .ftr-col.brand b { font-size: 17px; font-weight: 900; text-transform: uppercase; letter-spacing: -.01em; }
 
 /* ---------- оверлеї ---------- */

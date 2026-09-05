@@ -34,13 +34,17 @@
   ];
 
   /* ---------- контакти ----------
-     ЗАПОВНИТИ ПЕРЕД ПУБЛІКАЦІЄЮ. Порожній value → у макеті стоїть
-     сірий плейсхолдер «вказати», посилання неактивне.                */
+     ЗАПОВНИТИ ПЕРЕД ПУБЛІКАЦІЄЮ. Порожній href → лінк неактивний і
+     показаний приглушеним сірим (замість окремого підпису «вказати»).
+     id 'facebook' і 'phone' — короткий список під кнопкою «Замовити»
+     на сторінці товару (див. quickContacts() у app.js); повний список
+     (усі рядки нижче) — у шапці, футері й модалці.                    */
 
   var CONTACTS = [
-    { id: 'instagram', label: 'Instagram', value: '', href: '' },
-    { id: 'telegram',  label: 'Telegram',  value: '', href: '' },
-    { id: 'phone',     label: 'Телефон',   value: '', href: '' }
+    { id: 'instagram', label: 'Instagram', href: '' },
+    { id: 'facebook',  label: 'Facebook',  href: '' },
+    { id: 'telegram',  label: 'Telegram',  href: '' },
+    { id: 'phone',     label: 'Телефон',   href: '' }
   ];
 
   var P = [];
