@@ -111,11 +111,10 @@
   }
   /* Простий рядок-заклик «Facebook →», без окремого підпису значення:
      сам URL/tel: живе в href, поки контакту немає — лінк приглушений. */
-  function contactRows(list, withValue) {
+  function contactRows(list) {
     return (list || CONTACTS).map(function (c) {
-      var val = (withValue && c.value) ? '<span class="cval">' + esc(c.value) + '</span>' : '';
       return '<a class="t-micro' + (c.href ? '' : ' is-empty') + '"' + cAttrs(c) + '>'
-        + esc(vl(c)) + '<span class="arrow" aria-hidden="true">&rarr;</span>' + val + '</a>';
+        + esc(vl(c)) + '<span class="arrow" aria-hidden="true">&rarr;</span></a>';
     }).join('');
   }
   /* Короткий список під кнопкою «Замовити» на сторінці товару —
@@ -195,8 +194,7 @@
       + termsCol('orderTerms', 'orderList')
       + termsCol('deliveryTerms', 'deliveryList')
       + '<div class="ftr-col ftr-links">'
-      + '<span class="t-micro muted">' + esc(L('contacts')) + '</span>' + contactRows(null, true)
-      + '<div class="lang">' + langHTML() + '</div>'
+      + '<span class="t-micro muted">' + esc(L('contacts')) + '</span>' + contactRows()
       + '</div>'
       + '</div>';
   }

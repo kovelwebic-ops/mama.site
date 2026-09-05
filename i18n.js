@@ -10,7 +10,7 @@
   'use strict';
 
   var UA = {
-    tagline:     'Домашня кондитерка · Польща',
+    tagline:     'Домашня кондитерка · Живець, Польща',
     scroll:      'Прокрутіть',
     allProducts: 'Всі товари',
     search:      'Пошук',
@@ -34,7 +34,7 @@
     deliveryTerms: 'Умови доставки',
     deliveryList: [
       'Самовивіз — за попередньою домовленістю',
-      'Доставка по місту — вартість узгоджуємо окремо',
+      'Доставка по Живцю — вартість узгоджуємо окремо',
       'Торти видаємо у спеціальній упаковці'
     ],
 
@@ -52,7 +52,7 @@
   };
 
   var PL = {
-    tagline:     'Domowa cukiernia · Polska',
+    tagline:     'Domowa cukiernia · Żywiec, Polska',
     scroll:      'Przewiń',
     allProducts: 'Wszystkie produkty',
     search:      'Szukaj',
@@ -74,7 +74,7 @@
     deliveryTerms: 'Warunki dostawy',
     deliveryList: [
       'Odbiór osobisty po wcześniejszym uzgodnieniu',
-      'Dostawa na terenie miasta — koszt ustalamy indywidualnie',
+      'Dostawa na terenie Żywca — koszt ustalamy indywidualnie',
       'Torty wydajemy w specjalnym opakowaniu'
     ],
 
