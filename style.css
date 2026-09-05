@@ -218,9 +218,9 @@ input { font-family: inherit; color: inherit; }
 /* ---------- сторінка товару ---------- */
 
 .pdp {
-  margin-top: clamp(48px, 6vw, 96px);
-  display: grid; grid-template-columns: 20fr 54fr 26fr;
-  gap: clamp(40px, 5vw, 72px); align-items: start;
+  margin-top: clamp(40px, 11vh, 112px);
+  display: grid; grid-template-columns: 22fr 50fr 24fr;
+  gap: clamp(32px, 4vw, 64px); align-items: start;
 }
 /* без min-width:0 довге слово в назві розпирає ліву колонку і ламає пропорції */
 .pdp > * { min-width: 0; }
@@ -233,16 +233,19 @@ input { font-family: inherit; color: inherit; }
    проханням зробити текст менш «кричущим», а фото — головним акцентом. */
 .pdp .t-prod { font-size: clamp(20px, 11.2cqi, 46px); overflow-wrap: break-word; }
 
-/* Лівий блок «спускаємо» до нижнього краю фото: більше повітря зверху,
-   акцент лишається на продукті, а не на заголовку. */
+/* Усі три колонки починаються з однієї верхньої лінії — як у референсі.
+   Повітря дає верхній відступ секції, а не зсув блоків один відносно
+   одного. */
 .pdp-l {
   container-type: inline-size;
-  display: flex; flex-direction: column; gap: clamp(24px, 3vw, 40px);
-  align-self: end;
+  display: flex; flex-direction: column; gap: clamp(20px, 2.4vw, 32px);
 }
-.pdp-r { display: flex; flex-direction: column; gap: clamp(26px, 3vw, 40px); }
+.pdp-r { display: flex; flex-direction: column; gap: clamp(22px, 2.6vw, 34px); }
 
-.gal { position: relative; width: 100%; max-width: 900px; margin: 0 auto; }
+/* Фото квадратне, тож ширина = висота: без стелі по vh воно на широкому
+   екрані виростає вище за вікно і «вивалюється» за перший екран.
+   Тримаємо його в межах ~58vh — тоді шапка + фото + підпис уміщаються. */
+.gal { position: relative; width: 100%; max-width: min(700px, 58vh); margin: 0 auto; }
 .gal img { width: 100%; aspect-ratio: 1; object-fit: contain; touch-action: pan-y; }
 .gal-arrow {
   position: absolute; top: 50%; transform: translateY(-50%);
