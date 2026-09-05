@@ -233,19 +233,31 @@ input { font-family: inherit; color: inherit; }
    проханням зробити текст менш «кричущим», а фото — головним акцентом. */
 .pdp .t-prod { font-size: clamp(20px, 11.2cqi, 46px); overflow-wrap: break-word; }
 
-/* Усі три колонки починаються з однієї верхньої лінії — як у референсі.
-   Повітря дає верхній відступ секції, а не зсув блоків один відносно
-   одного. */
+/* Десктоп: картка товару займає рівно перший екран, а колонки
+   вирівняні по центру відносно фото — як у референсі, де назва товару
+   стоїть на одній лінії з ціною, а фото виступає вище й нижче за них.
+   Порогом 1101px відсікаємо мобільну верстку, вона лишається як є. */
+@media (min-width: 1101px) {
+  .pdp {
+    margin-top: 0;
+    min-height: calc(100vh - 72px);
+    min-height: calc(100svh - 72px);
+    align-items: center;
+    align-content: center;
+    padding-bottom: clamp(24px, 4vh, 56px);
+  }
+}
+
 .pdp-l {
   container-type: inline-size;
   display: flex; flex-direction: column; gap: clamp(20px, 2.4vw, 32px);
 }
 .pdp-r { display: flex; flex-direction: column; gap: clamp(22px, 2.6vw, 34px); }
 
-/* Фото квадратне, тож ширина = висота: без стелі по vh воно на широкому
-   екрані виростає вище за вікно і «вивалюється» за перший екран.
-   Тримаємо його в межах ~58vh — тоді шапка + фото + підпис уміщаються. */
-.gal { position: relative; width: 100%; max-width: min(700px, 58vh); margin: 0 auto; }
+/* Фото квадратне, тож ширина = висота: стеля по vh не дає йому вирости
+   вище за екран. 66vh — приблизно стільки ж, скільки продукт займає в
+   референсі, тобто фото лишається головним об'єктом сторінки. */
+.gal { position: relative; width: 100%; max-width: min(800px, 66vh); margin: 0 auto; }
 .gal img { width: 100%; aspect-ratio: 1; object-fit: contain; touch-action: pan-y; }
 .gal-arrow {
   position: absolute; top: 50%; transform: translateY(-50%);
