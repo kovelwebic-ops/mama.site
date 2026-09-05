@@ -186,7 +186,7 @@
 
   /* Копірайт лишається англійською в обох мовах — так просив замовник.
      Рік беремо поточний, щоб футер не застарів у січні. */
-  var SITE_DOMAIN = 'Slodkiemarzenie.pl';
+  var SITE_DOMAIN = 'Slodkiemarzenia.pl';
 
   function renderFooter() {
     var copy = '© ' + new Date().getFullYear() + ' ' + SITE_DOMAIN + ' · All rights reserved';
@@ -497,11 +497,15 @@
       var res = searchResults();
       var body;
       if (res == null) {
-        body = '<div class="search-cats">' + CATS.map(function (c) {
-          return '<a href="' + catHref(c.id) + '">' + esc(nm(c)) + '</a>';
-        }).join('') + '</div>';
+        /* Порожній запит — ті самі чіпи, що й у каталозі, замість стіни
+           гігантських назв: і зрозуміліше, і не сперечається з полем. */
+        body = '<div class="search-empty">'
+          + '<span class="t-micro muted">' + esc(L('categories')) + '</span>'
+          + '<div class="chips">' + CATS.map(function (c) {
+            return '<a class="chip t-micro" href="' + catHref(c.id) + '">' + esc(nm(c)) + '</a>';
+          }).join('') + '</div></div>';
       } else if (res.length) {
-        body = '<div class="grid search-grid">' + res.map(cardHTML).join('') + '</div>';
+        body = '<div class="grid">' + res.map(cardHTML).join('') + '</div>';
       } else {
         body = '';
       }
@@ -510,7 +514,9 @@
       html = '<div class="sheet">'
         + '<div class="wrap" style="padding:0">'
         + '<div class="sheet-bar"><button class="sheet-close" type="button" data-act="close" aria-label="' + esc(L('close')) + '">&times;</button></div>'
+        + '<div class="search-field">' + ICON_SEARCH
         + '<input class="search-input" id="sq" type="text" value="' + esc(S.q) + '" placeholder="' + esc(L('search')) + '" autocomplete="off">'
+        + '</div>'
         + '<div class="search-hint t-micro muted">' + esc(hint) + '</div>'
         + body
         + '</div></div>';

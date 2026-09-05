@@ -22,6 +22,7 @@
     volume:      'Об’єм',
     other:       'Інші товари',
     contacts:    'Контакти',
+    categories:  'Категорії',
 
     /* ⚠ ЧЕРНЕТКА. Умови вигадані як заглушка — замовниця має
        підтвердити терміни, розмір передоплати й зону доставки. */
@@ -64,6 +65,7 @@
     volume:      'Objętość',
     other:       'Inne produkty',
     contacts:    'Kontakt',
+    categories:  'Kategorie',
 
     orderTerms:    'Warunki zamówienia',
     orderList: [

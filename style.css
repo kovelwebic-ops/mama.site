@@ -404,16 +404,23 @@ input { font-family: inherit; color: inherit; }
 .menu-links { margin-top: 24px; display: flex; flex-direction: column; gap: 18px; }
 .menu-links a { font-size: clamp(30px, 9vw, 48px); font-weight: 900; text-transform: uppercase; letter-spacing: -.02em; line-height: 1; }
 
-.search-input {
-  width: 100%; margin-top: clamp(16px, 3vw, 40px);
-  border: 0; border-bottom: 1px solid var(--line); outline: none; background: none;
-  padding: 0 0 18px;
-  font-size: clamp(30px, 6vw, 64px); font-weight: 900; text-transform: uppercase; letter-spacing: -.02em;
+/* Поле з іконкою: так одразу зрозуміло, що це пошук, а не заголовок
+   сторінки. Кегль помітно менший за колишні 64px — інакше набране
+   слово ставало найбільшим об'єктом на екрані. */
+.search-field {
+  display: flex; align-items: center; gap: 14px;
+  margin-top: clamp(12px, 2vw, 28px); padding-bottom: 14px;
+  border-bottom: 1px solid var(--line);
 }
-.search-hint { margin-top: 24px; }
-.search-cats { margin-top: clamp(32px, 5vw, 64px); display: flex; flex-direction: column; gap: 14px; }
-.search-cats a { font-size: clamp(28px, 6vw, 64px); font-weight: 900; text-transform: uppercase; letter-spacing: -.03em; line-height: 1; }
-.search-grid { grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr)); }
+.search-field svg { flex: 0 0 auto; width: 22px; height: 22px; color: var(--muted); }
+.search-input {
+  width: 100%; border: 0; outline: none; background: none; padding: 0;
+  font-size: clamp(22px, 3.4vw, 40px); font-weight: 900;
+  text-transform: uppercase; letter-spacing: -.02em;
+}
+.search-hint { margin-top: 16px; }
+
+.search-empty { margin-top: clamp(28px, 4vw, 48px); display: flex; flex-direction: column; gap: 12px; }
 
 .modal-bg {
   position: fixed; inset: 0; z-index: 100;
