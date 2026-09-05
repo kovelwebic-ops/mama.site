@@ -39,7 +39,6 @@
       'Торти видаємо у спеціальній упаковці'
     ],
 
-    language:    'Мова',
     menu:        'Меню',
     close:       'Закрити',
     product:     'Товар',
@@ -47,7 +46,6 @@
     sortDefault: 'Рекомендовані',
     priceUp:     'Ціна ↑',
     priceDown:   'Ціна ↓',
-    density:     'Щільність',
     nothing:     'Нічого не знайдено',
     notFound:    'Товар не знайдено'
   };
@@ -80,7 +78,6 @@
       'Torty wydajemy w specjalnym opakowaniu'
     ],
 
-    language:    'Język',
     menu:        'Menu',
     close:       'Zamknij',
     product:     'Produkt',
@@ -88,7 +85,6 @@
     sortDefault: 'Polecane',
     priceUp:     'Cena ↑',
     priceDown:   'Cena ↓',
-    density:     'Gęstość',
     nothing:     'Nic nie znaleziono',
     notFound:    'Nie znaleziono produktu'
   };
