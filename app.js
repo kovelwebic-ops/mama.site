@@ -251,13 +251,16 @@
 
   /* ---------------- каталог ---------------- */
 
-  function sortItems(arr) {
+  /* curated — чи можна застосовувати ручний порядок (поле order).
+     Він нумерується всередині категорії, тож на сторінці «Всі товари»
+     номери різних категорій зіштовхнулись би між собою: там завжди
+     алфавіт. Усередині категорії ручний порядок головніший за нього —
+     інакше найефектніші позиції тонули б у списку. */
+  function sortItems(arr, curated) {
     var loc = S.lang === 'pl' ? 'pl' : 'uk';
     if (S.sort === 'name') {
-      /* Там, де замовник задав порядок вручну (поле order), він головніший
-         за алфавіт — інакше найефектніші позиції тонули б у списку. */
       arr.sort(function (x, y) {
-        if (x.order != null && y.order != null) return x.order - y.order;
+        if (curated && x.order != null && y.order != null) return x.order - y.order;
         return nm(x).localeCompare(nm(y), loc);
       });
     } else {
@@ -277,14 +280,17 @@
     var cat = catById(catId);
     if (catId && !cat) catId = '';
 
-    var items = sortItems(PRODUCTS.filter(function (p) { return !catId || p.cat === catId; }));
+    var items = sortItems(
+      PRODUCTS.filter(function (p) { return !catId || p.cat === catId; }),
+      !!catId
+    );
 
     var chips = ['<a class="chip t-micro' + (catId ? '' : ' on') + '" href="' + catHref('') + '">' + esc(L('allProducts')) + '</a>']
       .concat(CATS.map(function (c) {
         return '<a class="chip t-micro' + (catId === c.id ? ' on' : '') + '" href="' + catHref(c.id) + '">' + esc(nm(c)) + '</a>';
       })).join('');
 
-    var sorts = [['name', 'byName'], ['priceUp', 'priceUp'], ['priceDown', 'priceDown']].map(function (s) {
+    var sorts = [['name', 'sortDefault'], ['priceUp', 'priceUp'], ['priceDown', 'priceDown']].map(function (s) {
       return '<button type="button" data-act="sort" data-v="' + s[0] + '" class="' + (S.sort === s[0] ? 'on' : '') + '">' + esc(L(s[1])) + '</button>';
     }).join('');
 
