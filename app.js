@@ -184,12 +184,19 @@
       + '<ul class="ftr-terms">' + li + '</ul></div>';
   }
 
+  /* Копірайт лишається англійською в обох мовах — так просив замовник.
+     Рік беремо поточний, щоб футер не застарів у січні. */
+  var SITE_DOMAIN = 'Slodkiemarzenie.pl';
+
   function renderFooter() {
+    var copy = '© ' + new Date().getFullYear() + ' ' + SITE_DOMAIN + ' · All rights reserved';
+
     document.getElementById('ftr').innerHTML =
       '<div class="ftr-in">'
       + '<div class="ftr-col brand">'
       + '<b>SŁODKIE MARZENIA</b>'
       + '<span class="t-micro muted">' + esc(L('tagline')) + '</span>'
+      + '<span class="ftr-copy">' + esc(copy) + '</span>'
       + '</div>'
       + termsCol('orderTerms', 'orderList')
       + termsCol('deliveryTerms', 'deliveryList')

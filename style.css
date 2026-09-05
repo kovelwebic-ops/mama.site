@@ -364,6 +364,14 @@ input { font-family: inherit; color: inherit; }
 
 .ftr-col { display: flex; flex-direction: column; gap: 10px; }
 .ftr-col.brand { gap: 12px; }
+
+/* Копірайт — не капсом: домен і «All rights reserved» у верхньому
+   регістрі виглядають крикливо для службового рядка. */
+.ftr-copy {
+  margin-top: 2px;
+  font-size: 11px; line-height: 1.5;
+  color: rgba(255, 255, 255, .4);
+}
 .ftr-col.brand b {
   font-size: 17px; font-weight: 900; text-transform: uppercase;
   letter-spacing: -.01em; color: #FFF;
