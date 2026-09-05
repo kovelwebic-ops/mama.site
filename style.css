@@ -233,21 +233,6 @@ input { font-family: inherit; color: inherit; }
    проханням зробити текст менш «кричущим», а фото — головним акцентом. */
 .pdp .t-prod { font-size: clamp(20px, 11.2cqi, 46px); overflow-wrap: break-word; }
 
-/* Десктоп: картка товару займає рівно перший екран, а колонки
-   вирівняні по центру відносно фото — як у референсі, де назва товару
-   стоїть на одній лінії з ціною, а фото виступає вище й нижче за них.
-   Порогом 1101px відсікаємо мобільну верстку, вона лишається як є. */
-@media (min-width: 1101px) {
-  .pdp {
-    margin-top: 0;
-    min-height: calc(100vh - 72px);
-    min-height: calc(100svh - 72px);
-    align-items: center;
-    align-content: center;
-    padding-bottom: clamp(24px, 4vh, 56px);
-  }
-}
-
 .pdp-l {
   container-type: inline-size;
   display: flex; flex-direction: column; gap: clamp(20px, 2.4vw, 32px);
@@ -317,6 +302,39 @@ input { font-family: inherit; color: inherit; }
 .others h2 { margin-bottom: clamp(28px, 4vw, 48px); }
 .rail { display: flex; gap: var(--gap-x); overflow-x: auto; padding-bottom: 8px; scroll-snap-type: x proximity; }
 .rail .card { flex: 0 0 auto; width: clamp(160px, 22vw, 260px); scroll-snap-align: start; }
+
+/* Десктопна картка товару. Блок стоїть у кінці секції навмисно: медіа-
+   запит не додає ваги селектору, тож він мусить іти ПІСЛЯ базових
+   правил .gal / .pdp-l / .pdp-r, інакше вони його перекриють.
+   Поріг 1101px відсікає мобільну верстку — вона лишається як є. */
+@media (min-width: 1101px) {
+  /* Композиція вужча за загальний контейнер — бічні блоки підтягнуті
+     до центру, а не розкидані по краях екрана. */
+  .pdp, .others { max-width: 1440px; }
+
+  .pdp {
+    margin-top: 0;
+    min-height: calc(100vh - 72px);
+    min-height: calc(100svh - 72px);
+    grid-template-columns: 20fr 54fr 22fr;
+    gap: clamp(28px, 3.4vw, 56px);
+    align-items: center;
+    align-content: center;
+    padding-bottom: clamp(20px, 3vh, 40px);
+  }
+
+  /* Щільніші інтервали: у референсі ціна, варіанти й кнопка стоять
+     майже впритул, без зайвого повітря між ними. */
+  .pdp-l { gap: clamp(14px, 1.6vw, 24px); }
+  .pdp-r { gap: clamp(14px, 1.5vw, 22px); }
+  .pdp .varblock { gap: 10px; }
+  .pdp .sklad    { gap: 10px; }
+  .pdp .links    { gap: 10px; }
+
+  /* Позначки в макеті замовника дають смугу ~78vh — саме стільки фото
+     має займати по висоті екрана. */
+  .gal { max-width: 78vh; }
+}
 
 /* ---------- футер ---------- */
 
