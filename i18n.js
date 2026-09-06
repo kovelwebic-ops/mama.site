@@ -18,8 +18,6 @@
     order:       'Замовити',
     back:        'Назад',
     sklad:       'Склад',
-    weight:      'Вага',
-    volume:      'Об’єм',
     other:       'Інші товари',
     contacts:    'Контакти',
     categories:  'Категорії',
@@ -38,6 +36,17 @@
       'Доставка по Живцю — вартість узгоджуємо окремо',
       'Торти видаємо у спеціальній упаковці'
     ],
+
+    madeToOrder: 'Кожне замовлення обговорюємо індивідуально',
+
+    /* ⚠ ЧЕРНЕТКА. Текст написаний з того, що видно на самому сайті
+       (місто, склад каталогу) — жодних вигаданих фактів про досвід
+       чи навчання. Замовниця має переписати своїми словами. */
+    aboutTitle1: 'Домашня кондитерка',
+    aboutText1:  'Słodkie Marzenia — маленька домашня кондитерка в Живці. Тут немає конвеєра й готової вітрини: кожен торт, чізкейк і коробочка зефіру робляться руками під конкретне замовлення.',
+    aboutTitle2: 'Під ваше свято',
+    aboutText2:  'У каталозі понад пʼятдесят позицій — від класичного медовика до мусових десертів і зефірних букетів. Смак, розмір і оформлення підбираємо окремо, щоб десерт підійшов саме до вашої дати.',
+    photoStub:   'Фото',
 
     menu:        'Меню',
     close:       'Закрити',
@@ -59,8 +68,6 @@
     order:       'Zamów',
     back:        'Wróć',
     sklad:       'Skład',
-    weight:      'Waga',
-    volume:      'Objętość',
     other:       'Inne produkty',
     contacts:    'Kontakt',
     categories:  'Kategorie',
@@ -77,6 +84,14 @@
       'Dostawa na terenie Żywca — koszt ustalamy indywidualnie',
       'Torty wydajemy w specjalnym opakowaniu'
     ],
+
+    madeToOrder: 'Każde zamówienie ustalamy indywidualnie',
+
+    aboutTitle1: 'Domowa cukiernia',
+    aboutText1:  'Słodkie Marzenia to mała domowa cukiernia w Żywcu. Nie ma tu taśmy produkcyjnej ani gotowej witryny: każdy tort, sernik i pudełko pianek powstają ręcznie pod konkretne zamówienie.',
+    aboutTitle2: 'Na Twoją okazję',
+    aboutText2:  'W katalogu jest ponad pięćdziesiąt pozycji — od klasycznego miodownika po desery musowe i bukiety z pianek. Smak, rozmiar i dekor dobieramy osobno, żeby deser pasował właśnie do Twojej daty.',
+    photoStub:   'Zdjęcie',
 
     menu:        'Menu',
     close:       'Zamknij',

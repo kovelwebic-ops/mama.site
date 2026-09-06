@@ -139,9 +139,21 @@ input { font-family: inherit; color: inherit; }
 .strip-half  { display: flex; gap: 40px; }
 .strip img { width: 260px; height: 260px; object-fit: contain; flex: 0 0 auto; }
 
-.strip-l .strip-track { animation: sm-left  44s linear infinite; }
-.strip-r .strip-track { animation: sm-right 52s linear infinite; }
-.strip:hover .strip-track { animation-play-state: paused; }
+/* Повільний, майже непомітний хід — стрічка має бути тлом, а не
+   атракціоном. Пауза тримається і на :hover, і на класі від JS:
+   клас надійніший, бо не залежить від того, чи браузер оновив
+   hover-стан під нерухомим курсором. */
+.strip-l .strip-track { animation: sm-left  90s linear infinite; }
+.strip-r .strip-track { animation: sm-right 105s linear infinite; }
+.strip:hover .strip-track,
+.strip.is-paused .strip-track { animation-play-state: paused; }
+
+/* Курсор-«рука» тільки там, де стрічку справді можна тягнути —
+   у звичайному режимі вона обрізана overflow:hidden і не гортається. */
+@media (prefers-reduced-motion: reduce) {
+  .strip { cursor: grab; }
+  .strip.is-dragging { cursor: grabbing; }
+}
 
 @keyframes sm-left  { from { transform: translate3d(0,0,0); }                 to { transform: translate3d(calc(-50% - 20px),0,0); } }
 @keyframes sm-right { from { transform: translate3d(calc(-50% - 20px),0,0); } to { transform: translate3d(0,0,0); } }
@@ -152,6 +164,27 @@ input { font-family: inherit; color: inherit; }
   .strip { overflow-x: auto; }
   .strip-track { animation: none !important; }
 }
+
+/* ---------- блок «про кондитерку» (головна) ---------- */
+
+.about { margin-top: var(--sect); display: flex; flex-direction: column; gap: clamp(56px, 7vw, 104px); }
+.about-row {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: clamp(28px, 5vw, 80px); align-items: center;
+}
+/* Другий рядок дзеркальний: фото праворуч, текст ліворуч. */
+.about-row.is-flipped .about-ph { order: 2; }
+
+/* Заглушка під фото. Щоб замінити — постав <img class="about-ph">
+   з тим самим класом, співвідношення сторін уже задане. */
+.about-ph {
+  aspect-ratio: 4 / 3; width: 100%;
+  display: flex; align-items: center; justify-content: center;
+  border: 1px solid var(--line); background: #FAFAFA;
+  object-fit: cover;
+}
+.about-txt { display: flex; flex-direction: column; gap: 16px; }
+.about-txt p { font-size: 14px; line-height: 1.65; max-width: 46ch; }
 
 /* ---------- каталог ---------- */
 
@@ -304,8 +337,15 @@ input { font-family: inherit; color: inherit; }
 /* стрічка «Інші товари» */
 .others { margin-top: clamp(80px, 10vw, 140px); }
 .others h2 { margin-bottom: clamp(28px, 4vw, 48px); }
-.rail { display: flex; gap: var(--gap-x); overflow-x: auto; padding-bottom: 8px; scroll-snap-type: x proximity; }
+.rail {
+  display: flex; gap: var(--gap-x); overflow-x: auto;
+  padding-bottom: 8px; scroll-snap-type: x proximity;
+  cursor: grab;
+}
 .rail .card { flex: 0 0 auto; width: clamp(160px, 22vw, 260px); scroll-snap-align: start; }
+/* Під час перетягування знімаємо прилипання, інакше воно смикає стрічку. */
+.rail.is-dragging { cursor: grabbing; scroll-snap-type: none; }
+.rail.is-dragging .card { pointer-events: none; }
 
 /* Десктопна картка товару. Блок стоїть у кінці секції навмисно: медіа-
    запит не додає ваги селектору, тож він мусить іти ПІСЛЯ базових
@@ -434,3 +474,119 @@ input { font-family: inherit; color: inherit; }
 }
 .modal-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
 .modal-head b { font-size: 22px; font-weight: 900; text-transform: uppercase; letter-spacing: -.02em; line-height: 1; }
+
+/* =========================================================
+   Мобільна верстка
+   Макет вимагає дрібного тексту, тож площу для пальця додаємо
+   падінгами й від'ємними марджинами — візуально нічого не росте,
+   але в кожну ціль можна впевнено влучити. Орієнтир — 44px.
+   ========================================================= */
+
+@media (max-width: 1100px) {
+
+  /* --- шапка --- */
+
+  /* Дві риски лишаються 22px завширшки, але торкатись можна всього
+     квадрата 44×44; від'ємний марджин утримує їх на місці. */
+  .burger {
+    width: 44px; height: 44px; margin-left: -11px;
+    align-items: center; justify-content: center;
+  }
+  .burger span { width: 22px; }
+
+  .icon { width: 44px; height: 44px; align-items: center; justify-content: center; }
+  .hdr-r { gap: 0; margin-right: -11px; }
+  .mark { padding: 10px 0; }
+
+  /* --- футер --- */
+
+  .ftr-links a { min-height: 40px; align-items: center; }
+  .ftr-in { gap: 32px; }
+  .ftr-terms { max-width: none; }
+}
+
+@media (max-width: 900px) {
+
+  /* --- блок «про кондитерку»: у колонку, фото завжди зверху --- */
+
+  .about-row { grid-template-columns: 1fr; gap: 20px; }
+  .about-row.is-flipped .about-ph { order: 0; }
+  .about-ph { aspect-ratio: 3 / 2; }
+  .about-txt p { max-width: none; }
+
+  /* --- сторінка товару --- */
+
+  /* Пігулки — головна ціль дотику на сторінці, тож повні 44px. */
+  .pill { min-height: 44px; font-size: 13px; }
+  .pills { gap: 8px; }
+  .varblock { gap: 10px; }
+
+  /* Стрілки галереї на тач-екрані зайві — там працює свайп,
+     а на вузькому екрані вони ще й налазять на фото. */
+  .gal-arrow { display: none; }
+  .dots button { width: 9px; height: 9px; }
+  .dots { gap: 10px; margin-top: 16px; padding: 8px 0; }
+
+  .links a { min-height: 40px; align-items: center; }
+
+  /* --- каталог --- */
+
+  .chip { height: 40px; padding: 0 15px; font-size: 12px; }
+  .chips { gap: 8px; }
+  .sorts { gap: 18px; }
+  .sorts button { padding: 10px 0; font-size: 12px; }
+  .bar { gap: 12px 24px; }
+}
+
+@media (max-width: 640px) {
+
+  /* Герой: на телефоні фото може бути помітно більшим — місця
+     по горизонталі тут більше, ніж по вертикалі. */
+  .hero img { height: min(46svh, 78vw); }
+
+  /* Порядок керування: спершу чіпи категорій, сортування під ними
+     окремим рядком, а не притиснуте до правого краю. */
+  .bar { flex-direction: column; align-items: stretch; }
+  .bar-r { justify-content: flex-start; }
+
+  .search-field { gap: 10px; }
+  .search-field svg { width: 18px; height: 18px; }
+
+  /* Модалка на маленькому екрані — майже на всю ширину. */
+  .modal { padding: 24px; }
+  .modal-bg { padding: 12px; }
+}
+
+/* =========================================================
+   Перехід на сторінку товару
+   Клік по картці затягує екран плиткою кольору фону, і вже під
+   нею відбувається перехід; на новій сторінці плитка так само
+   розходиться. Витримка в кожної плитки випадкова, але вони
+   накладаються — тож це читається як м'яке проявлення, а не як
+   шахівниця, що перекидається.
+   ========================================================= */
+
+.tiles {
+  position: fixed; inset: 0; z-index: 200;
+  display: grid;
+  grid-template-columns: repeat(var(--cols), 1fr);
+  grid-template-rows: repeat(var(--rows), 1fr);
+  pointer-events: none;
+}
+
+.tiles i {
+  background: var(--bg);
+  opacity: 0;
+  transform: scale(.88);
+  /* Плавне сповільнення в кінці — рух гальмує, а не обривається. */
+  transition: opacity 260ms cubic-bezier(.22, .61, .36, 1),
+              transform 260ms cubic-bezier(.22, .61, .36, 1);
+}
+
+/* scale трохи більший за одиницю, щоб сусідні плитки перекривались
+   і на стиках не лишалось світлих швів від субпіксельних заокруглень. */
+.tiles.is-on i { opacity: 1; transform: scale(1.02); }
+
+@media (prefers-reduced-motion: reduce) {
+  .tiles { display: none; }
+}

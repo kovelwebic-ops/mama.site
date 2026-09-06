@@ -148,8 +148,8 @@
       name: c[0], name_pl: '', desc: c[2], desc_pl: '',
       photos: [img('Мусові', c[1])],
       price: 85, weight: '460 г',
-      note: 'Ціна вказана без декору. Вага 450–470 г залежно від форми',
-      note_pl: 'Cena bez dekoru. Waga 450–470 g w zależności od formy'
+      note: 'Ціна вказана без декору',
+      note_pl: 'Cena bez dekoru'
     });
   });
 

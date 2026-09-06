@@ -218,8 +218,19 @@
       + '</div></div>';
   }
 
-  /* Головна поки що коротка: герой → дві стрічки → футер. Блоки категорій
-     і заклик «Всі товари» прибрані — на їх місце піде інший контент. */
+  /* Блок «про кондитерку»: фото і текст міняються місцями через рядок.
+     Замість фото поки рамка-заглушка — щоб замінити, постав на її
+     місце <img class="about-ph" src="..."> з тим самим класом. */
+  function aboutRow(n, mod) {
+    return '<div class="about-row' + mod + '">'
+      + '<div class="about-ph"><span class="t-micro muted">' + esc(L('photoStub')) + '</span></div>'
+      + '<div class="about-txt">'
+      + '<h2 class="t-sect">' + esc(L('aboutTitle' + n)) + '</h2>'
+      + '<p>' + esc(L('aboutText' + n)) + '</p>'
+      + '</div></div>';
+  }
+
+  /* Головна: герой → дві стрічки → блок про кондитерку → футер. */
   function renderHome() {
     var hero = findProd('cakes', 'Фісташка малина');
 
@@ -236,7 +247,11 @@
       + '<div class="hero-scroll"><i></i><span class="t-micro muted">' + esc(L('scroll')) + '</span></div>'
       + '</section>'
 
-      + '<section class="strips">' + stripHTML(a, 'l') + stripHTML(b, 'r') + '</section>';
+      + '<section class="strips">' + stripHTML(a, 'l') + stripHTML(b, 'r') + '</section>'
+
+      + '<section class="wrap about">'
+      + aboutRow(1, '') + aboutRow(2, ' is-flipped')
+      + '</section>';
 
     document.title = 'Słodkie Marzenia — ' + L('tagline');
   }
@@ -317,19 +332,17 @@
 
   /* ---------------- сторінка товару ---------------- */
 
+  /* Вагу й об'єм більше не показуємо: розмір узгоджується при
+     замовленні. Поле weight у даних лишилось — воно ще знадобиться,
+     якщо колись з'явиться окремий блок характеристик. */
   function skladHTML(p, where) {
     var parts = ds(p).split(',').map(function (s) { return s.trim(); }).filter(Boolean);
     var li = parts.map(function (t) {
       return '<li class="t-sklad"><i>&middot;</i><span>' + esc(t) + '</span></li>';
     }).join('');
-    /* Трайфли міряються в мілілітрах — це об'єм, а не вага. */
-    var w = p.weight
-      ? '<span class="t-sklad muted">'
-        + esc(L(/мл/.test(p.weight) ? 'volume' : 'weight')) + ': ' + esc(units(p.weight))
-        + '</span>' : '';
     return '<div class="sklad sklad-' + where + '">'
       + '<span class="t-micro muted">' + esc(L('sklad')) + '</span>'
-      + '<ul>' + li + '</ul>' + w + '</div>';
+      + '<ul>' + li + '</ul></div>';
   }
 
   function variantsHTML(p) {
@@ -405,6 +418,7 @@
       + '</div>'
       + variantsHTML(p)
       + '<button class="btn-order" type="button" data-act="modal">' + esc(L('order')) + '</button>'
+      + '<span class="t-sklad muted made-to-order">' + esc(L('madeToOrder')) + '</span>'
       /* на мобільному склад стоїть між кнопкою і соцмережами, на десктопі — у лівій колонці */
       + skladHTML(p, 'mob')
       + '<div class="links">' + contactRows() + '</div>'
@@ -418,7 +432,139 @@
         : '');
 
     bindGallery();
+    /* Рейл «Інші товари» перебудовується разом зі сторінкою — щоразу
+       вішаємо на нього прокрутку заново. */
+    dragScroll(document.querySelector('.rail'));
     document.title = prodTitle(p, S.sel) + ' — Słodkie Marzenia';
+  }
+
+  /* ---------------- перехід на сторінку товару ----------------
+     Плитка кольору фону затягує екран, під нею відбувається перехід,
+     на новій сторінці вона розходиться. Тільки десктоп: на телефоні
+     перехід і так миттєвий, а зайвий шар лише з'їдав би батарею.  */
+
+  var TILE_FLAG = 'sm-tiles';
+  var TILE_IN = 540;   /* поки плитка сходиться, потім переходимо */
+
+  function tilesAllowed() {
+    try {
+      return !matchMedia('(prefers-reduced-motion: reduce)').matches
+        && matchMedia('(min-width: 1101px)').matches;
+    } catch (e) { return false; }
+  }
+
+  /* Плитки приблизно квадратні, ~190px — достатньо дрібно, щоб
+     випадковий порядок читався, і достатньо крупно, щоб не плодити
+     сотні вузлів. */
+  function buildTiles() {
+    var cols = Math.max(6, Math.round(innerWidth / 190));
+    var rows = Math.max(4, Math.round(innerHeight / 190));
+    var wrap = document.createElement('div');
+    wrap.className = 'tiles';
+    wrap.style.setProperty('--cols', cols);
+    wrap.style.setProperty('--rows', rows);
+    for (var i = 0; i < cols * rows; i++) {
+      var t = document.createElement('i');
+      t.style.transitionDelay = Math.round(Math.random() * 280) + 'ms';
+      wrap.appendChild(t);
+    }
+    document.body.appendChild(wrap);
+    return wrap;
+  }
+
+  /* Перемикаємо клас через примусовий reflow, а не через rAF: rAF не
+     спрацьовує у прихованій вкладці, і анімація мовчки не стартувала б,
+     тоді як таймер переходу все одно відпрацював би. */
+  function reflow(el) { void el.offsetWidth; }
+
+  /* Йдемо зі сторінки: показуємо плитку, і лише під нею навігуємо. */
+  function tilesCover(href) {
+    var wrap = buildTiles();
+    try { sessionStorage.setItem(TILE_FLAG, '1'); } catch (e) {}
+    reflow(wrap);
+    wrap.classList.add('is-on');
+    setTimeout(function () { location.href = href; }, TILE_IN);
+  }
+
+  /* Прийшли на сторінку: якщо перехід був анімований, малюємо плитку
+     ДО першого рендеру — інакше на кадр блимне порожня сторінка. */
+  function tilesArrive() {
+    var flag = null;
+    try {
+      flag = sessionStorage.getItem(TILE_FLAG);
+      sessionStorage.removeItem(TILE_FLAG);
+    } catch (e) {}
+    if (!flag || !tilesAllowed()) return null;
+    var wrap = buildTiles();
+    wrap.classList.add('is-on');
+    return wrap;
+  }
+
+  function tilesReveal(wrap) {
+    if (!wrap) return;
+    reflow(wrap);              /* фіксуємо стан «закрито» */
+    wrap.classList.remove('is-on');
+    setTimeout(function () { wrap.remove(); }, 700);
+  }
+
+  /* ---------------- горизонтальна прокрутка мишею ----------------
+     Смуги прокрутки на сайті приховані, а колесо миші гортає тільки
+     по вертикалі — тож без цього «Інші товари» на десктопі не
+     прокрутити взагалі. Пальцем працює нативно, тому мишу й тач
+     розводимо: drag вмикаємо лише для pointerType === 'mouse'.     */
+  function dragScroll(el) {
+    if (!el) return;
+    var down = false, startX = 0, startLeft = 0, moved = 0;
+
+    el.addEventListener('pointerdown', function (e) {
+      if (e.pointerType !== 'mouse' || e.button !== 0) return;
+      down = true; moved = 0;
+      startX = e.clientX; startLeft = el.scrollLeft;
+      el.classList.add('is-dragging');
+      try { el.setPointerCapture(e.pointerId); } catch (err) {}
+    });
+
+    el.addEventListener('pointermove', function (e) {
+      if (!down) return;
+      var dx = e.clientX - startX;
+      if (Math.abs(dx) > moved) moved = Math.abs(dx);
+      el.scrollLeft = startLeft - dx;
+    });
+
+    function end(e) {
+      if (!down) return;
+      down = false;
+      el.classList.remove('is-dragging');
+      try { el.releasePointerCapture(e.pointerId); } catch (err) {}
+    }
+    el.addEventListener('pointerup', end);
+    el.addEventListener('pointercancel', end);
+
+    /* Перетягування не має відкривати картку, на якій відпустили мишу. */
+    el.addEventListener('click', function (e) {
+      if (moved > 6) { e.preventDefault(); e.stopPropagation(); }
+    }, true);
+
+    /* Вертикальне колесо → горизонтальна прокрутка, але на краю
+       віддаємо подію сторінці, щоб гортання не «залипало» на стрічці. */
+    el.addEventListener('wheel', function (e) {
+      if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
+      var max = el.scrollWidth - el.clientWidth;
+      var next = el.scrollLeft + e.deltaY;
+      if (next < 0 || next > max) return;
+      el.scrollLeft = next;
+      e.preventDefault();
+    }, { passive: false });
+  }
+
+  /* Пауза стрічок під курсором. CSS :hover теж це вміє, але тут
+     стан явний — і його видно в DOM, коли треба перевірити. */
+  function bindStrips() {
+    [].forEach.call(document.querySelectorAll('.strip'), function (s) {
+      s.addEventListener('mouseenter', function () { s.classList.add('is-paused'); });
+      s.addEventListener('mouseleave', function () { s.classList.remove('is-paused'); });
+      dragScroll(s);
+    });
   }
 
   /* свайп пальцем і перетягування мишею по фото */
@@ -456,16 +602,31 @@
 
   /* ---------------- оверлеї ---------------- */
 
+  /* Індекс для пошуку. Категорію й підкатегорію додаємо навмисно:
+     «торт» — найочевидніший запит, але цього слова немає в жодній
+     назві товару, лише в назві категорії, тож без цього пошук на
+     ньому мовчав. Обидві мови в індексі, тому «sernik» знаходить
+     чізкейки і в українському інтерфейсі.                         */
+  function haystack(p) {
+    var bits = [p.name, p.name_pl, p.desc, p.desc_pl];
+
+    var c = catById(p.cat);
+    if (c) bits.push(c.name, c.name_pl);
+
+    var subs = SUBCATS[p.cat] || [];
+    subs.forEach(function (s) { if (s.id === p.sub) bits.push(s.name, s.name_pl); });
+
+    if (p.variants) p.variants.forEach(function (v) {
+      v.options.forEach(function (o) { bits.push(o.label, o.label_pl, o.title, o.title_pl); });
+    });
+
+    return bits.filter(Boolean).join(' ').toLowerCase();
+  }
+
   function searchResults() {
     var q = S.q.trim().toLowerCase();
     if (!q) return null;
-    return PRODUCTS.filter(function (p) {
-      var hay = [p.name, p.name_pl, p.desc, p.desc_pl].join(' ');
-      if (p.variants) p.variants.forEach(function (v) {
-        v.options.forEach(function (o) { hay += ' ' + o.label + ' ' + (o.label_pl || ''); });
-      });
-      return hay.toLowerCase().indexOf(q) !== -1;
-    });
+    return PRODUCTS.filter(function (p) { return haystack(p).indexOf(q) !== -1; });
   }
 
   function renderOverlays() {
@@ -546,6 +707,7 @@
     else if (page === 'catalog') renderCatalog();
     else renderProduct();
     renderOverlays();
+    if (page === 'home') bindStrips();
   }
 
   function setLang(l) {
@@ -561,6 +723,17 @@
   document.addEventListener('click', function (e) {
     var noop = e.target.closest && e.target.closest('a[aria-disabled]');
     if (noop) { e.preventDefault(); return; }
+
+    /* Клік по картці товару — не одразу перехід, а спершу плитка.
+       Модифікатори й середню кнопку не чіпаємо: «відкрити в новій
+       вкладці» має працювати як завжди. */
+    var card = e.target.closest && e.target.closest('a.card');
+    if (card && tilesAllowed() && e.button === 0
+        && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey) {
+      e.preventDefault();
+      tilesCover(card.getAttribute('href'));
+      return;
+    }
 
     var el = e.target.closest && e.target.closest('[data-act]');
     if (!el) return;
@@ -622,7 +795,11 @@
     }
   }
 
+  /* Плитку ставимо до renderAll: сторінка ще порожня, тож перехід
+     виглядає суцільним, без спалаху вмісту між ними. */
+  var arrived = tilesArrive();
   renderAll();
   watchScroll();
+  tilesReveal(arrived);
 
 })();
