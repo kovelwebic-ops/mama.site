@@ -131,11 +131,22 @@
 
   /* ---------------- картка товару ---------------- */
 
-  function cardHTML(p) {
+  /* Перші картки майже завжди у видимій частині екрана, тож lazy на них
+     лише відкладає промальовування: браузер спершу рахує розкладку і аж
+     потім починає качати. Вантажимо їх одразу, решту — ліниво.
+     Другий індекс приходить із .map(), який кличе cardHTML. */
+  var EAGER_CARDS = 8;
+
+  function cardHTML(p, i) {
+    /* Просто знімаємо lazy, без fetchpriority: високий пріоритет на
+       вісьмох картинках одночасно нічого не пришвидшує — вони лише
+       конкурують між собою. Він лишається для однієї головної. */
+    var load = i < EAGER_CARDS ? '' : ' loading="lazy"';
     var alt = p.photos.length > 1
-      ? '<img class="card-alt" src="' + esc(p.photos[1]) + '" alt="" loading="lazy">' : '';
+      ? '<img class="card-alt" src="' + esc(p.photos[1]) + '" alt="" loading="lazy" decoding="async">' : '';
     return '<a class="card" href="' + prodHref(p) + '">'
-      + '<span class="card-ph"><img src="' + esc(p.photos[0]) + '" alt="' + esc(nm(p)) + '" loading="lazy">' + alt + '</span>'
+      + '<span class="card-ph"><img src="' + esc(p.photos[0]) + '" alt="' + esc(nm(p)) + '"'
+      + load + ' decoding="async">' + alt + '</span>'
       + '<span class="card-txt">'
       + '<span class="card-name">' + esc(nm(p)) + '</span>'
       + '<span class="card-price">' + esc(priceText(p)) + '</span>'
@@ -252,7 +263,7 @@
 
     document.getElementById('main').innerHTML =
       '<section class="hero">'
-      + '<img src="' + esc(hero.photos[0]) + '" alt="">'
+      + '<img src="' + esc(hero.photos[0]) + '" alt="" fetchpriority="high" decoding="async">'
       + '<div class="hero-txt">'
       + '<h1 class="t-hero">SŁODKIE<br>MARZENIA</h1>'
       + '<p class="t-micro muted">' + esc(L('tagline')) + '</p>'
@@ -424,7 +435,7 @@
       + '</div>'
 
       + '<div class="pdp-c">'
-      + '<div class="gal"><img src="' + esc(p.photos[S.gi]) + '" alt="' + esc(prodTitle(p, S.sel)) + '">' + arrows + '</div>'
+      + '<div class="gal"><img src="' + esc(p.photos[S.gi]) + '" alt="' + esc(prodTitle(p, S.sel)) + '" fetchpriority="high" decoding="async">' + arrows + '</div>'
       + dots
       + '</div>'
 
@@ -525,11 +536,18 @@
     return wrap;
   }
 
+  /* Розкриття навмисно швидше за закриття: поки плитка сходиться,
+     людина ще дивиться на попередню сторінку, а поки розходиться —
+     вже чекає на нову. Симетричні витримки тут читались би як гальмо. */
   function tilesReveal(wrap) {
     if (!wrap) return;
+    [].forEach.call(wrap.children, function (t) {
+      t.style.transitionDelay = Math.round(Math.random() * 130) + 'ms';
+    });
     reflow(wrap);              /* фіксуємо стан «закрито» */
+    wrap.classList.add('is-out');
     wrap.classList.remove('is-on');
-    setTimeout(function () { wrap.remove(); }, 700);
+    setTimeout(function () { wrap.remove(); }, 420);
   }
 
   /* свайп пальцем і перетягування мишею по фото */

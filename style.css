@@ -592,6 +592,9 @@ input { font-family: inherit; color: inherit; }
    і на стиках не лишалось світлих швів від субпіксельних заокруглень. */
 .tiles.is-on i { opacity: 1; transform: scale(1.02); }
 
+/* Розкриття коротше за закриття — див. коментар у tilesReveal(). */
+.tiles.is-out i { transition-duration: 170ms; }
+
 @media (prefers-reduced-motion: reduce) {
   .tiles { display: none; }
 }
