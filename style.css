@@ -25,12 +25,12 @@ html { -webkit-text-size-adjust: 100%; }
 /* Ніде на сайті не показуємо смугу прокрутки браузера — сторінка й
    так «плаває» на білому, зайва темна риска праворуч зайва. Прокрутка
    й далі працює (колесо миші, свайп, стрілки), просто без візуальної
-   доріжки. Застосовано і до горизонтальних стрічок («Інші товари»). */
-html, .rail {
+   доріжки. */
+html {
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
-html::-webkit-scrollbar, .rail::-webkit-scrollbar { width: 0; height: 0; }
+html::-webkit-scrollbar { width: 0; height: 0; }
 
 body {
   margin: 0;
@@ -88,7 +88,10 @@ input { font-family: inherit; color: inherit; }
 .hdr-r { display: flex; align-items: center; justify-content: flex-end; gap: 18px; }
 
 .hdr-cats { display: flex; gap: 16px; min-width: 0; font-size: 11px; }
-.hdr-cats a { white-space: nowrap; }
+.hdr-cats a { white-space: nowrap; color: var(--muted); }
+.hdr-cats a:hover { color: var(--ink); }
+/* Поточний розділ — чорним і жирним: єдина підказка, де ти зараз. */
+.hdr-cats a.on { color: var(--ink); font-weight: 700; }
 
 /* вордмарк: замінюється на <img> без переїзду сусідів */
 .mark {
@@ -140,28 +143,22 @@ input { font-family: inherit; color: inherit; }
 .strip img { width: 260px; height: 260px; object-fit: contain; flex: 0 0 auto; }
 
 /* Повільний, майже непомітний хід — стрічка має бути тлом, а не
-   атракціоном. Пауза тримається і на :hover, і на класі від JS:
-   клас надійніший, бо не залежить від того, чи браузер оновив
-   hover-стан під нерухомим курсором. */
+   атракціоном. Вона живе сама по собі: не спиняється під курсором і
+   не гортається руками, тож цикл ніколи не «доїжджає до кінця».
+   Тому й pointer-events прибрано — на стрічку неможливо натрапити. */
+.strip { pointer-events: none; }
 .strip-l .strip-track { animation: sm-left  90s linear infinite; }
 .strip-r .strip-track { animation: sm-right 105s linear infinite; }
-.strip:hover .strip-track,
-.strip.is-paused .strip-track { animation-play-state: paused; }
-
-/* Курсор-«рука» тільки там, де стрічку справді можна тягнути —
-   у звичайному режимі вона обрізана overflow:hidden і не гортається. */
-@media (prefers-reduced-motion: reduce) {
-  .strip { cursor: grab; }
-  .strip.is-dragging { cursor: grabbing; }
-}
 
 @keyframes sm-left  { from { transform: translate3d(0,0,0); }                 to { transform: translate3d(calc(-50% - 20px),0,0); } }
 @keyframes sm-right { from { transform: translate3d(calc(-50% - 20px),0,0); } to { transform: translate3d(0,0,0); } }
 
 @media (max-width: 640px) { .strip img { width: 180px; height: 180px; } }
 
+/* Якщо рух вимкнено системно, стрічка стоїть — тоді єдиний спосіб
+   побачити решту фото це прогорнути її, тож повертаємо їй події. */
 @media (prefers-reduced-motion: reduce) {
-  .strip { overflow-x: auto; }
+  .strip { overflow-x: auto; pointer-events: auto; }
   .strip-track { animation: none !important; }
 }
 
@@ -172,8 +169,12 @@ input { font-family: inherit; color: inherit; }
   display: grid; grid-template-columns: 1fr 1fr;
   gap: clamp(28px, 5vw, 80px); align-items: center;
 }
-/* Другий рядок дзеркальний: фото праворуч, текст ліворуч. */
+/* Другий рядок дзеркальний: фото праворуч, текст ліворуч. Текст теж
+   треба віддзеркалити — інакше він тулиться до лівого краю екрана і
+   між ним та фото лишається провал, а в першому рядку текст стоїть
+   упритул до фото. */
 .about-row.is-flipped .about-ph { order: 2; }
+.about-row.is-flipped .about-txt { align-items: flex-end; text-align: right; }
 
 /* Заглушка під фото. Щоб замінити — постав <img class="about-ph">
    з тим самим класом, співвідношення сторін уже задане. */
@@ -314,6 +315,15 @@ input { font-family: inherit; color: inherit; }
 }
 .btn-order:hover { background: var(--ink-hover); color: #FFF; }
 
+/* Дрібний рядок під кнопкою — має лягати в один рядок, тож кегль
+   менший за решту мікротексту, а трекінг мінімальний. */
+.made-to-order {
+  margin-top: -6px;
+  font-size: 10px; font-weight: 500;
+  letter-spacing: .04em; text-transform: uppercase;
+  line-height: 1.4; white-space: nowrap;
+}
+
 /* Прості лінки-заклики, без рамок і без окремої колонки значення —
    сама стрілка й ховер-зсув дають досить контакту з елементом. */
 .links { display: flex; flex-direction: column; gap: 14px; }
@@ -334,18 +344,13 @@ input { font-family: inherit; color: inherit; }
   .sklad-mob  { display: flex; }
 }
 
-/* стрічка «Інші товари» */
+/* «Інші товари» — така сама сітка, як у каталозі: сторінка товару
+   читається як продовження тієї самої вкладки, без окремої механіки
+   гортання. Заголовок трохи дрібніший за каталожний, щоб не сперечався
+   з назвою самого товару вище. */
 .others { margin-top: clamp(80px, 10vw, 140px); }
-.others h2 { margin-bottom: clamp(28px, 4vw, 48px); }
-.rail {
-  display: flex; gap: var(--gap-x); overflow-x: auto;
-  padding-bottom: 8px; scroll-snap-type: x proximity;
-  cursor: grab;
-}
-.rail .card { flex: 0 0 auto; width: clamp(160px, 22vw, 260px); scroll-snap-align: start; }
-/* Під час перетягування знімаємо прилипання, інакше воно смикає стрічку. */
-.rail.is-dragging { cursor: grabbing; scroll-snap-type: none; }
-.rail.is-dragging .card { pointer-events: none; }
+.others h2 { margin-bottom: clamp(4px, 1vw, 12px); }
+.others .grid { margin-top: clamp(28px, 3vw, 44px); }
 
 /* Десктопна картка товару. Блок стоїть у кінці секції навмисно: медіа-
    запит не додає ваги селектору, тож він мусить іти ПІСЛЯ базових
@@ -579,8 +584,8 @@ input { font-family: inherit; color: inherit; }
   opacity: 0;
   transform: scale(.88);
   /* Плавне сповільнення в кінці — рух гальмує, а не обривається. */
-  transition: opacity 260ms cubic-bezier(.22, .61, .36, 1),
-              transform 260ms cubic-bezier(.22, .61, .36, 1);
+  transition: opacity 220ms cubic-bezier(.22, .61, .36, 1),
+              transform 220ms cubic-bezier(.22, .61, .36, 1);
 }
 
 /* scale трохи більший за одиницю, щоб сусідні плитки перекривались

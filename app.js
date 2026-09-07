@@ -150,9 +150,22 @@
       + '<button type="button" data-act="lang" data-lang="pl" class="' + (S.lang === 'pl' ? 'on' : '') + '">PL</button>';
   }
 
+  /* Яка категорія зараз відкрита — і на сторінці каталогу, і на
+     сторінці товару (там її дає сам товар). Потрібно, щоб у шапці
+     було видно, де людина перебуває. */
+  function activeCat() {
+    if (document.body.dataset.page === 'catalog') {
+      var c = catById(qs('cat'));
+      return c ? c.id : CATS[0].id;
+    }
+    return CURRENT ? CURRENT.cat : '';
+  }
+
   function renderHeader() {
+    var active = activeCat();
     var cats = CATS.map(function (c) {
-      return '<a href="' + catHref(c.id) + '">' + esc(nm(c)) + '</a>';
+      return '<a class="' + (c.id === active ? 'on' : '') + '" href="' + catHref(c.id) + '">'
+        + esc(nm(c)) + '</a>';
     }).join('');
 
     document.getElementById('hdr').innerHTML =
@@ -282,20 +295,18 @@
     return arr;
   }
 
+  /* Спільної сторінки «Всі товари» більше немає: каталог завжди
+     показує конкретну категорію. Порожній або невідомий ?cat=
+     відкриває першу — так у людини завжди є контекст, де вона є. */
   function renderCatalog() {
-    var catId = qs('cat');
-    var cat = catById(catId);
-    if (catId && !cat) catId = '';
+    var cat = catById(qs('cat')) || CATS[0];
+    var catId = cat.id;
 
-    var items = sortItems(
-      PRODUCTS.filter(function (p) { return !catId || p.cat === catId; }),
-      !!catId
-    );
+    var items = sortItems(inCat(catId), true);
 
-    var chips = ['<a class="chip t-micro' + (catId ? '' : ' on') + '" href="' + catHref('') + '">' + esc(L('allProducts')) + '</a>']
-      .concat(CATS.map(function (c) {
-        return '<a class="chip t-micro' + (catId === c.id ? ' on' : '') + '" href="' + catHref(c.id) + '">' + esc(nm(c)) + '</a>';
-      })).join('');
+    var chips = CATS.map(function (c) {
+      return '<a class="chip t-micro' + (catId === c.id ? ' on' : '') + '" href="' + catHref(c.id) + '">' + esc(nm(c)) + '</a>';
+    }).join('');
 
     var sorts = [['name', 'sortDefault'], ['priceUp', 'priceUp'], ['priceDown', 'priceDown']].map(function (s) {
       return '<button type="button" data-act="sort" data-v="' + s[0] + '" class="' + (S.sort === s[0] ? 'on' : '') + '">' + esc(L(s[1])) + '</button>';
@@ -303,7 +314,7 @@
 
     /* Категорії з підкатегоріями (зефір) показуємо секціями, решту —
        однією сіткою. Сортування діє всередині кожної секції. */
-    var subs = catId && SUBCATS[catId];
+    var subs = SUBCATS[catId];
     var body;
     if (subs) {
       body = subs.map(function (s) {
@@ -319,7 +330,7 @@
 
     document.getElementById('main').innerHTML =
       '<section class="wrap">'
-      + '<h1 class="t-hero cat-head">' + esc(cat ? nm(cat) : L('allProducts')) + '</h1>'
+      + '<h1 class="t-hero cat-head">' + esc(nm(cat)) + '</h1>'
       + '<div class="bar">'
       + '<div class="chips">' + chips + '</div>'
       + '<div class="bar-r"><div class="sorts">' + sorts + '</div></div>'
@@ -327,7 +338,7 @@
       + body
       + '</section>';
 
-    document.title = (cat ? nm(cat) : L('allProducts')) + ' — Słodkie Marzenia';
+    document.title = nm(cat) + ' — Słodkie Marzenia';
   }
 
   /* ---------------- сторінка товару ---------------- */
@@ -377,7 +388,7 @@
 
     if (!p) {
       main.innerHTML = '<section class="wrap"><h1 class="t-sect cat-head">' + esc(L('notFound')) + '</h1>'
-        + '<p class="t-micro muted empty"><a href="' + catHref('') + '">' + esc(L('allProducts')) + ' &rarr;</a></p></section>';
+        + '<p class="t-micro muted empty"><a href="' + catHref(CATS[0].id) + '">' + esc(nm(CATS[0])) + ' &rarr;</a></p></section>';
       document.title = L('notFound') + ' — Słodkie Marzenia';
       return;
     }
@@ -395,7 +406,13 @@
         return '<button type="button" data-act="dot" data-v="' + i + '" class="' + (i === S.gi ? 'on' : '') + '" aria-label="' + (i + 1) + '"></button>';
       }).join('') + '</div>' : '';
 
-    var others = inCat(p.cat).filter(function (o) { return o.id !== p.id; }).slice(0, 12);
+    /* Показуємо всю решту категорії, а не обрізану стрічку: сторінка
+       товару стає продовженням каталогу, і людині не треба вертатись
+       назад, щоб побачити інші варіанти. Порядок — той самий, що й
+       у каталозі. */
+    var others = sortItems(
+      inCat(p.cat).filter(function (o) { return o.id !== p.id; }), true
+    );
 
     main.innerHTML =
       '<section class="wrap pdp">'
@@ -418,7 +435,7 @@
       + '</div>'
       + variantsHTML(p)
       + '<button class="btn-order" type="button" data-act="modal">' + esc(L('order')) + '</button>'
-      + '<span class="t-sklad muted made-to-order">' + esc(L('madeToOrder')) + '</span>'
+      + '<span class="made-to-order muted">' + esc(L('madeToOrder')) + '</span>'
       /* на мобільному склад стоїть між кнопкою і соцмережами, на десктопі — у лівій колонці */
       + skladHTML(p, 'mob')
       + '<div class="links">' + contactRows() + '</div>'
@@ -428,13 +445,10 @@
 
       + (others.length
         ? '<section class="wrap others"><h2 class="t-sect">' + esc(L('other')) + '</h2>'
-        + '<div class="rail">' + others.map(cardHTML).join('') + '</div></section>'
+        + '<div class="grid">' + others.map(cardHTML).join('') + '</div></section>'
         : '');
 
     bindGallery();
-    /* Рейл «Інші товари» перебудовується разом зі сторінкою — щоразу
-       вішаємо на нього прокрутку заново. */
-    dragScroll(document.querySelector('.rail'));
     document.title = prodTitle(p, S.sel) + ' — Słodkie Marzenia';
   }
 
@@ -444,7 +458,18 @@
      перехід і так миттєвий, а зайвий шар лише з'їдав би батарею.  */
 
   var TILE_FLAG = 'sm-tiles';
-  var TILE_IN = 540;   /* поки плитка сходиться, потім переходимо */
+  var TILE_IN = 450;   /* поки плитка сходиться, потім переходимо */
+
+  /* Переходимо з анімацією між своїми сторінками. Зовнішні лінки,
+     tel: і якорі лишаємо браузеру. */
+  function isLocalPage(href) {
+    return /^(index|catalog|product)\.html(\?|#|$)/.test(href || '');
+  }
+
+  function isSamePage(href) {
+    try { return new URL(href, location.href).href === location.href; }
+    catch (e) { return false; }
+  }
 
   function tilesAllowed() {
     try {
@@ -465,7 +490,7 @@
     wrap.style.setProperty('--rows', rows);
     for (var i = 0; i < cols * rows; i++) {
       var t = document.createElement('i');
-      t.style.transitionDelay = Math.round(Math.random() * 280) + 'ms';
+      t.style.transitionDelay = Math.round(Math.random() * 220) + 'ms';
       wrap.appendChild(t);
     }
     document.body.appendChild(wrap);
@@ -505,66 +530,6 @@
     reflow(wrap);              /* фіксуємо стан «закрито» */
     wrap.classList.remove('is-on');
     setTimeout(function () { wrap.remove(); }, 700);
-  }
-
-  /* ---------------- горизонтальна прокрутка мишею ----------------
-     Смуги прокрутки на сайті приховані, а колесо миші гортає тільки
-     по вертикалі — тож без цього «Інші товари» на десктопі не
-     прокрутити взагалі. Пальцем працює нативно, тому мишу й тач
-     розводимо: drag вмикаємо лише для pointerType === 'mouse'.     */
-  function dragScroll(el) {
-    if (!el) return;
-    var down = false, startX = 0, startLeft = 0, moved = 0;
-
-    el.addEventListener('pointerdown', function (e) {
-      if (e.pointerType !== 'mouse' || e.button !== 0) return;
-      down = true; moved = 0;
-      startX = e.clientX; startLeft = el.scrollLeft;
-      el.classList.add('is-dragging');
-      try { el.setPointerCapture(e.pointerId); } catch (err) {}
-    });
-
-    el.addEventListener('pointermove', function (e) {
-      if (!down) return;
-      var dx = e.clientX - startX;
-      if (Math.abs(dx) > moved) moved = Math.abs(dx);
-      el.scrollLeft = startLeft - dx;
-    });
-
-    function end(e) {
-      if (!down) return;
-      down = false;
-      el.classList.remove('is-dragging');
-      try { el.releasePointerCapture(e.pointerId); } catch (err) {}
-    }
-    el.addEventListener('pointerup', end);
-    el.addEventListener('pointercancel', end);
-
-    /* Перетягування не має відкривати картку, на якій відпустили мишу. */
-    el.addEventListener('click', function (e) {
-      if (moved > 6) { e.preventDefault(); e.stopPropagation(); }
-    }, true);
-
-    /* Вертикальне колесо → горизонтальна прокрутка, але на краю
-       віддаємо подію сторінці, щоб гортання не «залипало» на стрічці. */
-    el.addEventListener('wheel', function (e) {
-      if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
-      var max = el.scrollWidth - el.clientWidth;
-      var next = el.scrollLeft + e.deltaY;
-      if (next < 0 || next > max) return;
-      el.scrollLeft = next;
-      e.preventDefault();
-    }, { passive: false });
-  }
-
-  /* Пауза стрічок під курсором. CSS :hover теж це вміє, але тут
-     стан явний — і його видно в DOM, коли треба перевірити. */
-  function bindStrips() {
-    [].forEach.call(document.querySelectorAll('.strip'), function (s) {
-      s.addEventListener('mouseenter', function () { s.classList.add('is-paused'); });
-      s.addEventListener('mouseleave', function () { s.classList.remove('is-paused'); });
-      dragScroll(s);
-    });
   }
 
   /* свайп пальцем і перетягування мишею по фото */
@@ -636,7 +601,7 @@
     if (S.open === 'menu') {
       var links = CATS.map(function (c) {
         return '<a href="' + catHref(c.id) + '">' + esc(nm(c)) + '</a>';
-      }).join('') + '<a class="muted" href="' + catHref('') + '">' + esc(L('allProducts')) + '</a>';
+      }).join('');
 
       html = '<div class="sheet">'
         + '<div class="sheet-bar"><button class="sheet-close" type="button" data-act="close" aria-label="' + esc(L('close')) + '">&times;</button></div>'
@@ -707,7 +672,6 @@
     else if (page === 'catalog') renderCatalog();
     else renderProduct();
     renderOverlays();
-    if (page === 'home') bindStrips();
   }
 
   function setLang(l) {
@@ -724,15 +688,20 @@
     var noop = e.target.closest && e.target.closest('a[aria-disabled]');
     if (noop) { e.preventDefault(); return; }
 
-    /* Клік по картці товару — не одразу перехід, а спершу плитка.
+    /* Будь-який перехід між сторінками сайту — спершу плитка, потім
+       навігація: картка товару, розділ у шапці, чіп, «Назад», вордмарк.
        Модифікатори й середню кнопку не чіпаємо: «відкрити в новій
-       вкладці» має працювати як завжди. */
-    var card = e.target.closest && e.target.closest('a.card');
-    if (card && tilesAllowed() && e.button === 0
+       вкладці» має працювати як завжди. Посилання на поточну сторінку
+       пропускаємо — інакше активний чіп перезавантажував би її. */
+    var link = e.target.closest && e.target.closest('a[href]');
+    if (link && tilesAllowed() && e.button === 0
         && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey) {
-      e.preventDefault();
-      tilesCover(card.getAttribute('href'));
-      return;
+      var href = link.getAttribute('href');
+      if (isLocalPage(href) && !isSamePage(href)) {
+        e.preventDefault();
+        tilesCover(href);
+        return;
+      }
     }
 
     var el = e.target.closest && e.target.closest('[data-act]');

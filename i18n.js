@@ -12,7 +12,6 @@
   var UA = {
     tagline:     'Домашня кондитерка · Живець, Польща',
     scroll:      'Прокрутіть',
-    allProducts: 'Всі товари',
     search:      'Пошук',
     searchHint:  'Почніть вводити назву або інгредієнт',
     order:       'Замовити',
@@ -26,26 +25,27 @@
        підтвердити терміни, розмір передоплати й зону доставки. */
     orderTerms:    'Умови замовлення',
     orderList: [
-      'Замовлення приймаємо щонайменше за 3 дні',
+      'Приймаю замовлення щонайменше за 3 дні',
       'Складний декор і великі торти — за 7 днів',
-      'Замовлення підтверджуємо після узгодження деталей'
+      'Підтверджую замовлення після узгодження деталей'
     ],
     deliveryTerms: 'Умови доставки',
     deliveryList: [
       'Самовивіз — за попередньою домовленістю',
-      'Доставка по Живцю — вартість узгоджуємо окремо',
-      'Торти видаємо у спеціальній упаковці'
+      'Доставка по Живцю — вартість узгоджую окремо',
+      'Торти віддаю у спеціальній упаковці'
     ],
 
-    madeToOrder: 'Кожне замовлення обговорюємо індивідуально',
+    madeToOrder: 'Кожне замовлення обговорюю особисто',
 
     /* ⚠ ЧЕРНЕТКА. Текст написаний з того, що видно на самому сайті
        (місто, склад каталогу) — жодних вигаданих фактів про досвід
-       чи навчання. Замовниця має переписати своїми словами. */
+       чи навчання. Голос — від першої особи: це одна людина, а не
+       компанія. Замовниця має переписати своїми словами. */
     aboutTitle1: 'Домашня кондитерка',
-    aboutText1:  'Słodkie Marzenia — маленька домашня кондитерка в Живці. Тут немає конвеєра й готової вітрини: кожен торт, чізкейк і коробочка зефіру робляться руками під конкретне замовлення.',
+    aboutText1:  'Słodkie Marzenia — моя маленька домашня кондитерка в Живці. Тут немає конвеєра й готової вітрини: кожен торт, чізкейк і коробочку зефіру я роблю руками під конкретне замовлення.',
     aboutTitle2: 'Під ваше свято',
-    aboutText2:  'У каталозі понад пʼятдесят позицій — від класичного медовика до мусових десертів і зефірних букетів. Смак, розмір і оформлення підбираємо окремо, щоб десерт підійшов саме до вашої дати.',
+    aboutText2:  'У каталозі понад пʼятдесят позицій — від класичного медовика до мусових десертів і зефірних букетів. Смак, розмір і оформлення підбираю окремо, щоб десерт підійшов саме до вашої дати.',
     photoStub:   'Фото',
 
     menu:        'Меню',
@@ -62,7 +62,6 @@
   var PL = {
     tagline:     'Domowa cukiernia · Żywiec, Polska',
     scroll:      'Przewiń',
-    allProducts: 'Wszystkie produkty',
     search:      'Szukaj',
     searchHint:  'Zacznij wpisywać nazwę lub składnik',
     order:       'Zamów',
@@ -74,23 +73,23 @@
 
     orderTerms:    'Warunki zamówienia',
     orderList: [
-      'Zamówienia przyjmujemy minimum 3 dni wcześniej',
+      'Zamówienia przyjmuję minimum 3 dni wcześniej',
       'Skomplikowany dekor i duże torty — 7 dni wcześniej',
-      'Zamówienie potwierdzamy po ustaleniu szczegółów'
+      'Zamówienie potwierdzam po ustaleniu szczegółów'
     ],
     deliveryTerms: 'Warunki dostawy',
     deliveryList: [
       'Odbiór osobisty po wcześniejszym uzgodnieniu',
-      'Dostawa na terenie Żywca — koszt ustalamy indywidualnie',
-      'Torty wydajemy w specjalnym opakowaniu'
+      'Dostawa na terenie Żywca — koszt ustalam osobno',
+      'Torty wydaję w specjalnym opakowaniu'
     ],
 
-    madeToOrder: 'Każde zamówienie ustalamy indywidualnie',
+    madeToOrder: 'Każde zamówienie ustalam osobiście',
 
     aboutTitle1: 'Domowa cukiernia',
-    aboutText1:  'Słodkie Marzenia to mała domowa cukiernia w Żywcu. Nie ma tu taśmy produkcyjnej ani gotowej witryny: każdy tort, sernik i pudełko pianek powstają ręcznie pod konkretne zamówienie.',
+    aboutText1:  'Słodkie Marzenia to moja mała domowa cukiernia w Żywcu. Nie ma tu taśmy produkcyjnej ani gotowej witryny: każdy tort, sernik i pudełko pianek robię ręcznie pod konkretne zamówienie.',
     aboutTitle2: 'Na Twoją okazję',
-    aboutText2:  'W katalogu jest ponad pięćdziesiąt pozycji — od klasycznego miodownika po desery musowe i bukiety z pianek. Smak, rozmiar i dekor dobieramy osobno, żeby deser pasował właśnie do Twojej daty.',
+    aboutText2:  'W katalogu jest ponad pięćdziesiąt pozycji — od klasycznego miodownika po desery musowe i bukiety z pianek. Smak, rozmiar i dekor dobieram osobno, żeby deser pasował właśnie do Twojej daty.',
     photoStub:   'Zdjęcie',
 
     menu:        'Menu',
