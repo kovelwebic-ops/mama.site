@@ -36,7 +36,7 @@
       'Торти віддаю у спеціальній упаковці'
     ],
 
-    madeToOrder: 'Кожне замовлення обговорюю особисто',
+    madeToOrder: 'Кожне замовлення обговорюємо особисто',
 
     /* ⚠ ЧЕРНЕТКА. Текст написаний з того, що видно на самому сайті
        (місто, склад каталогу) — жодних вигаданих фактів про досвід
@@ -84,7 +84,7 @@
       'Torty wydaję w specjalnym opakowaniu'
     ],
 
-    madeToOrder: 'Każde zamówienie ustalam osobiście',
+    madeToOrder: 'Każde zamówienie ustalamy osobiście',
 
     aboutTitle1: 'Domowa cukiernia',
     aboutText1:  'Słodkie Marzenia to moja mała domowa cukiernia w Żywcu. Nie ma tu taśmy produkcyjnej ani gotowej witryny: każdy tort, sernik i pudełko pianek robię ręcznie pod konkretne zamówienie.',
