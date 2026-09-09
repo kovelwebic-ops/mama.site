@@ -21,6 +21,11 @@
     contacts:    'Контакти',
     categories:  'Категорії',
     home:        'Головна',
+    /* Знімки для каталогу оброблені нейромережею — сказати про це
+       треба, але тихо: у футері, дрібним, поруч зі службовим рядком.
+       Після тексту йде посилання на Facebook, тож речення обривається
+       прийменником навмисно. */
+    aiNote:      'Фото десертів оброблені штучним інтелектом для сайту. Живі знімки — у',
 
     /* ⚠ ЧЕРНЕТКА. Умови вигадані як заглушка — замовниця має
        підтвердити терміни, розмір передоплати й зону доставки. */
@@ -81,6 +86,7 @@
     contacts:    'Kontakt',
     categories:  'Kategorie',
     home:        'Główna',
+    aiNote:      'Zdjęcia deserów opracowane przez sztuczną inteligencję na potrzeby strony. Prawdziwe zdjęcia — na',
 
     orderTerms:    'Warunki zamówienia',
     orderList: [

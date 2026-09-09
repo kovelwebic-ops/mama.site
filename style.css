@@ -231,6 +231,9 @@ a, button { -webkit-tap-highlight-color: transparent; }
 .hero-scroll {
   position: absolute; left: 50%; bottom: clamp(14px, 2.6vh, 30px);
   color: var(--muted); pointer-events: none;
+  /* Дрібніше за решту мікротексту: це найтихіша річ на екрані, вона
+     має ловитись боковим зором і не більше. */
+  font-size: 9px; letter-spacing: .1em;
   transform: translateX(-50%);
 }
 @media (prefers-reduced-motion: no-preference) {
@@ -319,19 +322,20 @@ a, button { -webkit-tap-highlight-color: transparent; }
 }
 .hero-arrow {
   position: absolute; top: 50%; left: 50%;
-  width: 40px; height: 40px; border-radius: 50%;
+  width: 34px; height: 34px; border-radius: 50%;
   border: 1px solid var(--line); background: var(--bg);
   display: flex; align-items: center; justify-content: center;
-  font-size: 20px; line-height: 1;
+  font-size: 17px; line-height: 1;
   transition: border-color 140ms linear, color 140ms linear;
 }
-.hero-arrow.prev { transform: translate(calc(-50% - 150px), -50%); }
-.hero-arrow.next { transform: translate(calc(-50% + 150px), -50%); }
+.hero-arrow.prev { transform: translate(calc(-50% - 120px), -50%); }
+.hero-arrow.next { transform: translate(calc(-50% + 120px), -50%); }
 .hero-arrow:hover { border-color: var(--ink); }
 
 /* Ширину назви обмежуємо навмисно: так вона фізично не дотягнеться до
-   стрілок і в найдовшому випадку просто перенесеться в два рядки. */
-.hero-meta { text-align: center; max-width: 240px; }
+   стрілок і в найдовшому випадку просто перенесеться в два рядки.
+   190px — найдовша назва в каталозі («Червоний оксамит») плюс запас. */
+.hero-meta { text-align: center; max-width: 190px; }
 .hero-name  { display: block; font-size: 15px; font-weight: 600; line-height: 1.3; }
 .hero-price { display: block; font-size: 14px; color: var(--muted); margin-top: 3px; }
 
@@ -660,10 +664,21 @@ a, button { -webkit-tap-highlight-color: transparent; }
 /* Копірайт — не капсом: домен і «All rights reserved» у верхньому
    регістрі виглядають крикливо для службового рядка. Окремий рядок
    під колонками, відбитий волосяною лінією. */
+/* Примітка про оброблені фото — найтихіший рядок у підвалі, тихіший
+   навіть за копірайт. */
+.ftr-note {
+  max-width: var(--max); margin: clamp(18px, 1.8vw, 24px) auto 0;
+  padding: 0 var(--pad);
+  font-size: 10px; line-height: 1.5;
+  color: rgba(255, 255, 255, .4);
+}
+.ftr-note a { color: rgba(255, 255, 255, .6); text-underline-offset: 3px; }
+.ftr-note a:hover { color: #FFF; text-decoration: underline; }
+
 /* Без відбивної лінії: службовий рядок і так відділений відступом, а
    риска через увесь підвал робила з нього другу «секцію». */
 .ftr-bottom {
-  max-width: var(--max); margin: clamp(18px, 1.8vw, 24px) auto 0;
+  max-width: var(--max); margin: clamp(8px, 1vw, 12px) auto 0;
   padding: 0 var(--pad);
   display: flex; flex-wrap: wrap; align-items: baseline;
   justify-content: space-between; gap: 4px 24px;
@@ -904,11 +919,24 @@ a, button { -webkit-tap-highlight-color: transparent; }
   /* Герой на телефоні поки просто складається в колонку: карусель
      робилась під десктоп, під вузький екран її ще належить окремо
      обіграти. */
-  .hero-in { grid-template-columns: 1fr; gap: clamp(24px, 5vh, 40px); }
+  /* На телефоні порядок інший: спершу самі десерти, під ними опис,
+     кнопки — в самому низу. Назву не повторюємо — вона вже стоїть у
+     шапці, а другий раз тим самим шрифтом займала пів екрана перед
+     тим, заради чого сюди прийшли. Лишаємо її для читалок і пошуку. */
+  .hero-in { grid-template-columns: 1fr; gap: clamp(20px, 4vh, 34px); }
+  .hero-stage { order: -1; }
+
+  .hero .t-hero {
+    position: absolute; width: 1px; height: 1px;
+    margin: -1px; padding: 0; overflow: hidden;
+    clip-path: inset(50%); white-space: nowrap;
+  }
+
   /* Міняємо саме --w, а не height: із неї рахується й ширина кадру,
      інакше він лишається десктопним і вилазить за екран. */
   .hero-slides { --w: min(300px, 76vw); }
   .hero-lead { max-width: none; }
+  .hero-scroll { font-size: 8px; }
 
   /* Порядок керування: спершу чіпи категорій, сортування під ними
      окремим рядком, а не притиснуте до правого краю. */
