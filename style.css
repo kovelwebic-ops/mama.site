@@ -184,8 +184,8 @@ a, button { -webkit-tap-highlight-color: transparent; }
 }
 .hero-in {
   width: 100%;
-  display: grid; grid-template-columns: minmax(0, 43fr) minmax(0, 57fr);
-  gap: clamp(28px, 4vw, 72px); align-items: center;
+  display: grid; grid-template-columns: minmax(0, 40fr) minmax(0, 60fr);
+  gap: clamp(28px, 3.4vw, 60px); align-items: center;
 }
 
 /* Текст відсунутий від краю сторінки: притиснутий до самого поля він
@@ -197,7 +197,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
 }
 /* Назва в один рядок — кегль підібраний так, щоб вона вміщалась у
    свою колонку цілою й не переносилась. */
-.hero .t-hero { font-size: clamp(26px, 3.3vw, 56px); }
+.hero .t-hero { font-size: clamp(26px, 3.1vw, 52px); }
 .hero-lead {
   font-size: clamp(14px, 1.05vw, 17px); line-height: 1.65;
   color: var(--muted); max-width: 44ch;
@@ -251,7 +251,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
 /* Усі кадри лежать один на одному, а місце в «колі» їм дає лише
    клас: так перехід між позиціями анімується сам, без перебудови
    розмітки. */
-.hero-slides { --h: min(58vh, 500px); position: relative; height: var(--h); }
+.hero-slides { --h: min(66vh, 580px); position: relative; height: var(--h); }
 
 /* Кадр — квадрат за висотою сцени, а не на всю її ширину. Це важливо:
    зсуви задані у відсотках від самого кадру, і якби кадр був завширшки

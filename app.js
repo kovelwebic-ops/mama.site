@@ -305,7 +305,19 @@
      решта чекає за кадром. Позицію кожного задає лише клас, тож
      переїзд анімує CSS, а нам лишається переставляти класи. */
 
-  var HERO_N = 5;
+  /* Для каруселі є окремі знімки з вирізаним фоном (папка «Без фону»,
+     WebP з альфа-каналом, названі за id товару). Саме вони дають тортам
+     стояти внапуск: у звичайного JPG білий квадрат накривав би сусідів
+     невидимим прямокутником, зрізаючи їх на дві третини.
+
+     Список нарощується сам: щойно в папці з'явиться ще один id —
+     досить дописати його сюди, і десерт стане в коло на своє місце за
+     порядком каталогу. */
+  var HERO_CUT_DIR = 'Без фону/';
+  var HERO_CUT = ['cake1', 'cake2', 'cake3', 'cake4', 'cake5', 'cake7', 'cake17'];
+
+  function heroPhoto(p) { return encodeURI(HERO_CUT_DIR + p.id + '.webp'); }
+
   var HERO_ITEMS = [];
   var HERO_TIMER = null;
   var HERO_STEP = 5200;
@@ -368,8 +380,13 @@
       var rel = (i - S.hi + HERO_ITEMS.length) % HERO_ITEMS.length;
       return '<a class="hero-slide ' + heroSlot(rel, HERO_ITEMS.length) + '"'
         + ' data-i="' + i + '" href="' + prodHref(p) + '" tabindex="' + (rel === 0 ? 0 : -1) + '">'
-        + '<img src="' + esc(p.photos[0]) + '" alt="' + esc(nm(p)) + '"'
-        + (i === S.hi ? ' fetchpriority="high"' : ' loading="lazy"') + ' decoding="async">'
+        /* Передній кадр тягнемо першим, обидва сусідні — звичайним
+           порядком: вони теж одразу на екрані. Ліниві тільки ті, що
+           стоять за кадром. */
+        + '<img src="' + heroPhoto(p) + '" alt="' + esc(nm(p)) + '"'
+        + (rel === 0 ? ' fetchpriority="high"'
+           : (rel === 1 || rel === HERO_ITEMS.length - 1) ? '' : ' loading="lazy"')
+        + ' decoding="async">'
         + '</a>';
     }).join('');
 
@@ -392,9 +409,11 @@
     var a = PRODUCTS.filter(function (p) { return p.cat === 'cakes'; }).slice(0, 10);
     var b = PRODUCTS.filter(function (p) { return p.cat !== 'cakes'; }).slice(0, 10);
 
-    /* Перші позиції в категорії — ті, які замовниця поставила першими
-       сама, тож у вітрину йдуть саме вони. */
-    HERO_ITEMS = sortItems(inCat('cakes'), true).slice(0, HERO_N);
+    /* У вітрину йдуть ті торти, для яких є знімок без фону, і саме в
+       порядку каталогу — тобто в тому, який виставила замовниця. */
+    HERO_ITEMS = sortItems(inCat('cakes'), true).filter(function (p) {
+      return HERO_CUT.indexOf(p.id) !== -1;
+    });
     if (S.hi >= HERO_ITEMS.length) S.hi = 0;
 
     document.getElementById('main').innerHTML =
