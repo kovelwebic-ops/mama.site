@@ -477,12 +477,14 @@ a, button { -webkit-tap-highlight-color: transparent; }
    заголовки розповзаються по різних рядках, а підкреслення обриваються
    на півдорозі. */
 @media (max-width: 900px) { .ftr-in { grid-template-columns: 1fr; } }
-/* На чистому чорному тексту можна дати більше світла, не боячись, що
-   він «загориться»: підписи розділів і контакти читаються здалеку, а
-   не проглядають крізь фон. */
-.ftr a { color: rgba(255, 255, 255, .9); }
+/* Ієрархія в підвалі задається світлом. Найясніші — підписи розділів:
+   це орієнтири, по яких око знаходить потрібний блок, тож вони мусять
+   бути помітнішими за текст під собою, а не навпаки. Далі йдуть
+   посилання, потім самі умови, і найтихіше — теглайн та копірайт. */
+.ftr-lab { color: rgba(255, 255, 255, .95); }
+.ftr a { color: rgba(255, 255, 255, .85); }
 .ftr a:hover { color: #FFF; }
-.ftr .muted { color: rgba(255, 255, 255, .62); }
+.ftr .muted { color: rgba(255, 255, 255, .5); }
 
 .ftr-col { display: flex; flex-direction: column; gap: 7px; }
 .ftr-col.brand { gap: 9px; }
@@ -509,7 +511,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
 }
 .ftr-copy {
   font-size: 11px; line-height: 1.5;
-  color: rgba(255, 255, 255, .4);
+  color: rgba(255, 255, 255, .6);
 }
 /* Підпис автора — єдине посилання в цьому рядку, тож підкреслене:
    інакше воно нічим не відрізняється від копірайту навпроти. */
@@ -528,7 +530,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
 .ftr-terms { display: flex; flex-direction: column; gap: 6px; max-width: 34ch; }
 .ftr-terms li {
   font-size: 12px; line-height: 1.5;
-  color: rgba(255, 255, 255, .82);
+  color: rgba(255, 255, 255, .75);
 }
 
 .ftr-links-row { display: flex; flex-direction: column; gap: 10px; }
@@ -710,8 +712,8 @@ a, button { -webkit-tap-highlight-color: transparent; }
   .ftr-head { min-height: 42px; cursor: pointer; }
   .ftr-head i {
     display: block; flex: 0 0 auto; width: 8px; height: 8px;
-    border-right: 1.5px solid rgba(255, 255, 255, .45);
-    border-bottom: 1.5px solid rgba(255, 255, 255, .45);
+    border-right: 1.5px solid rgba(255, 255, 255, .7);
+    border-bottom: 1.5px solid rgba(255, 255, 255, .7);
     transform: translateY(-2px) rotate(45deg);
     transition: transform 160ms ease;
   }

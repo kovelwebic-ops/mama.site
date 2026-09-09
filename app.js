@@ -237,7 +237,7 @@
     var li = L(listKey).map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('');
     var on = !!S.ftr[titleKey];
     return '<div class="ftr-col ftr-acc' + (on ? ' is-open' : '') + '">'
-      + '<button class="ftr-head t-micro muted" type="button" data-act="ftr" data-v="' + titleKey + '"'
+      + '<button class="ftr-head ftr-lab t-micro" type="button" data-act="ftr" data-v="' + titleKey + '"'
       + ' aria-expanded="' + on + '">' + esc(L(titleKey)) + '<i aria-hidden="true"></i></button>'
       + '<ul class="ftr-terms">' + li + '</ul></div>';
   }
@@ -259,7 +259,7 @@
       + termsCol('orderTerms', 'orderList')
       + termsCol('deliveryTerms', 'deliveryList')
       + '<div class="ftr-col ftr-links">'
-      + '<span class="t-micro muted">' + esc(L('contacts')) + '</span>'
+      + '<span class="t-micro ftr-lab">' + esc(L('contacts')) + '</span>'
       + '<div class="ftr-links-row">' + contactRows() + '</div>'
       + '</div>'
       + '</div>'
