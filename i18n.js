@@ -38,6 +38,12 @@
 
     madeToOrder: 'Кожне замовлення обговорюємо особисто',
 
+    /* ⚠ ЧЕРНЕТКА. Підзаголовок на головній — стиснуте «про мене»:
+       той самий зміст, що в блоці нижче, але в один подих. Замовниця
+       має переписати своїми словами. */
+    heroLead: 'Домашня кондитерка в Живці. Кожен торт, чізкейк і коробочку зефіру роблю руками — під ваше свято й під вашу дату.',
+    chooseDessert: 'Обрати десерт',
+
     /* ⚠ ЧЕРНЕТКА. Текст написаний з того, що видно на самому сайті
        (місто, склад каталогу) — жодних вигаданих фактів про досвід
        чи навчання. Голос — від першої особи: це одна людина, а не
@@ -85,6 +91,9 @@
     ],
 
     madeToOrder: 'Każde zamówienie ustalamy osobiście',
+
+    heroLead: 'Domowa cukiernia w Żywcu. Każdy tort, sernik i pudełko pianek robię ręcznie — na Twoje święto i na Twoją datę.',
+    chooseDessert: 'Wybierz deser',
 
     aboutTitle1: 'Domowa cukiernia',
     aboutText1:  'Słodkie Marzenia to moja mała domowa cukiernia w Żywcu. Nie ma tu taśmy produkcyjnej ani gotowej witryny: każdy tort, sernik i pudełko pianek robię ręcznie pod konkretne zamówienie.',

@@ -19,6 +19,7 @@
     sort: 'name',
     q: '',
     gi: 0,          // індекс поточного фото в галереї
+    hi: 0,          // активний десерт у каруселі на головній
     sel: {},        // вибрані варіанти на сторінці товару
     open: null,     // 'menu' | 'search' | 'modal' | null
     ftr: {}         // розгорнуті блоки умов у футері (тільки мобільна)
@@ -276,13 +277,6 @@
 
   /* ---------------- головна ---------------- */
 
-  function findProd(cat, name) {
-    for (var i = 0; i < PRODUCTS.length; i++) {
-      if (PRODUCTS[i].cat === cat && PRODUCTS[i].name === name) return PRODUCTS[i];
-    }
-    return PRODUCTS[0];
-  }
-
   function stripHTML(items, dir) {
     var half = items.map(function (p) {
       return '<img src="' + esc(p.photos[0]) + '" alt="" loading="lazy">';
@@ -306,22 +300,114 @@
       + '</div></div>';
   }
 
+  /* ---------------- карусель на головній ----------------
+     П'ять десертів по колу: один спереду, два приглушені з боків,
+     решта чекає за кадром. Позицію кожного задає лише клас, тож
+     переїзд анімує CSS, а нам лишається переставляти класи. */
+
+  var HERO_N = 5;
+  var HERO_ITEMS = [];
+  var HERO_TIMER = null;
+  var HERO_STEP = 5200;
+
+  function heroSlot(rel, n) {
+    if (rel === 0) return 'is-front';
+    if (rel === 1) return 'is-right';
+    if (rel === n - 1) return 'is-left';
+    return (rel <= n / 2) ? 'is-far-right' : 'is-far-left';
+  }
+
+  /* Оновлюємо на місці, а не перемальовуємо: інакше нові вузли
+     з'явилися б одразу в кінцевій позиції й переходу не було б. */
+  function heroSync() {
+    var n = HERO_ITEMS.length;
+    if (!n) return;
+
+    [].forEach.call(document.querySelectorAll('.hero-slide'), function (el, i) {
+      var rel = (i - S.hi + n) % n;
+      el.className = 'hero-slide ' + heroSlot(rel, n);
+      /* За кадром картка не має ловити ні палець, ні Tab. */
+      el.setAttribute('aria-hidden', rel === 0 ? 'false' : 'true');
+      el.tabIndex = rel === 0 ? 0 : -1;
+    });
+
+    var p = HERO_ITEMS[S.hi];
+    var nmEl = document.querySelector('.hero-name');
+    var prEl = document.querySelector('.hero-price');
+    if (nmEl) nmEl.textContent = nm(p);
+    if (prEl) prEl.textContent = priceText(p);
+  }
+
+  function heroGo(d) {
+    var n = HERO_ITEMS.length;
+    if (!n) return;
+    S.hi = (S.hi + d + n) % n;
+    heroSync();
+  }
+
+  /* Саме обертання і є причиною тут затриматись, тож воно йде саме.
+     Курсор над каруселлю й будь-який ручний крок відсувають таймер —
+     інакше воно поїхало б з-під пальця. */
+  function heroAuto() {
+    clearInterval(HERO_TIMER);
+    try { if (matchMedia('(prefers-reduced-motion: reduce)').matches) return; } catch (e) {}
+    if (HERO_ITEMS.length < 2) return;
+    HERO_TIMER = setInterval(function () { heroGo(1); }, HERO_STEP);
+  }
+
+  function bindHero() {
+    var stage = document.querySelector('.hero-stage');
+    if (!stage) return;
+    stage.addEventListener('mouseenter', function () { clearInterval(HERO_TIMER); });
+    stage.addEventListener('mouseleave', heroAuto);
+    heroAuto();
+  }
+
+  function heroHTML() {
+    var slides = HERO_ITEMS.map(function (p, i) {
+      var rel = (i - S.hi + HERO_ITEMS.length) % HERO_ITEMS.length;
+      return '<a class="hero-slide ' + heroSlot(rel, HERO_ITEMS.length) + '"'
+        + ' data-i="' + i + '" href="' + prodHref(p) + '" tabindex="' + (rel === 0 ? 0 : -1) + '">'
+        + '<img src="' + esc(p.photos[0]) + '" alt="' + esc(nm(p)) + '"'
+        + (i === S.hi ? ' fetchpriority="high"' : ' loading="lazy"') + ' decoding="async">'
+        + '</a>';
+    }).join('');
+
+    var cur = HERO_ITEMS[S.hi];
+
+    return '<div class="hero-stage">'
+      + '<div class="hero-slides">' + slides + '</div>'
+      + '<div class="hero-nav">'
+      + '<button class="hero-arrow" type="button" data-act="hero" data-v="-1" aria-label="&larr;">&lsaquo;</button>'
+      + '<span class="hero-meta">'
+      + '<span class="hero-name">' + esc(nm(cur)) + '</span>'
+      + '<span class="hero-price">' + esc(priceText(cur)) + '</span>'
+      + '</span>'
+      + '<button class="hero-arrow" type="button" data-act="hero" data-v="1" aria-label="&rarr;">&rsaquo;</button>'
+      + '</div></div>';
+  }
+
   /* Головна: герой → дві стрічки → блок про кондитерку → футер. */
   function renderHome() {
-    var hero = findProd('cakes', 'Фісташка малина');
-
     var a = PRODUCTS.filter(function (p) { return p.cat === 'cakes'; }).slice(0, 10);
     var b = PRODUCTS.filter(function (p) { return p.cat !== 'cakes'; }).slice(0, 10);
 
+    /* Перші позиції в категорії — ті, які замовниця поставила першими
+       сама, тож у вітрину йдуть саме вони. */
+    HERO_ITEMS = sortItems(inCat('cakes'), true).slice(0, HERO_N);
+    if (S.hi >= HERO_ITEMS.length) S.hi = 0;
+
     document.getElementById('main').innerHTML =
-      '<section class="hero">'
-      + '<img src="' + esc(hero.photos[0]) + '" alt="" fetchpriority="high" decoding="async">'
+      '<section class="hero"><div class="wrap hero-in">'
       + '<div class="hero-txt">'
+      + '<span class="t-micro muted">' + esc(L('tagline')) + '</span>'
       + '<h1 class="t-hero">SŁODKIE<br>MARZENIA</h1>'
-      + '<p class="t-micro muted">' + esc(L('tagline')) + '</p>'
+      + '<p class="hero-lead">' + esc(L('heroLead')) + '</p>'
+      + '<a class="hero-cta" href="' + catHref('cakes') + '">'
+      + '<span>' + esc(L('chooseDessert')) + '</span><i aria-hidden="true">&rarr;</i></a>'
       + '</div>'
-      + '<div class="hero-scroll"><i></i><span class="t-micro muted">' + esc(L('scroll')) + '</span></div>'
-      + '</section>'
+      + heroHTML()
+      + '</div></section>'
 
       + '<section class="strips">' + stripHTML(a, 'l') + stripHTML(b, 'r') + '</section>'
 
@@ -329,6 +415,7 @@
       + aboutRow(1, '') + aboutRow(2, ' is-flipped')
       + '</section>';
 
+    bindHero();
     document.title = 'Słodkie Marzenia — ' + L('tagline');
   }
 
@@ -821,6 +908,19 @@
     var noop = e.target.closest && e.target.closest('a[aria-disabled]');
     if (noop) { e.preventDefault(); return; }
 
+    /* Клік по боковому десерту в каруселі повертає його наперед, а не
+       веде на сторінку: спершу людина хоче роздивитись. Перевірка йде
+       найпершою — картка це <a>, і без неї її перехопив би загальний
+       обробник посилань нижче. */
+    var slide = e.target.closest && e.target.closest('.hero-slide');
+    if (slide && !slide.classList.contains('is-front')) {
+      e.preventDefault();
+      S.hi = +slide.dataset.i;
+      heroSync();
+      heroAuto();
+      return;
+    }
+
     /* Будь-який перехід між сторінками сайту — спершу плитка, потім
        навігація: картка товару, розділ у шапці, чіп, «Назад», вордмарк.
        Модифікатори й середню кнопку не чіпаємо: «відкрити в новій
@@ -847,6 +947,8 @@
     if (act === 'modal')    { S.open = 'modal';  renderOverlays(); return; }
     if (act === 'close')    { S.open = null; S.q = ''; renderOverlays(); return; }
     if (act === 'backdrop') { if (e.target === el) { S.open = null; renderOverlays(); } return; }
+
+    if (act === 'hero') { heroGo(+el.dataset.v); heroAuto(); return; }
 
     if (act === 'ftr')  { S.ftr[el.dataset.v] = !S.ftr[el.dataset.v]; renderFooter(); return; }
 
