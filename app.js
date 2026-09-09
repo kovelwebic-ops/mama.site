@@ -148,7 +148,7 @@
     var load = i < EAGER_CARDS ? '' : ' loading="lazy"';
     var alt = p.photos.length > 1
       ? '<img class="card-alt" src="' + esc(p.photos[1]) + '" alt="" loading="lazy" decoding="async">' : '';
-    return '<a class="card" href="' + prodHref(p) + '">'
+    return '<a class="card rv" href="' + prodHref(p) + '">'
       + '<span class="card-ph"><img src="' + esc(p.photos[0]) + '" alt="' + esc(nm(p)) + '"'
       + load + ' decoding="async">' + alt + '</span>'
       + '<span class="card-txt">'
@@ -217,6 +217,7 @@
   /* Копірайт лишається англійською в обох мовах — так просив замовник.
      Рік беремо поточний, щоб футер не застарів у січні. */
   var SITE_DOMAIN = 'Slodkiemarzenia.pl';
+  var AUTHOR = { name: 'Andrii Voitiuk', href: 'https://t.me/kovelwebic' };
 
   function renderFooter() {
     var copy = '© ' + new Date().getFullYear() + ' ' + SITE_DOMAIN + ' · All rights reserved';
@@ -236,8 +237,13 @@
       + '</div>'
       /* Копірайт стоїть окремим рядком під усіма колонками, а не в
          колонці бренду: це службовий рядок про весь сайт, і в колонці
-         він читався як частина контактів кондитерки. */
-      + '<div class="ftr-bottom"><span class="ftr-copy">' + esc(copy) + '</span></div>';
+         він читався як частина контактів кондитерки. Підпис автора —
+         на тому ж рівні праворуч. */
+      + '<div class="ftr-bottom">'
+      + '<span class="ftr-copy">' + esc(copy) + '</span>'
+      + '<span class="ftr-copy ftr-credit">Created by '
+      + '<a href="' + esc(AUTHOR.href) + '" target="_blank" rel="noopener">' + esc(AUTHOR.name) + '</a>'
+      + '</span></div>';
   }
 
   /* ---------------- головна ---------------- */
@@ -264,7 +270,7 @@
      Замість фото поки рамка-заглушка — щоб замінити, постав на її
      місце <img class="about-ph" src="..."> з тим самим класом. */
   function aboutRow(n, mod) {
-    return '<div class="about-row' + mod + '">'
+    return '<div class="about-row rv' + mod + '">'
       + '<div class="about-ph"><span class="t-micro muted">' + esc(L('photoStub')) + '</span></div>'
       + '<div class="about-txt">'
       + '<h2 class="t-sect">' + esc(L('aboutTitle' + n)) + '</h2>'
@@ -473,7 +479,7 @@
       + '</section>'
 
       + (others.length
-        ? '<section class="wrap others"><h2 class="t-sect">' + esc(L('other')) + '</h2>'
+        ? '<section class="wrap others"><h2 class="t-sect rv">' + esc(L('other')) + '</h2>'
         + '<div class="grid">' + others.map(cardHTML).join('') + '</div></section>'
         : '');
 
@@ -487,7 +493,14 @@
      перехід і так миттєвий, а зайвий шар лише з'їдав би батарею.  */
 
   var TILE_FLAG = 'sm-tiles';
-  var TILE_IN = 450;   /* поки плитка сходиться, потім переходимо */
+
+  /* На телефоні перехід коротший: там кожен зайвий кадр між тапом і
+     новою сторінкою читається як гальмо, а не як плавність. */
+  function narrow() {
+    try { return matchMedia('(max-width: 1100px)').matches; } catch (e) { return false; }
+  }
+  function tileIn()    { return narrow() ? 300 : 450; }   /* чекаємо, поки плитка зійдеться */
+  function tileSpread(){ return narrow() ? 120 : 220; }   /* розкид витримок між плитками */
 
   /* Переходимо з анімацією між своїми сторінками. Зовнішні лінки,
      tel: і якорі лишаємо браузеру. */
@@ -502,8 +515,7 @@
 
   function tilesAllowed() {
     try {
-      return !matchMedia('(prefers-reduced-motion: reduce)').matches
-        && matchMedia('(min-width: 1101px)').matches;
+      return !matchMedia('(prefers-reduced-motion: reduce)').matches;
     } catch (e) { return false; }
   }
 
@@ -517,9 +529,10 @@
     wrap.className = 'tiles';
     wrap.style.setProperty('--cols', cols);
     wrap.style.setProperty('--rows', rows);
+    var spread = tileSpread();
     for (var i = 0; i < cols * rows; i++) {
       var t = document.createElement('i');
-      t.style.transitionDelay = Math.round(Math.random() * 220) + 'ms';
+      t.style.transitionDelay = Math.round(Math.random() * spread) + 'ms';
       wrap.appendChild(t);
     }
     document.body.appendChild(wrap);
@@ -537,7 +550,7 @@
     try { sessionStorage.setItem(TILE_FLAG, '1'); } catch (e) {}
     reflow(wrap);
     wrap.classList.add('is-on');
-    setTimeout(function () { location.href = href; }, TILE_IN);
+    setTimeout(function () { location.href = href; }, tileIn());
   }
 
   /* Прийшли на сторінку: якщо перехід був анімований, малюємо плитку
@@ -559,8 +572,9 @@
      вже чекає на нову. Симетричні витримки тут читались би як гальмо. */
   function tilesReveal(wrap) {
     if (!wrap) return;
+    var spread = Math.round(tileSpread() * .6);
     [].forEach.call(wrap.children, function (t) {
-      t.style.transitionDelay = Math.round(Math.random() * 130) + 'ms';
+      t.style.transitionDelay = Math.round(Math.random() * spread) + 'ms';
     });
     reflow(wrap);              /* фіксуємо стан «закрито» */
     wrap.classList.add('is-out');
@@ -583,11 +597,56 @@
     gal.addEventListener('pointercancel', function () { x0 = null; });
   }
 
+  /* Перемикання фото й варіантів міняє лише те, що справді змінилось:
+     саме фото, крапки, назву, ціну й активні пігулки. Раніше тут
+     перемальовувалась уся сторінка — разом із «Іншими товарами», тобто
+     кожен свайп наново піднімав десяток картинок і збивав анімацію
+     появи. Заразом це дає фото плавну заміну замість ривка. */
+  function refreshProduct() {
+    var p = CURRENT;
+    if (!p) return;
+    var title = prodTitle(p, S.sel);
+
+    var img = document.querySelector('.gal img');
+    if (img) {
+      var src = p.photos[S.gi];
+      if (img.getAttribute('src') !== src) {
+        img.setAttribute('src', src);
+        img.classList.remove('is-swap');
+        void img.offsetWidth;            /* перезапуск анімації */
+        img.classList.add('is-swap');
+      }
+      img.alt = title;
+    }
+
+    var h = document.querySelector('.t-prod');
+    if (h) h.textContent = title;
+
+    var pr = document.querySelector('.price');
+    if (pr) pr.textContent = priceText(p, S.sel);
+
+    [].forEach.call(document.querySelectorAll('.dots button'), function (b, i) {
+      b.className = (i === S.gi) ? 'on' : '';
+    });
+
+    if (p.variants) {
+      [].forEach.call(document.querySelectorAll('.varblock'), function (vb, vi) {
+        var v = p.variants[vi];
+        if (!v) return;
+        [].forEach.call(vb.querySelectorAll('.pill'), function (b, oi) {
+          b.className = 'pill' + ((S.sel[v.id] || 0) === oi ? ' on' : '');
+        });
+      });
+    }
+
+    document.title = title + ' — Słodkie Marzenia';
+  }
+
   function step(d) {
     var n = CURRENT.photos.length;
     S.gi = (S.gi + d + n) % n;
     syncPhotoVar();
-    renderProduct();
+    refreshProduct();
   }
 
   /* якщо фото прив'язані до блока вибору — тримаємо їх синхронно */
@@ -693,6 +752,10 @@
     }
 
     ov.innerHTML = html;
+    /* Результати пошуку показуємо одразу, без спостерігача: оверлей
+       має власну прокрутку, і покладатись тут на перетин з вікном —
+       зайвий ризик лишити людину з порожнім екраном. */
+    revealNow(ov);
     document.body.classList.toggle('is-locked', !!S.open);
 
     if (S.open === 'search') {
@@ -713,6 +776,7 @@
     else if (page === 'catalog') renderCatalog();
     else renderProduct();
     renderOverlays();
+    bindReveal();
   }
 
   function setLang(l) {
@@ -758,17 +822,17 @@
 
     if (act === 'ftr')  { S.ftr[el.dataset.v] = !S.ftr[el.dataset.v]; renderFooter(); return; }
 
-    if (act === 'sort') { S.sort = el.dataset.v; renderCatalog(); return; }
+    if (act === 'sort') { S.sort = el.dataset.v; renderCatalog(); bindReveal(); return; }
 
     if (act === 'gal') { step(+el.dataset.v); return; }
-    if (act === 'dot') { S.gi = +el.dataset.v; syncPhotoVar(); renderProduct(); return; }
+    if (act === 'dot') { S.gi = +el.dataset.v; syncPhotoVar(); refreshProduct(); return; }
 
     if (act === 'pill') {
       var v = CURRENT.variants[+el.dataset.v];
       var oi = +el.dataset.o;
       S.sel[v.id] = oi;
       if (CURRENT.photoVar === v.id && v.options[oi].photo != null) S.gi = v.options[oi].photo;
-      renderProduct();
+      refreshProduct();
       return;
     }
   });
@@ -776,6 +840,42 @@
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape' && S.open) { S.open = null; S.q = ''; renderOverlays(); }
   });
+
+  /* ---------------- поява при прокрутці ----------------
+     Розмітка приходить із класом .rv (прихований стан), спостерігач
+     додає .is-in. Якщо IntersectionObserver недоступний — показуємо
+     все одразу: анімація не варта того, щоб через неї зник каталог. */
+
+  var RV_OBS = null;
+
+  function revealNow(root) {
+    [].forEach.call(root.querySelectorAll('.rv'), function (el) {
+      el.classList.add('is-in');
+    });
+  }
+
+  function bindReveal() {
+    if (!window.IntersectionObserver) { revealNow(document); return; }
+
+    if (!RV_OBS) {
+      RV_OBS = new IntersectionObserver(function (entries, obs) {
+        /* Сходинка затримки всередині одного спрацювання: ряд карток
+           проявляється хвилею, а не всі разом. Стеля — щоб довгий
+           хвіст не тягнувся секунду. */
+        var n = 0;
+        entries.forEach(function (en) {
+          if (!en.isIntersecting) return;
+          en.target.style.transitionDelay = Math.min(n++, 5) * 60 + 'ms';
+          en.target.classList.add('is-in');
+          obs.unobserve(en.target);
+        });
+      }, { rootMargin: '0px 0px -8% 0px' });
+    }
+
+    [].forEach.call(document.querySelectorAll('.rv:not(.is-in)'), function (el) {
+      RV_OBS.observe(el);
+    });
+  }
 
   /* Волосяна лінія під шапкою з'являється, щойно сторінку зрушили.
      Стежимо за невидимою міткою на самому верху документа: це надійніше

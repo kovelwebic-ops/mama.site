@@ -58,6 +58,45 @@ input { font-family: inherit; color: inherit; }
 
 :focus-visible { outline: 1.5px solid var(--ink); outline-offset: 3px; }
 
+/* Свій відгук на натиск є в кожної цілі, тож сіра плашка, яку малює
+   мобільний браузер поверх посилань, тут тільки заважає. */
+a, button { -webkit-tap-highlight-color: transparent; }
+
+/* ---------- поява при прокрутці ----------
+   Клас .rv ставить розмітка, .is-in додає спостерігач у app.js.
+   Рух дрібний і швидкий: сторінка має проявлятись, а не «виїжджати». */
+
+.rv {
+  opacity: 0; transform: translateY(14px);
+  transition: opacity 460ms cubic-bezier(.22, .61, .36, 1),
+              transform 460ms cubic-bezier(.22, .61, .36, 1);
+}
+.rv.is-in { opacity: 1; transform: none; }
+
+/* ---------- відгук на натиск ----------
+   Зсув мінімальний і швидкий — палець має відчути, що влучив, а не
+   побачити анімацію. */
+
+.btn-order { transition: background-color 160ms linear, transform 120ms ease; }
+.btn-order:active { transform: scale(.985); }
+
+.pill { transition: border-color 140ms linear, transform 120ms ease; }
+.pill:active { transform: scale(.97); }
+
+.chip, .menu-search, .links a, .sorts button { transition: color 140ms linear, border-color 140ms linear; }
+.menu-search:active { transform: scale(.99); }
+
+/* Відгук вішаємо на фото картки, а не на саму картку: картка вже несе
+   .rv зі своїм transition, і другий transition на тому ж елементі
+   просто перебив би анімацію появи. */
+.card-ph { transition: opacity 140ms linear; }
+.card:active .card-ph { opacity: .78; }
+
+@media (prefers-reduced-motion: reduce) {
+  .rv { opacity: 1; transform: none; transition: none; }
+  .btn-order:active, .pill:active, .menu-search:active { transform: none; }
+}
+
 /* ---------- типографіка ---------- */
 
 .t-hero  { font-size: clamp(48px, 8vw, 120px); font-weight: 900; text-transform: uppercase; letter-spacing: -.03em; line-height: .9; }
@@ -288,6 +327,13 @@ input { font-family: inherit; color: inherit; }
    референсі, тобто фото лишається головним об'єктом сторінки. */
 .gal { position: relative; width: 100%; max-width: min(800px, 66vh); margin: 0 auto; }
 .gal img { width: 100%; aspect-ratio: 1; object-fit: contain; touch-action: pan-y; }
+
+/* Заміна кадру в галереї. Проявляємо з чверті непрозорості, а не з
+   нуля: якщо наступне фото ще не встигло намалюватись, з нуля це
+   читалось би як блимання порожнечею. */
+.gal img.is-swap { animation: sm-swap 260ms cubic-bezier(.22, .61, .36, 1); }
+@keyframes sm-swap { from { opacity: .25; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .gal img.is-swap { animation: none; } }
 .gal-arrow {
   position: absolute; top: 50%; transform: translateY(-50%);
   font-size: 34px; line-height: 1; padding: 8px;
@@ -402,17 +448,20 @@ input { font-family: inherit; color: inherit; }
 
 /* Чорний блок на всю ширину: фон малюємо на самому <footer>, а колонки
    тримаємо у внутрішньому контейнері тієї ж ширини, що й решта сайту. */
+/* Відступи навмисно скромніші, ніж просилась би чорна плашка такого
+   розміру: це підвал, а не окремий екран, і на десктопі повітря в
+   ньому набиралось більше, ніж у самому вмісті. */
 .ftr {
-  margin-top: clamp(96px, 11vw, 160px);
+  margin-top: clamp(72px, 8vw, 116px);
   background: var(--ink); color: #FFF;
-  padding: clamp(36px, 3.6vw, 52px) 0 clamp(32px, 3.2vw, 44px);
+  padding: clamp(30px, 2.8vw, 40px) 0 clamp(22px, 2vw, 28px);
 }
 /* Сітка, а не space-between: при флексі зайва ширина йшла в один
    великий провал між брендом і першою колонкою умов. */
 .ftr-in {
   max-width: var(--max); margin: 0 auto; padding: 0 var(--pad);
   display: grid; grid-template-columns: 1.3fr 1.1fr 1.1fr .7fr;
-  gap: 32px clamp(28px, 3.2vw, 56px);
+  gap: 26px clamp(24px, 2.8vw, 48px);
 }
 /* Одна колонка рівно там, де умови стають акордеоном: розкривний
    блок має сенс лише у вертикальному списку — у двох колонках сусідні
@@ -423,8 +472,8 @@ input { font-family: inherit; color: inherit; }
 .ftr a:hover { color: #FFF; }
 .ftr .muted { color: rgba(255, 255, 255, .45); }
 
-.ftr-col { display: flex; flex-direction: column; gap: 10px; }
-.ftr-col.brand { gap: 12px; }
+.ftr-col { display: flex; flex-direction: column; gap: 8px; }
+.ftr-col.brand { gap: 10px; }
 
 /* Заголовок колонки умов — кнопка лише на телефоні; на десктопі це
    звичайний підпис, тож він і не реагує на курсор. Стрілка теж
@@ -439,14 +488,23 @@ input { font-family: inherit; color: inherit; }
    регістрі виглядають крикливо для службового рядка. Окремий рядок
    під колонками, відбитий волосяною лінією. */
 .ftr-bottom {
-  max-width: var(--max); margin: clamp(28px, 3vw, 40px) auto 0;
-  padding: clamp(16px, 1.8vw, 22px) var(--pad) 0;
+  max-width: var(--max); margin: clamp(22px, 2.2vw, 30px) auto 0;
+  padding: clamp(13px, 1.4vw, 18px) var(--pad) 0;
   border-top: 1px solid rgba(255, 255, 255, .12);
+  display: flex; flex-wrap: wrap; align-items: baseline;
+  justify-content: space-between; gap: 4px 24px;
 }
 .ftr-copy {
   font-size: 11px; line-height: 1.5;
   color: rgba(255, 255, 255, .4);
 }
+/* Підпис автора — єдине посилання в цьому рядку, тож підкреслене:
+   інакше воно нічим не відрізняється від копірайту навпроти. */
+.ftr-credit a {
+  color: rgba(255, 255, 255, .62);
+  text-decoration: underline; text-underline-offset: 3px;
+}
+.ftr-credit a:hover { color: #FFF; }
 .ftr-col.brand b {
   font-size: 17px; font-weight: 900; text-transform: uppercase;
   letter-spacing: -.01em; color: #FFF;
