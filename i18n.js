@@ -10,7 +10,7 @@
   'use strict';
 
   var UA = {
-    tagline:     'Домашня кондитерка · Живець, Польща',
+    tagline:     'Домашня кондитерка · Живець',
     scroll:      'Прокрутіть',
     search:      'Пошук',
     searchHint:  'Почніть вводити назву або інгредієнт',
@@ -60,7 +60,7 @@
   };
 
   var PL = {
-    tagline:     'Domowa cukiernia · Żywiec, Polska',
+    tagline:     'Domowa cukiernia · Żywiec',
     scroll:      'Przewiń',
     search:      'Szukaj',
     searchHint:  'Zacznij wpisywać nazwę lub składnik',

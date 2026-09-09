@@ -24,10 +24,38 @@
     ftr: {}         // розгорнуті блоки умов у футері (тільки мобільна)
   };
 
+  /* Мову вгадуємо з налаштувань самого пристрою. navigator.languages —
+     це список мов інтерфейсу системи й браузера, а не регіон за IP:
+     українець із польською сімкою в Живці все одно побачить
+     українську, і навпаки. Нічого не питаємо й нікуди не ходимо —
+     значення вже є в браузері.
+
+     Усе, що не польське й не кириличне, лишається на українській:
+     це мова, якою кондитерка говорить за замовчуванням. */
+  function detectLang() {
+    var list;
+    try {
+      list = (navigator.languages && navigator.languages.length)
+        ? navigator.languages
+        : [navigator.language || ''];
+    } catch (e) { return 'ua'; }
+
+    for (var i = 0; i < list.length; i++) {
+      var tag = String(list[i] || '').toLowerCase();
+      if (tag.indexOf('pl') === 0) return 'pl';
+      if (tag.indexOf('uk') === 0 || tag.indexOf('ru') === 0) return 'ua';
+    }
+    return 'ua';
+  }
+
+  S.lang = detectLang();
+
+  /* Свій вибір головніший за вгадану мову: щойно людина перемкнула
+     UA/PL руками, автовизначення більше не втручається. */
   try {
     var saved = localStorage.getItem('sm-lang');
     if (saved === 'pl' || saved === 'ua') S.lang = saved;
-  } catch (e) { /* file:// без localStorage — лишається 'ua' */ }
+  } catch (e) { /* file:// без localStorage — лишається вгадана мова */ }
 
   /* ---------------- дрібні помічники ---------------- */
 
@@ -356,7 +384,7 @@
         var part = items.filter(function (p) { return p.sub === s.id; });
         if (!part.length) return '';
         return '<div class="sub">'
-          + '<span class="sub-head t-micro muted">' + esc(nm(s)) + '</span>'
+          + '<span class="sub-head t-micro">' + esc(nm(s)) + '</span>'
           + '<div class="grid">' + part.map(cardHTML).join('') + '</div></div>';
       }).join('');
     } else {

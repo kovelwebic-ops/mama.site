@@ -276,15 +276,21 @@ a, button { -webkit-tap-highlight-color: transparent; }
    бачить кожен десерт на повну ширину, як у стрічці. */
 @media (max-width: 640px)  { .grid { grid-template-columns: minmax(0, 1fr); row-gap: 52px; } }
 
-/* Секції підкатегорій (зефір): волосяна лінія + дрібний підпис —
-   ділить сітку, не сперечаючись за увагу з заголовком сторінки. */
+/* Секції підкатегорій (зефір). Лінія через усю ширину ділила сторінку
+   надто різко — на вузькому екрані вона виходила довшою за все, що під
+   нею, і читалась як межа розділу, а не як підпис групи. Тепер групу
+   тримає сам відступ, а підпис дано чорним: він і так короткий, тож
+   помітності йому вистачає без жодної риски. */
 .sub-head {
-  display: block; padding-bottom: 12px;
-  border-bottom: 1px solid var(--line);
+  display: block;
+  color: var(--ink); font-weight: 700;
 }
-.sub .grid { margin-top: clamp(28px, 3vw, 44px); }
+/* Підпис тримається за свою сітку, а самі групи розсунуті ширше —
+   тепер саме інтервал, а не лінія, показує, де закінчується одна
+   підкатегорія й починається наступна. */
+.sub .grid { margin-top: clamp(18px, 2vw, 28px); }
 .sub { margin-top: clamp(40px, 5vw, 72px); }
-.sub + .sub { margin-top: clamp(56px, 7vw, 96px); }
+.sub + .sub { margin-top: clamp(64px, 8vw, 108px); }
 
 .card { display: flex; flex-direction: column; gap: 14px; }
 .card:hover { color: inherit; }
@@ -450,30 +456,36 @@ a, button { -webkit-tap-highlight-color: transparent; }
    тримаємо у внутрішньому контейнері тієї ж ширини, що й решта сайту. */
 /* Відступи навмисно скромніші, ніж просилась би чорна плашка такого
    розміру: це підвал, а не окремий екран, і на десктопі повітря в
-   ньому набиралось більше, ніж у самому вмісті. */
+   ньому набиралось більше, ніж у самому вмісті.
+
+   Фон тут чистий чорний, темніший за сайтовий --ink (#0A0A0A): підвал
+   має читатись як окремий важкий блок, а не як сірувата пляма. */
 .ftr {
-  margin-top: clamp(72px, 8vw, 116px);
-  background: var(--ink); color: #FFF;
-  padding: clamp(30px, 2.8vw, 40px) 0 clamp(22px, 2vw, 28px);
+  margin-top: clamp(64px, 7vw, 100px);
+  background: #000; color: #FFF;
+  padding: clamp(26px, 2.4vw, 34px) 0 clamp(18px, 1.6vw, 22px);
 }
 /* Сітка, а не space-between: при флексі зайва ширина йшла в один
    великий провал між брендом і першою колонкою умов. */
 .ftr-in {
   max-width: var(--max); margin: 0 auto; padding: 0 var(--pad);
   display: grid; grid-template-columns: 1.3fr 1.1fr 1.1fr .7fr;
-  gap: 26px clamp(24px, 2.8vw, 48px);
+  gap: 22px clamp(20px, 2.4vw, 40px);
 }
 /* Одна колонка рівно там, де умови стають акордеоном: розкривний
    блок має сенс лише у вертикальному списку — у двох колонках сусідні
    заголовки розповзаються по різних рядках, а підкреслення обриваються
    на півдорозі. */
 @media (max-width: 900px) { .ftr-in { grid-template-columns: 1fr; } }
-.ftr a { color: rgba(255, 255, 255, .75); }
+/* На чистому чорному тексту можна дати більше світла, не боячись, що
+   він «загориться»: підписи розділів і контакти читаються здалеку, а
+   не проглядають крізь фон. */
+.ftr a { color: rgba(255, 255, 255, .9); }
 .ftr a:hover { color: #FFF; }
-.ftr .muted { color: rgba(255, 255, 255, .45); }
+.ftr .muted { color: rgba(255, 255, 255, .62); }
 
-.ftr-col { display: flex; flex-direction: column; gap: 8px; }
-.ftr-col.brand { gap: 10px; }
+.ftr-col { display: flex; flex-direction: column; gap: 7px; }
+.ftr-col.brand { gap: 9px; }
 
 /* Заголовок колонки умов — кнопка лише на телефоні; на десктопі це
    звичайний підпис, тож він і не реагує на курсор. Стрілка теж
@@ -487,10 +499,11 @@ a, button { -webkit-tap-highlight-color: transparent; }
 /* Копірайт — не капсом: домен і «All rights reserved» у верхньому
    регістрі виглядають крикливо для службового рядка. Окремий рядок
    під колонками, відбитий волосяною лінією. */
+/* Без відбивної лінії: службовий рядок і так відділений відступом, а
+   риска через увесь підвал робила з нього другу «секцію». */
 .ftr-bottom {
-  max-width: var(--max); margin: clamp(22px, 2.2vw, 30px) auto 0;
-  padding: clamp(13px, 1.4vw, 18px) var(--pad) 0;
-  border-top: 1px solid rgba(255, 255, 255, .12);
+  max-width: var(--max); margin: clamp(18px, 1.8vw, 24px) auto 0;
+  padding: 0 var(--pad);
   display: flex; flex-wrap: wrap; align-items: baseline;
   justify-content: space-between; gap: 4px 24px;
 }
@@ -515,7 +528,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
 .ftr-terms { display: flex; flex-direction: column; gap: 6px; max-width: 34ch; }
 .ftr-terms li {
   font-size: 12px; line-height: 1.5;
-  color: rgba(255, 255, 255, .75);
+  color: rgba(255, 255, 255, .82);
 }
 
 .ftr-links-row { display: flex; flex-direction: column; gap: 10px; }
@@ -684,8 +697,8 @@ a, button { -webkit-tap-highlight-color: transparent; }
 
   /* Футер тут службовий, а не окрема сторінка: щільніші відступи,
      дрібніший кегль, менше повітря між блоками. */
-  .ftr { margin-top: clamp(64px, 9vw, 100px); padding: 28px 0 22px; }
-  .ftr-in { gap: 16px; }
+  .ftr { margin-top: clamp(56px, 8vw, 88px); padding: 24px 0 18px; }
+  .ftr-in { gap: 14px; }
   .ftr-col.brand { gap: 5px; }
   .ftr-col.brand b { font-size: 15px; }
   .ftr-col.ftr-links { gap: 6px; }
@@ -708,7 +721,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
   .ftr-acc.is-open .ftr-terms { display: flex; gap: 5px; padding-bottom: 14px; }
   .ftr-terms li { font-size: 11px; line-height: 1.45; }
 
-  .ftr-bottom { margin-top: 16px; padding-top: 13px; }
+  .ftr-bottom { margin-top: 14px; }
   .ftr-copy { font-size: 10px; }
 
   /* --- футер: контакти одним рядком --- */
