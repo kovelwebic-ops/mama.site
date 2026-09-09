@@ -110,12 +110,14 @@
       ? ' href="' + esc(c.href) + '" target="_blank" rel="noopener"'
       : ' href="#" aria-disabled="true"';
   }
-  /* Простий рядок-заклик «Facebook →»: сама адреса живе в href, поки
-     контакту немає — лінк приглушений. Стрілку у футері ховає CSS. */
+  /* Просто підпис: сама адреса живе в href, поки контакту немає —
+     лінк приглушений. Що це посилання, показує підкреслення, а не
+     стрілка: стрілок на сторінці набиралось по три-чотири підряд і
+     вони читались як список кроків, а не як контакти. */
   function contactRows() {
     return CONTACTS.map(function (c) {
       return '<a class="t-micro' + (c.href ? '' : ' is-empty') + '"' + cAttrs(c) + '>'
-        + esc(vl(c)) + '<span class="arrow" aria-hidden="true">&rarr;</span></a>';
+        + esc(vl(c)) + '</a>';
     }).join('');
   }
 
@@ -125,10 +127,11 @@
     + '<circle cx="7" cy="7" r="5.4" stroke="currentColor" stroke-width="1.4"/>'
     + '<line x1="11.2" y1="11.2" x2="16" y2="16" stroke="currentColor" stroke-width="1.4"/></svg>';
 
-  var ICON_MAIL = '<svg width="17" height="17" viewBox="0 0 17 17" fill="none" aria-hidden="true">'
-    + '<rect x="1" y="2.5" width="15" height="11" rx="2" stroke="currentColor" stroke-width="1.4"/>'
-    + '<line x1="1.6" y1="4" x2="8.5" y2="9" stroke="currentColor" stroke-width="1.4"/>'
-    + '<line x1="15.4" y1="4" x2="8.5" y2="9" stroke="currentColor" stroke-width="1.4"/></svg>';
+  /* Слухавка, а не конверт: пошти в контактах немає й ніколи не було,
+     тож конверт обіцяв не те. Замовляють дзвінком або в месенджері. */
+  var ICON_PHONE = '<svg width="17" height="17" viewBox="0 0 17 17" fill="none" aria-hidden="true">'
+    + '<path d="M3.4 3.1c0-.7.6-1.3 1.3-1.3h1.6c.6 0 1.1.4 1.2.9l.6 2.3c.1.4 0 .9-.4 1.1l-1.2.8c.8 1.6 2.1 2.9 3.7 3.7l.8-1.2c.2-.4.7-.5 1.1-.4l2.3.6c.5.1.9.6.9 1.2v1.6c0 .7-.6 1.3-1.3 1.3-6.9 0-10.6-3.7-10.6-10.6z"'
+    + ' stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>';
 
   /* ---------------- картка товару ---------------- */
 
@@ -192,7 +195,7 @@
          переїжджає першим рядком у меню під бургером, тож у шапці
          справа стоїть один зрозумілий значок, а не два дрібних. */
       + '<button class="icon hdr-search" type="button" data-act="search" aria-label="' + esc(L('search')) + '">' + ICON_SEARCH + '</button>'
-      + '<button class="icon hdr-contact" type="button" data-act="modal" aria-label="' + esc(L('contacts')) + '">' + ICON_MAIL + '</button>'
+      + '<button class="icon hdr-contact" type="button" data-act="modal" aria-label="' + esc(L('contacts')) + '">' + ICON_PHONE + '</button>'
       + '<div class="lang hdr-lang">' + langHTML() + '</div>'
       + '</div></div>';
   }
@@ -636,13 +639,16 @@
         return '<a href="' + catHref(c.id) + '">' + esc(nm(c)) + '</a>';
       }).join('');
 
+      /* UA/PL стоїть у верхньому рядку меню, поруч із хрестиком: у
+         підвалі меню, під контактами, його просто не знаходили. */
       html = '<div class="sheet">'
-        + '<div class="sheet-bar"><button class="sheet-close" type="button" data-act="close" aria-label="' + esc(L('close')) + '">&times;</button></div>'
+        + '<div class="sheet-bar sheet-bar-menu">'
+        + '<div class="lang lang-menu">' + langHTML() + '</div>'
+        + '<button class="sheet-close" type="button" data-act="close" aria-label="' + esc(L('close')) + '">&times;</button></div>'
         + '<button class="menu-search t-micro" type="button" data-act="search">'
         + ICON_SEARCH + '<span>' + esc(L('search')) + '</span></button>'
         + '<nav class="menu-links">' + links + '</nav>'
         + '<div class="links" style="margin-top:48px">' + contactRows() + '</div>'
-        + '<div class="lang" style="margin-top:32px">' + langHTML() + '</div>'
         + '</div>';
     }
 

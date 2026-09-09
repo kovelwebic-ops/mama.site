@@ -110,8 +110,10 @@ input { font-family: inherit; color: inherit; }
 .lang .sep { color: var(--line); }
 
 /* Три риски, а не дві: дві читаються як абстрактний знак, три —
-   як загальновідома «кнопка меню», і думати над нею не треба. */
-.burger { display: none; flex-direction: column; gap: 4.5px; width: 22px; }
+   як загальновідома «кнопка меню», і думати над нею не треба.
+   Розмір той самий, що в значка праворуч (17px): два знаки по краях
+   шапки мусять важити однаково, інакше шапка перекошується. */
+.burger { display: none; flex-direction: column; gap: 4px; width: 17px; }
 .burger span { display: block; height: 1.5px; background: var(--ink); }
 
 /* На телефоні в шапці лишається один значок — конверт (контакти),
@@ -332,13 +334,16 @@ input { font-family: inherit; color: inherit; }
   line-height: 1.4; white-space: nowrap;
 }
 
-/* Прості лінки-заклики, без рамок і без окремої колонки значення —
-   сама стрілка й ховер-зсув дають досить контакту з елементом. */
+/* Прості лінки без рамок. Підкреслення — єдина ознака, що це
+   посилання, і саме тому воно тут обов'язкове: на монохромному сайті
+   колір цю роботу не виконує, а стрілки виявились гіршими за нього. */
 .links { display: flex; flex-direction: column; gap: 14px; }
-.links a { display: inline-flex; align-items: baseline; gap: 6px; width: fit-content; }
-.links a .arrow { display: inline-block; transition: transform 150ms ease; }
-.links a:hover .arrow { transform: translateX(3px); }
-.links a.is-empty { color: var(--muted); }
+.links a {
+  display: inline-flex; align-items: baseline; width: fit-content;
+  text-decoration: underline; text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+}
+.links a.is-empty { color: var(--muted); text-decoration: none; }
 
 /* «Склад» показуємо зліва на десктопі, у правій колонці — на мобільному.
    Поріг 1100px (не 900px) навмисно високий: 20%-ва ліва колонка вужча
@@ -455,11 +460,8 @@ input { font-family: inherit; color: inherit; }
   color: rgba(255, 255, 255, .75);
 }
 
-/* У футері лінки без стрілок — тут це просто список контактів, а не
-   заклик до дії, як під кнопкою «Замовити». */
 .ftr-links-row { display: flex; flex-direction: column; gap: 10px; }
 .ftr-links a { width: fit-content; }
-.ftr-links a .arrow { display: none; }
 .ftr-links a.is-empty { color: rgba(255, 255, 255, .4); }
 
 /* ---------- оверлеї ---------- */
@@ -471,6 +473,10 @@ input { font-family: inherit; color: inherit; }
 }
 .sheet-bar { height: 72px; display: flex; align-items: center; justify-content: flex-end; }
 .sheet-close { font-size: 26px; line-height: 1; }
+
+/* У меню верхній рядок ділять перемикач мови й хрестик. */
+.sheet-bar-menu { justify-content: space-between; }
+.lang-menu button { font-size: 13px; padding: 10px 0; }
 
 /* Пошук у меню виглядає як поле вводу, а не як ще одне посилання —
    інакше в стовпчику з розділами його просто не помічають. */
@@ -512,8 +518,12 @@ input { font-family: inherit; color: inherit; }
 .modal {
   width: 100%; max-width: 420px; background: var(--bg);
   border-radius: 8px; padding: 32px;
-  display: flex; flex-direction: column; gap: 20px;
+  display: flex; flex-direction: column; gap: 18px;
 }
+/* У вікні контакти стоять щільніше, ніж деінде: тут їх усього три і
+   вони єдиний вміст, тож розганяти їх на всю висоту нема сенсу. */
+.modal .links { gap: 2px; }
+.modal .links a { min-height: 36px; align-items: center; }
 .modal-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
 .modal-head b { font-size: 22px; font-weight: 900; text-transform: uppercase; letter-spacing: -.02em; line-height: 1; }
 
@@ -534,13 +544,25 @@ input { font-family: inherit; color: inherit; }
     width: 44px; height: 44px; margin-left: -11px;
     align-items: center; justify-content: center;
   }
-  .burger span { width: 22px; }
+  .burger span { width: 17px; }
 
   .icon { width: 44px; height: 44px; align-items: center; justify-content: center; }
   .hdr-r { gap: 0; margin-right: -11px; }
-  .mark { padding: 10px 0; }
+
+  /* Вордмарк — єдине, що на телефоні називає кондитерку, тож він
+     помітно більший за десктопні 13px, які сюди діставались із clamp. */
+  .mark { padding: 10px 0; font-size: clamp(15px, 4.4vw, 19px); }
 
   /* --- сторінка товару --- */
+
+  /* Головне на цій сторінці — ціна й кнопка. Раніше над назвою стояло
+     майже 100px порожнечі (11vh), а фото було квадратом, у якому
+     широкий зріз торта і так лежав з полями зверху й знизу. Разом це
+     зсувало кнопку за межу екрана. Тепер усе, аж до рядка під
+     кнопкою, видно без гортання. */
+  .pdp { margin-top: clamp(14px, 2.2vh, 26px); gap: 20px; }
+  .pdp-r { gap: 16px; }
+  .gal img { aspect-ratio: 5 / 4; }
 
   /* Контакти під кнопкою прибрані: сама кнопка «Замовити» відкриває
      їх же у вікні, а на вузькому екрані цей список ще й відсував
@@ -594,13 +616,19 @@ input { font-family: inherit; color: inherit; }
 
   /* --- футер: умови розкриваються по тапу --- */
 
-  .ftr-in { gap: 24px; }
+  /* Футер тут службовий, а не окрема сторінка: щільніші відступи,
+     дрібніший кегль, менше повітря між блоками. */
+  .ftr { margin-top: clamp(64px, 9vw, 100px); padding: 28px 0 22px; }
+  .ftr-in { gap: 16px; }
+  .ftr-col.brand { gap: 5px; }
+  .ftr-col.brand b { font-size: 15px; }
+  .ftr-col.ftr-links { gap: 6px; }
 
   /* Закритий блок — це один рядок висотою в палець і волосяна лінія
      під ним, тож два блоки умов займають стільки ж, скільки раніше
      займав один заголовок зі списком. */
   .ftr-acc { gap: 0; border-bottom: 1px solid rgba(255, 255, 255, .12); }
-  .ftr-head { min-height: 48px; cursor: pointer; }
+  .ftr-head { min-height: 42px; cursor: pointer; }
   .ftr-head i {
     display: block; flex: 0 0 auto; width: 8px; height: 8px;
     border-right: 1.5px solid rgba(255, 255, 255, .45);
@@ -611,14 +639,18 @@ input { font-family: inherit; color: inherit; }
   .ftr-acc.is-open .ftr-head i { transform: translateY(2px) rotate(-135deg); }
 
   .ftr-terms { display: none; }
-  .ftr-acc.is-open .ftr-terms { display: flex; padding-bottom: 18px; }
+  .ftr-acc.is-open .ftr-terms { display: flex; gap: 5px; padding-bottom: 14px; }
+  .ftr-terms li { font-size: 11px; line-height: 1.45; }
+
+  .ftr-bottom { margin-top: 16px; padding-top: 13px; }
+  .ftr-copy { font-size: 10px; }
 
   /* --- футер: контакти одним рядком --- */
 
   /* Три посилання стовпчиком по 40px висоти займали більше місця, ніж
      самі умови. У рядок через крапку — той самий зміст, чверть висоти. */
   .ftr-links-row { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 0 22px; }
-  .ftr-links-row a { position: relative; min-height: 36px; align-items: center; }
+  .ftr-links-row a { position: relative; min-height: 30px; align-items: center; }
   .ftr-links-row a + a::before {
     content: '·'; position: absolute; left: -13px;
     color: rgba(255, 255, 255, .35);
@@ -636,17 +668,26 @@ input { font-family: inherit; color: inherit; }
   .bar { flex-direction: column; align-items: stretch; }
   .bar-r { justify-content: flex-start; }
 
-  /* Розділи — одним рядком і дрібніше. П'ять чіпів у два-три ряди
-     важили більше за сам заголовок сторінки; тепер це вузька смужка,
-     яка за потреби зсувається пальцем убік. Від'ємні марджини дають
-     їй їхати до самих країв екрана, а не спинятись на полях. */
+  /* Розділи — рівним рядком на всю ширину. У рамках вони не влазили
+     в екран: останній чіп обрізало краєм, і при цьому зліва лишалось
+     поле, через що ряд виглядав зсунутим. Без рамок п'ять назв
+     вміщаються з запасом, тож ряд розтягується від краю до краю, а
+     поточний розділ позначає риска під ним.
+     min-width:0 — щоб flex-елемент міг стиснутись вужче за свій вміст
+     і на найвужчих екранах зсувався пальцем, а не вилазив за екран. */
   .chips {
-    flex-wrap: nowrap; overflow-x: auto;
-    margin: 0 calc(var(--pad) * -1); padding: 0 var(--pad);
+    flex-wrap: nowrap; justify-content: space-between; gap: 8px;
+    min-width: 0; overflow-x: auto;
     scrollbar-width: none; -ms-overflow-style: none;
   }
   .chips::-webkit-scrollbar { width: 0; height: 0; }
-  .chip { height: 30px; padding: 0 11px; font-size: 11px; letter-spacing: .03em; }
+  .chip {
+    height: auto; padding: 10px 0; border: 0; border-radius: 0;
+    font-size: 11px; letter-spacing: .02em;
+    border-bottom: 1.5px solid transparent;
+  }
+  .chip:hover { border-bottom-color: var(--line); }
+  .chip.on { border-bottom-color: var(--ink); }
 
   .search-field { gap: 10px; }
   .search-field svg { width: 18px; height: 18px; }
