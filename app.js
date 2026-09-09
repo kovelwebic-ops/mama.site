@@ -20,7 +20,8 @@
     q: '',
     gi: 0,          // індекс поточного фото в галереї
     sel: {},        // вибрані варіанти на сторінці товару
-    open: null      // 'menu' | 'search' | 'modal' | null
+    open: null,     // 'menu' | 'search' | 'modal' | null
+    ftr: {}         // розгорнуті блоки умов у футері (тільки мобільна)
   };
 
   try {
@@ -182,21 +183,31 @@
     document.getElementById('hdr').innerHTML =
       '<div class="hdr-in">'
       + '<div class="hdr-l">'
-      + '<button class="burger" type="button" data-act="menu" aria-label="' + esc(L('menu')) + '"><span></span><span></span></button>'
+      + '<button class="burger" type="button" data-act="menu" aria-label="' + esc(L('menu')) + '"><span></span><span></span><span></span></button>'
       + '<nav class="hdr-cats t-micro">' + cats + '</nav>'
       + '</div>'
       + '<a class="mark" href="index.html">SŁODKIE MARZENIA</a>'
       + '<div class="hdr-r">'
-      + '<button class="icon" type="button" data-act="search" aria-label="' + esc(L('search')) + '">' + ICON_SEARCH + '</button>'
+      /* На телефоні лупа ховається, а конверт лишається: пошук
+         переїжджає першим рядком у меню під бургером, тож у шапці
+         справа стоїть один зрозумілий значок, а не два дрібних. */
+      + '<button class="icon hdr-search" type="button" data-act="search" aria-label="' + esc(L('search')) + '">' + ICON_SEARCH + '</button>'
       + '<button class="icon hdr-contact" type="button" data-act="modal" aria-label="' + esc(L('contacts')) + '">' + ICON_MAIL + '</button>'
       + '<div class="lang hdr-lang">' + langHTML() + '</div>'
       + '</div></div>';
   }
 
+  /* Умови — цілий абзац тексту на кожен блок. На десктопі вони просто
+     стоять колонками, а на телефоні розгортались у стіну, більшу за
+     решту футера разом узяту, тож там заголовок стає кнопкою і список
+     розкривається по тапу. Одна й та сама розмітка на обох ширинах:
+     що показувати, вирішує CSS — на десктопі кнопка не натискається. */
   function termsCol(titleKey, listKey) {
     var li = L(listKey).map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('');
-    return '<div class="ftr-col">'
-      + '<span class="t-micro muted">' + esc(L(titleKey)) + '</span>'
+    var on = !!S.ftr[titleKey];
+    return '<div class="ftr-col ftr-acc' + (on ? ' is-open' : '') + '">'
+      + '<button class="ftr-head t-micro muted" type="button" data-act="ftr" data-v="' + titleKey + '"'
+      + ' aria-expanded="' + on + '">' + esc(L(titleKey)) + '<i aria-hidden="true"></i></button>'
       + '<ul class="ftr-terms">' + li + '</ul></div>';
   }
 
@@ -212,14 +223,18 @@
       + '<div class="ftr-col brand">'
       + '<b>SŁODKIE MARZENIA</b>'
       + '<span class="t-micro muted">' + esc(L('tagline')) + '</span>'
-      + '<span class="ftr-copy">' + esc(copy) + '</span>'
       + '</div>'
       + termsCol('orderTerms', 'orderList')
       + termsCol('deliveryTerms', 'deliveryList')
       + '<div class="ftr-col ftr-links">'
-      + '<span class="t-micro muted">' + esc(L('contacts')) + '</span>' + contactRows()
+      + '<span class="t-micro muted">' + esc(L('contacts')) + '</span>'
+      + '<div class="ftr-links-row">' + contactRows() + '</div>'
       + '</div>'
-      + '</div>';
+      + '</div>'
+      /* Копірайт стоїть окремим рядком під усіма колонками, а не в
+         колонці бренду: це службовий рядок про весь сайт, і в колонці
+         він читався як частина контактів кондитерки. */
+      + '<div class="ftr-bottom"><span class="ftr-copy">' + esc(copy) + '</span></div>';
   }
 
   /* ---------------- головна ---------------- */
@@ -623,6 +638,8 @@
 
       html = '<div class="sheet">'
         + '<div class="sheet-bar"><button class="sheet-close" type="button" data-act="close" aria-label="' + esc(L('close')) + '">&times;</button></div>'
+        + '<button class="menu-search t-micro" type="button" data-act="search">'
+        + ICON_SEARCH + '<span>' + esc(L('search')) + '</span></button>'
         + '<nav class="menu-links">' + links + '</nav>'
         + '<div class="links" style="margin-top:48px">' + contactRows() + '</div>'
         + '<div class="lang" style="margin-top:32px">' + langHTML() + '</div>'
@@ -732,6 +749,8 @@
     if (act === 'modal')    { S.open = 'modal';  renderOverlays(); return; }
     if (act === 'close')    { S.open = null; S.q = ''; renderOverlays(); return; }
     if (act === 'backdrop') { if (e.target === el) { S.open = null; renderOverlays(); } return; }
+
+    if (act === 'ftr')  { S.ftr[el.dataset.v] = !S.ftr[el.dataset.v]; renderFooter(); return; }
 
     if (act === 'sort') { S.sort = el.dataset.v; renderCatalog(); return; }
 

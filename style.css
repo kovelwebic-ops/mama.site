@@ -109,11 +109,16 @@ input { font-family: inherit; color: inherit; }
 .lang button.on { color: var(--ink); font-weight: 700; }
 .lang .sep { color: var(--line); }
 
-.burger { display: none; flex-direction: column; gap: 5px; width: 22px; }
+/* Три риски, а не дві: дві читаються як абстрактний знак, три —
+   як загальновідома «кнопка меню», і думати над нею не треба. */
+.burger { display: none; flex-direction: column; gap: 4.5px; width: 22px; }
 .burger span { display: block; height: 1.5px; background: var(--ink); }
 
+/* На телефоні в шапці лишається один значок — конверт (контакти),
+   бо це головна дія сайту. Пошук нікуди не зник: він першим рядком
+   у меню під бургером. */
 @media (max-width: 1100px) {
-  .hdr-cats, .hdr-contact, .hdr-lang { display: none; }
+  .hdr-cats, .hdr-search, .hdr-lang { display: none; }
   .burger { display: flex; }
 }
 
@@ -225,7 +230,10 @@ input { font-family: inherit; color: inherit; }
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 @media (max-width: 1024px) { .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-@media (max-width: 640px)  { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 20px; row-gap: 44px; } }
+/* На телефоні — один товар у рядок. У дві колонки торт займав менш ніж
+   пів екрана завширшки, а вирішує тут саме фото: людина гортає вниз і
+   бачить кожен десерт на повну ширину, як у стрічці. */
+@media (max-width: 640px)  { .grid { grid-template-columns: minmax(0, 1fr); row-gap: 52px; } }
 
 /* Секції підкатегорій (зефір): волосяна лінія + дрібний підпис —
    ділить сітку, не сперечаючись за увагу з заголовком сторінки. */
@@ -401,8 +409,11 @@ input { font-family: inherit; color: inherit; }
   display: grid; grid-template-columns: 1.3fr 1.1fr 1.1fr .7fr;
   gap: 32px clamp(28px, 3.2vw, 56px);
 }
-@media (max-width: 900px) { .ftr-in { grid-template-columns: 1fr 1fr; } }
-@media (max-width: 560px) { .ftr-in { grid-template-columns: 1fr; } }
+/* Одна колонка рівно там, де умови стають акордеоном: розкривний
+   блок має сенс лише у вертикальному списку — у двох колонках сусідні
+   заголовки розповзаються по різних рядках, а підкреслення обриваються
+   на півдорозі. */
+@media (max-width: 900px) { .ftr-in { grid-template-columns: 1fr; } }
 .ftr a { color: rgba(255, 255, 255, .75); }
 .ftr a:hover { color: #FFF; }
 .ftr .muted { color: rgba(255, 255, 255, .45); }
@@ -410,10 +421,24 @@ input { font-family: inherit; color: inherit; }
 .ftr-col { display: flex; flex-direction: column; gap: 10px; }
 .ftr-col.brand { gap: 12px; }
 
+/* Заголовок колонки умов — кнопка лише на телефоні; на десктопі це
+   звичайний підпис, тож він і не реагує на курсор. Стрілка теж
+   з'являється тільки там, де по ній справді можна тапнути. */
+.ftr-head {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; width: 100%; text-align: left; cursor: default;
+}
+.ftr-head i { display: none; }
+
 /* Копірайт — не капсом: домен і «All rights reserved» у верхньому
-   регістрі виглядають крикливо для службового рядка. */
+   регістрі виглядають крикливо для службового рядка. Окремий рядок
+   під колонками, відбитий волосяною лінією. */
+.ftr-bottom {
+  max-width: var(--max); margin: clamp(28px, 3vw, 40px) auto 0;
+  padding: clamp(16px, 1.8vw, 22px) var(--pad) 0;
+  border-top: 1px solid rgba(255, 255, 255, .12);
+}
 .ftr-copy {
-  margin-top: 2px;
   font-size: 11px; line-height: 1.5;
   color: rgba(255, 255, 255, .4);
 }
@@ -432,6 +457,7 @@ input { font-family: inherit; color: inherit; }
 
 /* У футері лінки без стрілок — тут це просто список контактів, а не
    заклик до дії, як під кнопкою «Замовити». */
+.ftr-links-row { display: flex; flex-direction: column; gap: 10px; }
 .ftr-links a { width: fit-content; }
 .ftr-links a .arrow { display: none; }
 .ftr-links a.is-empty { color: rgba(255, 255, 255, .4); }
@@ -445,6 +471,17 @@ input { font-family: inherit; color: inherit; }
 }
 .sheet-bar { height: 72px; display: flex; align-items: center; justify-content: flex-end; }
 .sheet-close { font-size: 26px; line-height: 1; }
+
+/* Пошук у меню виглядає як поле вводу, а не як ще одне посилання —
+   інакше в стовпчику з розділами його просто не помічають. */
+.menu-search {
+  display: flex; align-items: center; gap: 12px;
+  width: 100%; min-height: 48px; padding: 0 16px;
+  border: 1px solid var(--line); border-radius: 6px;
+  color: var(--muted); text-align: left;
+}
+.menu-search:hover { border-color: var(--ink); color: var(--ink); }
+.menu-search svg { flex: 0 0 auto; }
 
 .menu-links { margin-top: 24px; display: flex; flex-direction: column; gap: 18px; }
 .menu-links a { font-size: clamp(30px, 9vw, 48px); font-weight: 900; text-transform: uppercase; letter-spacing: -.02em; line-height: 1; }
@@ -503,6 +540,14 @@ input { font-family: inherit; color: inherit; }
   .hdr-r { gap: 0; margin-right: -11px; }
   .mark { padding: 10px 0; }
 
+  /* --- сторінка товару --- */
+
+  /* Контакти під кнопкою прибрані: сама кнопка «Замовити» відкриває
+     їх же у вікні, а на вузькому екрані цей список ще й відсував
+     «Інші товари» глибоко вниз. На десктопі колонка широка — там
+     список лишається. */
+  .pdp-r .links { display: none; }
+
   /* --- футер --- */
 
   .ftr-links a { min-height: 40px; align-items: center; }
@@ -518,6 +563,11 @@ input { font-family: inherit; color: inherit; }
   .about-row.is-flipped .about-ph { order: 0; }
   .about-ph { aspect-ratio: 3 / 2; }
   .about-txt p { max-width: none; }
+
+  /* Дзеркалення потрібне тільки поки блоки стоять поруч. В одну
+     колонку обидва описи мусять починатися від того самого лівого
+     краю — інакше другий висить справа й читається як чужий. */
+  .about-row.is-flipped .about-txt { align-items: flex-start; text-align: left; }
 
   /* --- сторінка товару --- */
 
@@ -541,6 +591,38 @@ input { font-family: inherit; color: inherit; }
   .sorts { gap: 18px; }
   .sorts button { padding: 10px 0; font-size: 12px; }
   .bar { gap: 12px 24px; }
+
+  /* --- футер: умови розкриваються по тапу --- */
+
+  .ftr-in { gap: 24px; }
+
+  /* Закритий блок — це один рядок висотою в палець і волосяна лінія
+     під ним, тож два блоки умов займають стільки ж, скільки раніше
+     займав один заголовок зі списком. */
+  .ftr-acc { gap: 0; border-bottom: 1px solid rgba(255, 255, 255, .12); }
+  .ftr-head { min-height: 48px; cursor: pointer; }
+  .ftr-head i {
+    display: block; flex: 0 0 auto; width: 8px; height: 8px;
+    border-right: 1.5px solid rgba(255, 255, 255, .45);
+    border-bottom: 1.5px solid rgba(255, 255, 255, .45);
+    transform: translateY(-2px) rotate(45deg);
+    transition: transform 160ms ease;
+  }
+  .ftr-acc.is-open .ftr-head i { transform: translateY(2px) rotate(-135deg); }
+
+  .ftr-terms { display: none; }
+  .ftr-acc.is-open .ftr-terms { display: flex; padding-bottom: 18px; }
+
+  /* --- футер: контакти одним рядком --- */
+
+  /* Три посилання стовпчиком по 40px висоти займали більше місця, ніж
+     самі умови. У рядок через крапку — той самий зміст, чверть висоти. */
+  .ftr-links-row { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 0 22px; }
+  .ftr-links-row a { position: relative; min-height: 36px; align-items: center; }
+  .ftr-links-row a + a::before {
+    content: '·'; position: absolute; left: -13px;
+    color: rgba(255, 255, 255, .35);
+  }
 }
 
 @media (max-width: 640px) {
@@ -553,6 +635,18 @@ input { font-family: inherit; color: inherit; }
      окремим рядком, а не притиснуте до правого краю. */
   .bar { flex-direction: column; align-items: stretch; }
   .bar-r { justify-content: flex-start; }
+
+  /* Розділи — одним рядком і дрібніше. П'ять чіпів у два-три ряди
+     важили більше за сам заголовок сторінки; тепер це вузька смужка,
+     яка за потреби зсувається пальцем убік. Від'ємні марджини дають
+     їй їхати до самих країв екрана, а не спинятись на полях. */
+  .chips {
+    flex-wrap: nowrap; overflow-x: auto;
+    margin: 0 calc(var(--pad) * -1); padding: 0 var(--pad);
+    scrollbar-width: none; -ms-overflow-style: none;
+  }
+  .chips::-webkit-scrollbar { width: 0; height: 0; }
+  .chip { height: 30px; padding: 0 11px; font-size: 11px; letter-spacing: .03em; }
 
   .search-field { gap: 10px; }
   .search-field svg { width: 18px; height: 18px; }
