@@ -463,7 +463,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
 .ftr {
   margin-top: clamp(64px, 7vw, 100px);
   background: #000; color: #FFF;
-  padding: clamp(26px, 2.4vw, 34px) 0 clamp(18px, 1.6vw, 22px);
+  padding: clamp(26px, 2.4vw, 34px) 0 clamp(24px, 2vw, 30px);
 }
 /* Сітка, а не space-between: при флексі зайва ширина йшла в один
    великий провал між брендом і першою колонкою умов. */
@@ -533,9 +533,18 @@ a, button { -webkit-tap-highlight-color: transparent; }
   color: rgba(255, 255, 255, .75);
 }
 
+/* Контакти приглушені до рівня теглайна, а що це посилання — каже
+   підкреслення, не яскравість. Помітність у цій колонці тримає
+   заголовок «Контакти»; самі лінки під ним не мають з ним змагатись. */
 .ftr-links-row { display: flex; flex-direction: column; gap: 10px; }
 .ftr-links a { width: fit-content; }
-.ftr-links a.is-empty { color: rgba(255, 255, 255, .4); }
+.ftr-links-row a {
+  color: rgba(255, 255, 255, .5);
+  text-decoration: underline; text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+}
+.ftr-links-row a:hover { color: #FFF; }
+.ftr-links a.is-empty { color: rgba(255, 255, 255, .32); text-decoration: none; }
 
 /* ---------- оверлеї ---------- */
 
@@ -699,7 +708,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
 
   /* Футер тут службовий, а не окрема сторінка: щільніші відступи,
      дрібніший кегль, менше повітря між блоками. */
-  .ftr { margin-top: clamp(56px, 8vw, 88px); padding: 24px 0 18px; }
+  .ftr { margin-top: clamp(56px, 8vw, 88px); padding: 24px 0 26px; }
   .ftr-in { gap: 14px; }
   .ftr-col.brand { gap: 5px; }
   .ftr-col.brand b { font-size: 15px; }
