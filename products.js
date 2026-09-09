@@ -57,7 +57,10 @@
   var CONTACTS = [
     { id: 'facebook', label: 'Facebook', href: 'https://www.facebook.com/profile.php?id=100027222292650' },
     { id: 'telegram', label: 'Telegram', href: 'https://t.me/+380501435646' },
-    { id: 'phone',    label: 'Телефон',  label_pl: 'Telefon',
+    /* Номер стоїть підписом, а не словом «Телефон»: його переписують
+       чи набирають з екрана так само часто, як тиснуть на посилання,
+       а зі словом його спершу треба десь знайти. */
+    { id: 'phone',    label: '+48 787 208 935',
       href: 'tel:+48787208935' }
   ];
 

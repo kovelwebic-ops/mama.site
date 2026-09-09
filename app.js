@@ -404,14 +404,19 @@
        під тортом. Раніше вони стояли в одному ряду, і кожна довша
        назва розсовувала стрілки вбік просто в мить, коли до них
        тягнулися пальцем. */
+    /* Стрілки стоять під тортом, обабіч назви, але не в одному потоці
+       з нею: вони прибиті на сталу відстань від центру, тож довша
+       назва їх не зсуває. Сама назва обмежена по ширині, щоб ніколи
+       до них не дотягнутись. */
     return '<div class="hero-stage">'
-      + '<div class="hero-slides">' + slides
+      + '<div class="hero-slides">' + slides + '</div>'
+      + '<div class="hero-nav">'
       + '<button class="hero-arrow prev" type="button" data-act="hero" data-v="-1" aria-label="&larr;">&lsaquo;</button>'
-      + '<button class="hero-arrow next" type="button" data-act="hero" data-v="1" aria-label="&rarr;">&rsaquo;</button>'
-      + '</div>'
       + '<div class="hero-meta">'
       + '<span class="hero-name">' + esc(nm(cur)) + '</span>'
       + '<span class="hero-price">' + esc(priceText(cur)) + '</span>'
+      + '</div>'
+      + '<button class="hero-arrow next" type="button" data-act="hero" data-v="1" aria-label="&rarr;">&rsaquo;</button>'
       + '</div></div>';
   }
 
@@ -439,7 +444,7 @@
       + '</div>'
       + heroHTML()
       + '</div>'
-      + '<div class="hero-scroll" aria-label="' + esc(L('scroll')) + '"><i aria-hidden="true"></i></div>'
+      + '<div class="hero-scroll t-micro">' + esc(L('scroll')) + '</div>'
       + '</section>'
 
       + '<section class="strips">' + stripHTML(a, 'l') + stripHTML(b, 'r') + '</section>'
