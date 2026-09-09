@@ -184,7 +184,40 @@ a, button { -webkit-tap-highlight-color: transparent; }
      сторінці горизонтальної прокрутки. */
   overflow: hidden;
 }
+/* ---------- фактура під героєм ----------
+
+   Тільки під героєм, і лише тому, що всі десерти в каруселі — з
+   вирізаним фоном. Нижче по сторінці, у стрічках, лежать звичайні
+   знімки на білому: на фактурі вони одразу проступили б білими
+   прямокутниками. Обидві плями згасають задовго до країв секції, тож
+   переходу до наступного блоку не видно.                             */
+
+.hero::before, .hero::after {
+  content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+}
+
+/* Дві розмиті світлові плями: одна за каруселлю, друга під текстом.
+   Вони не малюють нічого впізнаваного — просто прибирають відчуття
+   порожнього аркуша. */
+.hero::before {
+  background:
+    radial-gradient(72% 62% at 68% 46%, rgba(10, 10, 10, .062), rgba(10, 10, 10, 0) 70%),
+    radial-gradient(58% 58% at 17% 60%, rgba(10, 10, 10, .038), rgba(10, 10, 10, 0) 72%);
+}
+
+/* Зерно паперу. Плитка 160×160 зшивається сама (stitchTiles), тож
+   шум рахується один раз і далі просто повторюється. Маска гасить
+   його зверху й знизу, щоб межа секції не читалась різом. */
+.hero::after {
+  opacity: .045;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23g)'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
+  -webkit-mask-image: linear-gradient(180deg, transparent, #000 18%, #000 82%, transparent);
+          mask-image: linear-gradient(180deg, transparent, #000 18%, #000 82%, transparent);
+}
+
 .hero-in {
+  position: relative; z-index: 1;
   width: 100%;
   display: grid; grid-template-columns: minmax(0, 40fr) minmax(0, 60fr);
   gap: clamp(28px, 3.4vw, 60px); align-items: center;
