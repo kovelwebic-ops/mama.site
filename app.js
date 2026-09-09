@@ -400,14 +400,17 @@
     document.getElementById('main').innerHTML =
       '<section class="hero"><div class="wrap hero-in">'
       + '<div class="hero-txt">'
-      + '<span class="t-micro muted">' + esc(L('tagline')) + '</span>'
-      + '<h1 class="t-hero">SŁODKIE<br>MARZENIA</h1>'
+      + '<h1 class="t-hero">SŁODKIE MARZENIA</h1>'
       + '<p class="hero-lead">' + esc(L('heroLead')) + '</p>'
-      + '<a class="hero-cta" href="' + catHref('cakes') + '">'
-      + '<span>' + esc(L('chooseDessert')) + '</span><i aria-hidden="true">&rarr;</i></a>'
+      + '<div class="hero-btns">'
+      + '<a class="btn btn-fill" href="' + catHref('cakes') + '">' + esc(L('chooseDessert')) + '</a>'
+      + '<button class="btn btn-line" type="button" data-act="modal">' + esc(L('contacts')) + '</button>'
+      + '</div>'
       + '</div>'
       + heroHTML()
-      + '</div></section>'
+      + '</div>'
+      + '<div class="hero-scroll t-micro"><span>' + esc(L('scroll')) + '</span><i aria-hidden="true"></i></div>'
+      + '</section>'
 
       + '<section class="strips">' + stripHTML(a, 'l') + stripHTML(b, 'r') + '</section>'
 
@@ -857,9 +860,12 @@
 
     if (S.open === 'modal') {
       var item = CURRENT ? orderItemText(CURRENT) : '';
+      /* Зі сторінки товару це вікно замовлення — там під заголовком
+         стоїть сам товар. Звідусіль інакше (значок у шапці, кнопка на
+         головній) це просто контакти, і назвати його треба так само. */
       html = '<div class="modal-bg" data-act="backdrop">'
         + '<div class="modal">'
-        + '<div class="modal-head"><b>' + esc(L('order')) + '</b>'
+        + '<div class="modal-head"><b>' + esc(item ? L('order') : L('contacts')) + '</b>'
         + '<button class="sheet-close" type="button" data-act="close" aria-label="' + esc(L('close')) + '">&times;</button></div>'
         + (item ? '<div class="t-sklad muted">' + esc(L('product')) + ': <span style="color:var(--ink)">' + esc(item) + '</span></div>' : '')
         + '<div class="links">' + contactRows() + '</div>'

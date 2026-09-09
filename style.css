@@ -172,6 +172,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
    без жодної рамки, і сусідні позиції можна просто приглушити
    прозорістю, як віддалені предмети. */
 .hero {
+  position: relative;
   min-height: calc(100vh - 72px);
   min-height: calc(100svh - 72px);
   display: flex; align-items: center;
@@ -187,26 +188,61 @@ a, button { -webkit-tap-highlight-color: transparent; }
   gap: clamp(28px, 4vw, 72px); align-items: center;
 }
 
-.hero-txt { display: flex; flex-direction: column; align-items: flex-start; gap: clamp(14px, 1.6vw, 22px); }
-.hero .t-hero { font-size: clamp(40px, 5.2vw, 92px); }
+/* Текст відсунутий від краю сторінки: притиснутий до самого поля він
+   читався як службовий підпис, а не як початок розмови. */
+.hero-txt {
+  padding-left: clamp(0px, 3.4vw, 64px);
+  display: flex; flex-direction: column; align-items: flex-start;
+  gap: clamp(14px, 1.6vw, 22px);
+}
+/* Назва в один рядок — кегль підібраний так, щоб вона вміщалась у
+   свою колонку цілою й не переносилась. */
+.hero .t-hero { font-size: clamp(26px, 3.3vw, 56px); }
 .hero-lead {
   font-size: clamp(14px, 1.05vw, 17px); line-height: 1.65;
   color: var(--muted); max-width: 44ch;
 }
 
-/* Заклик у стилі референсу: підпис і кружечок зі стрілкою поруч. */
-.hero-cta {
-  margin-top: clamp(4px, 1vw, 12px);
-  display: inline-flex; align-items: center; gap: 16px;
-  font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
+.hero-btns { margin-top: clamp(4px, 1vw, 12px); display: flex; flex-wrap: wrap; gap: 12px; }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  height: 50px; padding: 0 26px; border-radius: 6px;
+  font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+  transition: background-color 160ms linear, border-color 160ms linear,
+              color 160ms linear, transform 120ms ease;
 }
-.hero-cta i {
-  display: flex; align-items: center; justify-content: center;
-  width: 46px; height: 46px; border-radius: 50%;
-  border: 1px solid var(--line); font-style: normal; font-size: 15px;
-  transition: border-color 160ms linear, transform 220ms cubic-bezier(.22, .61, .36, 1);
+.btn:active { transform: scale(.985); }
+.btn-fill { background: var(--ink); color: #FFF; }
+.btn-fill:hover { background: var(--ink-hover); color: #FFF; }
+.btn-line { border: 1px solid var(--line); }
+.btn-line:hover { border-color: var(--ink); }
+
+/* Підказка прокрутки. Майже весь час мовчить і раз на кілька секунд
+   коротко підстрибує: рух ловить око, але не тримає його. Клікати
+   нема чого, тож і подій вона не ловить. */
+.hero-scroll {
+  position: absolute; left: 50%; bottom: clamp(14px, 2.6vh, 30px);
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  color: var(--muted); opacity: .5; pointer-events: none;
+  transform: translateX(-50%);
 }
-.hero-cta:hover i { border-color: var(--ink); transform: translateX(5px); }
+.hero-scroll i {
+  display: block; width: 7px; height: 7px;
+  border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor;
+  transform: rotate(45deg);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .hero-scroll { animation: sm-nudge 6s ease-in-out infinite; }
+}
+/* translateX(-50%) повторюється в кожному кадрі: анімація підміняє
+   transform цілком, і без нього підказку зносило б управо. */
+@keyframes sm-nudge {
+  0%, 84%, 100% { transform: translate(-50%, 0); }
+  89% { transform: translate(-50%, 7px); }
+  94% { transform: translate(-50%, 0); }
+  97% { transform: translate(-50%, 3px); }
+}
 
 /* ---------- карусель ---------- */
 
