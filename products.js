@@ -197,6 +197,9 @@
     ],
     price: 10, unit: '/шт', weight: '60 г/шт',
     note: 'Замовлення від 8 шт', note_pl: 'Zamówienie od 8 szt',
+    /* Смак зефіру тут не вибирають: у складі й так написано
+       «класичний або фруктовий на вибір», і це узгоджується при
+       замовленні. Лишається тільки шоколад — він міняє фото. */
     photoVar: 'choc',
     variants: [
       {
@@ -206,10 +209,6 @@
           { label: 'Білий',    label_pl: 'Biała',   photo: 1 },
           { label: 'Темний',   label_pl: 'Gorzka',  photo: 2 }
         ]
-      },
-      {
-        id: 'flavor', label: 'Смак зефіру', label_pl: 'Smak pianki',
-        options: FL.map(function (f) { return { label: f[0], label_pl: f[3] }; })
       }
     ]
   });

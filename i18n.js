@@ -20,6 +20,7 @@
     other:       'Інші товари',
     contacts:    'Контакти',
     categories:  'Категорії',
+    home:        'Головна',
 
     /* ⚠ ЧЕРНЕТКА. Умови вигадані як заглушка — замовниця має
        підтвердити терміни, розмір передоплати й зону доставки. */
@@ -36,7 +37,10 @@
       'Торти віддаю у спеціальній упаковці'
     ],
 
-    madeToOrder: 'Кожне замовлення обговорюємо особисто',
+    /* «Особисто» читалось як обіцянка зустрітись наживо — тут ідеться
+       про те, що замовлення підбирається під людину, а не про формат
+       розмови. */
+    madeToOrder: 'Кожне замовлення обговоримо індивідуально',
 
     /* ⚠ ЧЕРНЕТКА. Підзаголовок на головній — стиснуте «про мене»:
        той самий зміст, що в блоці нижче, але в один подих. Замовниця
@@ -76,6 +80,7 @@
     other:       'Inne produkty',
     contacts:    'Kontakt',
     categories:  'Kategorie',
+    home:        'Główna',
 
     orderTerms:    'Warunki zamówienia',
     orderList: [
@@ -90,7 +95,7 @@
       'Torty wydaję w specjalnym opakowaniu'
     ],
 
-    madeToOrder: 'Każde zamówienie ustalamy osobiście',
+    madeToOrder: 'Każde zamówienie ustalimy indywidualnie',
 
     heroLead: 'Domowa cukiernia w Żywcu. Każdy tort, sernik i pudełko pianek robię ręcznie — na Twoje święto i na Twoją datę.',
     chooseDessert: 'Wybierz deser',

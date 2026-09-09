@@ -207,10 +207,14 @@
 
   function renderHeader() {
     var active = activeCat();
-    var cats = CATS.map(function (c) {
-      return '<a class="' + (c.id === active ? 'on' : '') + '" href="' + catHref(c.id) + '">'
-        + esc(nm(c)) + '</a>';
-    }).join('');
+    /* «Головна» — такий самий пункт, як розділи: без неї на головній
+       сторінці жоден пункт не підсвічений і незрозуміло, де ти. */
+    var isHome = document.body.dataset.page === 'home';
+    var cats = '<a class="' + (isHome ? 'on' : '') + '" href="index.html">' + esc(L('home')) + '</a>'
+      + CATS.map(function (c) {
+        return '<a class="' + (c.id === active ? 'on' : '') + '" href="' + catHref(c.id) + '">'
+          + esc(nm(c)) + '</a>';
+      }).join('');
 
     document.getElementById('hdr').innerHTML =
       '<div class="hdr-in">'
@@ -322,11 +326,15 @@
   var HERO_TIMER = null;
   var HERO_STEP = 5200;
 
+  /* Кільце, а не стрічка: спереду один десерт, по плечах два, решта —
+     позаду нього, в глибині. Той, що йде з лівого плеча, не вилітає за
+     екран, а відступає назад і повертається з правого боку. Тому всі
+     проміжні позиції — одна й та сама «глибина» в центрі. */
   function heroSlot(rel, n) {
     if (rel === 0) return 'is-front';
     if (rel === 1) return 'is-right';
     if (rel === n - 1) return 'is-left';
-    return (rel <= n / 2) ? 'is-far-right' : 'is-far-left';
+    return 'is-back';
   }
 
   /* Оновлюємо на місці, а не перемальовуємо: інакше нові вузли
@@ -392,15 +400,18 @@
 
     var cur = HERO_ITEMS[S.hi];
 
+    /* Стрілки прибиті до країв сцени, назва з ціною — окремим рядком
+       під тортом. Раніше вони стояли в одному ряду, і кожна довша
+       назва розсовувала стрілки вбік просто в мить, коли до них
+       тягнулися пальцем. */
     return '<div class="hero-stage">'
-      + '<div class="hero-slides">' + slides + '</div>'
-      + '<div class="hero-nav">'
-      + '<button class="hero-arrow" type="button" data-act="hero" data-v="-1" aria-label="&larr;">&lsaquo;</button>'
-      + '<span class="hero-meta">'
+      + '<div class="hero-slides">' + slides
+      + '<button class="hero-arrow prev" type="button" data-act="hero" data-v="-1" aria-label="&larr;">&lsaquo;</button>'
+      + '<button class="hero-arrow next" type="button" data-act="hero" data-v="1" aria-label="&rarr;">&rsaquo;</button>'
+      + '</div>'
+      + '<div class="hero-meta">'
       + '<span class="hero-name">' + esc(nm(cur)) + '</span>'
       + '<span class="hero-price">' + esc(priceText(cur)) + '</span>'
-      + '</span>'
-      + '<button class="hero-arrow" type="button" data-act="hero" data-v="1" aria-label="&rarr;">&rsaquo;</button>'
       + '</div></div>';
   }
 
@@ -428,7 +439,7 @@
       + '</div>'
       + heroHTML()
       + '</div>'
-      + '<div class="hero-scroll t-micro"><span>' + esc(L('scroll')) + '</span><i aria-hidden="true"></i></div>'
+      + '<div class="hero-scroll" aria-label="' + esc(L('scroll')) + '"><i aria-hidden="true"></i></div>'
       + '</section>'
 
       + '<section class="strips">' + stripHTML(a, 'l') + stripHTML(b, 'r') + '</section>'
@@ -608,9 +619,10 @@
       + variantsHTML(p)
       + '<button class="btn-order" type="button" data-act="modal">' + esc(L('order')) + '</button>'
       + '<span class="made-to-order muted">' + esc(L('madeToOrder')) + '</span>'
-      /* на мобільному склад стоїть між кнопкою і соцмережами, на десктопі — у лівій колонці */
+      /* Списку контактів тут більше немає: усю цю роботу робить сама
+         кнопка «Замовити» — вона їх і відкриває. На десктопі склад
+         стоїть у лівій колонці, на мобільному — тут. */
       + skladHTML(p, 'mob')
-      + '<div class="links">' + contactRows() + '</div>'
       + '</div>'
 
       + '</section>'
@@ -831,9 +843,10 @@
     var html = '';
 
     if (S.open === 'menu') {
-      var links = CATS.map(function (c) {
-        return '<a href="' + catHref(c.id) + '">' + esc(nm(c)) + '</a>';
-      }).join('');
+      var links = '<a href="index.html">' + esc(L('home')) + '</a>'
+        + CATS.map(function (c) {
+          return '<a href="' + catHref(c.id) + '">' + esc(nm(c)) + '</a>';
+        }).join('');
 
       /* UA/PL стоїть у верхньому рядку меню, поруч із хрестиком: у
          підвалі меню, під контактами, його просто не знаходили. */
