@@ -134,15 +134,25 @@
 
   /* ---------------- контакти ---------------- */
 
+  /* Шукаємо контакт за id, а не за місцем у масиві: порядок у
+     products.js — це порядок показу, і його можуть переставити, а
+     посилання від того не має вести в інший месенджер. */
+  function contactHref(id) {
+    for (var i = 0; i < CONTACTS.length; i++) {
+      if (CONTACTS[i].id === id) return CONTACTS[i].href || '';
+    }
+    return '';
+  }
+
   function cAttrs(c) {
     return c.href
       ? ' href="' + esc(c.href) + '" target="_blank" rel="noopener"'
       : ' href="#" aria-disabled="true"';
   }
   /* Просто підпис: сама адреса живе в href, поки контакту немає —
-     лінк приглушений. Що це посилання, показує підкреслення, а не
-     стрілка: стрілок на сторінці набиралось по три-чотири підряд і
-     вони читались як список кроків, а не як контакти. */
+     лінк приглушений. Ознака посилання тут — підкреслення при
+     наведенні: постійних рисок під кожним рядком свідомо немає,
+     стовпчик із ними читався як закреслений список. */
   function contactRows() {
     return CONTACTS.map(function (c) {
       return '<a class="t-micro' + (c.href ? '' : ' is-empty') + '"' + cAttrs(c) + '>'
@@ -186,6 +196,11 @@
       + '</span></a>';
   }
 
+  /* Те саме, але завжди ліниво: для сіток, що лежать нижче згину —
+     «Інші товари» під сторінкою товару й другий-третій розділ зефіру.
+     Там жадібне завантаження лише відбирало канал у головного фото. */
+  function lazyCard(p) { return cardHTML(p, EAGER_CARDS); }
+
   /* ---------------- шапка / футер ---------------- */
 
   function langHTML() {
@@ -224,7 +239,7 @@
       + '</div>'
       + '<a class="mark" href="index.html">SŁODKIE MARZENIA</a>'
       + '<div class="hdr-r">'
-      /* На телефоні лупа ховається, а конверт лишається: пошук
+      /* На телефоні лупа ховається, а слухавка лишається: пошук
          переїжджає першим рядком у меню під бургером, тож у шапці
          справа стоїть один зрозумілий значок, а не два дрібних. */
       + '<button class="icon hdr-search" type="button" data-act="search" aria-label="' + esc(L('search')) + '">' + ICON_SEARCH + '</button>'
@@ -268,16 +283,16 @@
       + '<div class="ftr-links-row">' + contactRows() + '</div>'
       + '</div>'
       + '</div>'
-      /* Копірайт стоїть окремим рядком під усіма колонками, а не в
-         колонці бренду: це службовий рядок про весь сайт, і в колонці
-         він читався як частина контактів кондитерки. Підпис автора —
-         на тому ж рівні праворуч. */
       /* Примітка про оброблені фото. Стоїть у футері й найтихішим
          кеглем: сказати треба чесно, але це не те, з чим людина має
          зустрітись першим ділом на головній. */
       + '<div class="ftr-note">' + esc(L('aiNote')) + ' '
-      + '<a href="' + esc(CONTACTS[0].href) + '" target="_blank" rel="noopener">Facebook</a>'
+      + '<a href="' + esc(contactHref('facebook')) + '" target="_blank" rel="noopener">Facebook</a>'
       + '</div>'
+      /* Копірайт стоїть окремим рядком під усіма колонками, а не в
+         колонці бренду: це службовий рядок про весь сайт, і в колонці
+         він читався як частина контактів кондитерки. Підпис автора —
+         на тому ж рівні праворуч. */
       + '<div class="ftr-bottom">'
       + '<span class="ftr-copy">' + esc(copy) + '</span>'
       + '<span class="ftr-copy ftr-credit">Created by '
@@ -311,9 +326,10 @@
   }
 
   /* ---------------- карусель на головній ----------------
-     П'ять десертів по колу: один спереду, два приглушені з боків,
-     решта чекає за кадром. Позицію кожного задає лише клас, тож
-     переїзд анімує CSS, а нам лишається переставляти класи. */
+     Десерти по колу: один спереду, два приглушені по плечах, решта —
+     в глибині за переднім. Скільки їх — вирішує список HERO_CUT
+     нижче. Позицію кожного задає лише клас, тож переїзд анімує CSS,
+     а нам лишається переставляти класи. */
 
   /* Для каруселі є окремі знімки з вирізаним фоном (папка «Без фону»,
      WebP з альфа-каналом, названі за id товару). Саме вони дають тортам
@@ -406,10 +422,6 @@
 
     var cur = HERO_ITEMS[S.hi];
 
-    /* Стрілки прибиті до країв сцени, назва з ціною — окремим рядком
-       під тортом. Раніше вони стояли в одному ряду, і кожна довша
-       назва розсовувала стрілки вбік просто в мить, коли до них
-       тягнулися пальцем. */
     /* Стрілки стоять під тортом, обабіч назви, але не в одному потоці
        з нею: вони прибиті на сталу відстань від центру, тож довша
        назва їх не зсуває. Сама назва обмежена по ширині, щоб ніколи
@@ -511,12 +523,14 @@
     var subs = SUBCATS[catId];
     var body;
     if (subs) {
-      body = subs.map(function (s) {
+      body = subs.map(function (s, si) {
         var part = items.filter(function (p) { return p.sub === s.id; });
         if (!part.length) return '';
+        /* Жадібно вантажимо тільки перший розділ: решта вже під згином. */
+        var card = si === 0 ? cardHTML : lazyCard;
         return '<div class="sub">'
           + '<span class="sub-head t-micro">' + esc(nm(s)) + '</span>'
-          + '<div class="grid">' + part.map(cardHTML).join('') + '</div></div>';
+          + '<div class="grid">' + part.map(card).join('') + '</div></div>';
       }).join('');
     } else {
       body = '<div class="grid">' + items.map(cardHTML).join('') + '</div>';
@@ -625,7 +639,7 @@
       + '<div class="pdp-r">'
       + '<div>'
       + '<div class="price">' + esc(priceText(p, S.sel)) + '</div>'
-      + (note ? '<div class="t-sklad muted" style="margin-top:8px">' + esc(note) + '</div>' : '')
+      + (note ? '<div class="t-sklad muted pdp-note">' + esc(note) + '</div>' : '')
       + '</div>'
       + variantsHTML(p)
       + '<button class="btn-order" type="button" data-act="modal">' + esc(L('order')) + '</button>'
@@ -640,7 +654,7 @@
 
       + (others.length
         ? '<section class="wrap others"><h2 class="t-sect rv">' + esc(L('other')) + '</h2>'
-        + '<div class="grid">' + others.map(cardHTML).join('') + '</div></section>'
+        + '<div class="grid">' + others.map(lazyCard).join('') + '</div></section>'
         : '');
 
     bindGallery();
@@ -649,8 +663,8 @@
 
   /* ---------------- перехід на сторінку товару ----------------
      Плитка кольору фону затягує екран, під нею відбувається перехід,
-     на новій сторінці вона розходиться. Тільки десктоп: на телефоні
-     перехід і так миттєвий, а зайвий шар лише з'їдав би батарею.  */
+     на новій сторінці вона розходиться. Працює й на телефоні — там
+     лише коротше, див. tileIn() нижче. */
 
   var TILE_FLAG = 'sm-tiles';
 
@@ -868,7 +882,7 @@
         + '<button class="menu-search t-micro" type="button" data-act="search">'
         + ICON_SEARCH + '<span>' + esc(L('search')) + '</span></button>'
         + '<nav class="menu-links">' + links + '</nav>'
-        + '<div class="links" style="margin-top:48px">' + contactRows() + '</div>'
+        + '<div class="links menu-links-contacts">' + contactRows() + '</div>'
         + '</div>';
     }
 
@@ -891,7 +905,7 @@
       var hint = res == null ? L('searchHint') : (res.length ? plural(res.length) : L('nothing'));
 
       html = '<div class="sheet">'
-        + '<div class="wrap" style="padding:0">'
+        + '<div class="wrap search-wrap">'
         + '<div class="sheet-bar"><button class="sheet-close" type="button" data-act="close" aria-label="' + esc(L('close')) + '">&times;</button></div>'
         + '<div class="search-field">' + ICON_SEARCH
         + '<input class="search-input" id="sq" type="text" value="' + esc(S.q) + '" placeholder="' + esc(L('search')) + '" autocomplete="off">'
@@ -910,7 +924,7 @@
         + '<div class="modal">'
         + '<div class="modal-head"><b>' + esc(item ? L('order') : L('contacts')) + '</b>'
         + '<button class="sheet-close" type="button" data-act="close" aria-label="' + esc(L('close')) + '">&times;</button></div>'
-        + (item ? '<div class="t-sklad muted">' + esc(L('product')) + ': <span style="color:var(--ink)">' + esc(item) + '</span></div>' : '')
+        + (item ? '<div class="t-sklad muted">' + esc(L('product')) + ': <span class="modal-item">' + esc(item) + '</span></div>' : '')
         + '<div class="links">' + contactRows() + '</div>'
         + '</div></div>';
     }

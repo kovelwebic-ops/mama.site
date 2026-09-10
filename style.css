@@ -157,7 +157,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
 .burger { display: none; flex-direction: column; gap: 4px; width: 17px; }
 .burger span { display: block; height: 1.5px; background: var(--ink); }
 
-/* На телефоні в шапці лишається один значок — конверт (контакти),
+/* На телефоні в шапці лишається один значок — слухавка (контакти),
    бо це головна дія сайту. Пошук нікуди не зник: він першим рядком
    у меню під бургером. */
 @media (max-width: 1100px) {
@@ -1057,3 +1057,12 @@ a, button { -webkit-tap-highlight-color: transparent; }
 @media (prefers-reduced-motion: reduce) {
   .tiles { display: none; }
 }
+
+/* ---------- дрібні службові класи ----------
+   Раніше ці чотири правила жили інлайновими style= просто в розмітці.
+   Винесені сюди, щоб уся геометрія лишалась в одному місці. */
+
+.pdp-note { margin-top: 8px; }
+.menu-links-contacts { margin-top: 48px; }
+.search-wrap { padding: 0; }
+.modal-item { color: var(--ink); }
