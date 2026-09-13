@@ -762,6 +762,15 @@ a, button { -webkit-tap-highlight-color: transparent; }
 .sheet-bar { height: 72px; display: flex; align-items: center; justify-content: flex-end; }
 .sheet-close { font-size: 26px; line-height: 1; }
 
+/* Сам знак дрібний, але торкатись можна квадрата 44×44 — раніше
+   ціль була 17×26 і на телефоні в неї доводилось цілитись. Від'ємні
+   марджини тримають знак на тому самому місці й не роздувають
+   висоту заголовка у вікні контактів. */
+.sheet-close {
+  display: flex; align-items: center; justify-content: center;
+  width: 44px; height: 44px; margin: -9px -13px -9px 0;
+}
+
 /* У меню верхній рядок ділять перемикач мови й хрестик. */
 .sheet-bar-menu { justify-content: space-between; }
 .lang-menu button { font-size: 13px; padding: 10px 0; }
@@ -847,6 +856,19 @@ a, button { -webkit-tap-highlight-color: transparent; }
      майже 100px порожнечі (11vh), тож усе з'їжджало вниз. Тепер блок
      піднятий, а звільнена висота віддана фото. */
   .pdp { margin-top: clamp(14px, 2.2vh, 26px); gap: 18px; }
+
+  /* Секція товару займає цілий перший екран (мінус шапка й відступ
+     над нею), тож склад, що йде наступним блоком, гарантовано
+     починається вже за згином. align-content: start обов'язковий —
+     без нього сітка розтягнула б рядки на всю висоту й розсунула
+     назву, фото й ціну. Якщо вміст сам вищий за екран (два блоки
+     вибору), min-height нічого не робить. */
+  .pdp {
+    min-height: calc(100vh - 72px - clamp(14px, 2.2vh, 26px));
+    min-height: calc(100svh - 72px - clamp(14px, 2.2vh, 26px));
+    align-content: start;
+  }
+  .pdp-sklad { margin-top: 28px; }
   .pdp-l { gap: 14px; }
   .pdp-r { gap: 14px; }
 
@@ -958,6 +980,21 @@ a, button { -webkit-tap-highlight-color: transparent; }
      тим, заради чого сюди прийшли. Лишаємо її для читалок і пошуку. */
   .hero-in { grid-template-columns: 1fr; gap: clamp(20px, 4vh, 34px); }
   .hero-stage { order: -1; }
+
+  /* Відступ тексту зліва задуманий для десктопа, де текст стоїть
+     поруч із каруселлю. У колонку він лише зсував опис і кнопки на
+     13px відносно каруселі й решти сторінки. */
+  .hero-txt { padding-left: 0; }
+
+  /* Вміст притиснутий догори, а не відцентрований: при центруванні над
+     каруселлю лишалось ~150px порожнечі, і перший екран починався з
+     білого поля. Тепер вільне місце збирається внизу, над підказкою. */
+  .hero { align-items: flex-start; padding-top: clamp(12px, 2.4vh, 28px); }
+
+  /* Дві кнопки однієї ширини на весь рядок — розміром 162 і 129px
+     поруч вони виглядали випадково. */
+  .hero-btns { width: 100%; }
+  .hero-btns .btn { flex: 1 1 0; padding: 0 12px; }
 
   .hero .t-hero {
     position: absolute; width: 1px; height: 1px;
