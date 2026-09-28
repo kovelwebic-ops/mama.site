@@ -119,6 +119,23 @@ a, button { -webkit-tap-highlight-color: transparent; }
 }
 .hdr.is-scrolled { border-bottom-color: var(--line); }
 
+/* Поки шапка лежить над фото героя — вона прозора й біла. Клас ставить
+   і знімає watchHero() в app.js. Правило стоїть після .is-scrolled
+   навмисно: обидва класи якийсь час висять разом, а над фото лінія під
+   шапкою зайва. */
+.hdr.is-over { background: transparent; border-bottom-color: transparent; }
+.hdr.is-over .mark,
+.hdr.is-over .icon,
+.hdr.is-over .hdr-cats a.on,
+.hdr.is-over .lang button.on { color: #FFF; }
+.hdr.is-over .hdr-cats a,
+.hdr.is-over .lang button { color: rgba(255, 255, 255, .72); }
+.hdr.is-over .mark:hover,
+.hdr.is-over .hdr-cats a:hover,
+.hdr.is-over .lang button:hover { color: #FFF; }
+.hdr.is-over .lang .sep { color: rgba(255, 255, 255, .38); }
+.hdr.is-over .burger span { background: #FFF; }
+
 .hdr-in {
   max-width: var(--max); width: 100%; margin: 0 auto; padding: 0 var(--pad);
   display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 16px;
@@ -167,75 +184,63 @@ a, button { -webkit-tap-highlight-color: transparent; }
 
 /* ---------- головна ---------- */
 
-/* Герой: зліва текст, справа карусель десертів.
-
-   Карусель тримається на тому, що всі знімки зняті на однаковому
-   білому тлі — воно зливається з фоном сторінки, тож торт «плаває»
-   без жодної рамки, і сусідні позиції можна просто приглушити
-   прозорістю, як віддалені предмети. */
+/* Герой — знімок кондитерки на весь перший екран. Від'ємний марджин
+   заводить його під шапку: шапка лишається в потоці (і далі липне при
+   прокрутці), але фото починається від самого верху вікна. Верхній
+   падінг повертає вміст із-під шапки. Тло секції — темний тон самого
+   кадру: поки фото вантажиться, замість білого спалаху видно колір,
+   у який воно й проявиться. */
 .hero {
-  position: relative;
-  min-height: calc(100vh - 72px);
-  min-height: calc(100svh - 72px);
+  position: relative; overflow: hidden;
+  margin-top: -72px;
+  min-height: 100vh; min-height: 100svh;
   display: flex; align-items: center;
-  padding: clamp(24px, 4vh, 56px) 0;
-  /* Бокові десерти навмисно виходять за край екрана — так видно, що
-     коло триває далі. Обрізаємо їх тут, щоб цей виступ не додавав
-     сторінці горизонтальної прокрутки. */
-  overflow: hidden;
+  padding: 72px 0 clamp(56px, 8vh, 90px);
+  background: #3E4F5E; color: #FFF;
 }
-/* ---------- фактура під героєм ----------
 
-   Тільки під героєм, і лише тому, що всі десерти в каруселі — з
-   вирізаним фоном. Нижче по сторінці, у стрічках, лежать звичайні
-   знімки на білому: на фактурі вони одразу проступили б білими
-   прямокутниками. Обидві плями згасають задовго до країв секції, тож
-   переходу до наступного блоку не видно.                             */
+/* Вона стоїть у правій третині кадру (торт починається з ~61% ширини,
+   обличчя на ~79%). Тримаємось її боку: на будь-якій пропорції вікна
+   обрізається порожнє тло зліва, а не вона. */
+.hero-bg {
+  position: absolute; inset: 0; z-index: 0;
+  width: 100%; height: 100%; object-fit: cover;
+  object-position: 72% center;
+}
 
+/* Затемнення. Тло під текстом у середньому #7C8998: білий текст на
+   ньому дає лише 3.5:1, у найсвітліших місцях 2.4:1. Ліва заслона
+   підтягує це до ≥5:1 і згасає до 58% ширини — раніше, ніж
+   починається торт. Верхня — під шапку з дрібними білими пунктами.
+   Колір не чорний, а темний синьо-сірий тон самого знімка, тож
+   заслона читається як світло кадру, а не як плівка поверх нього. */
 .hero::before, .hero::after {
-  content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  content: ''; position: absolute; z-index: 1; pointer-events: none;
 }
-
-/* Дві розмиті світлові плями: одна за каруселлю, друга під текстом.
-   Вони не малюють нічого впізнаваного — просто прибирають відчуття
-   порожнього аркуша. */
 .hero::before {
-  background:
-    radial-gradient(72% 62% at 68% 46%, rgba(10, 10, 10, .062), rgba(10, 10, 10, 0) 70%),
-    radial-gradient(58% 58% at 17% 60%, rgba(10, 10, 10, .038), rgba(10, 10, 10, 0) 72%);
+  inset: 0;
+  background: linear-gradient(90deg,
+    rgba(18, 24, 33, .62) 0%, rgba(18, 24, 33, .5) 42%, rgba(18, 24, 33, 0) 58%);
 }
-
-/* Зерно паперу. Плитка 160×160 зшивається сама (stitchTiles), тож
-   шум рахується один раз і далі просто повторюється. Маска гасить
-   його зверху й знизу, щоб межа секції не читалась різом. */
 .hero::after {
-  opacity: .045;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23g)'/%3E%3C/svg%3E");
-  background-size: 160px 160px;
-  -webkit-mask-image: linear-gradient(180deg, transparent, #000 18%, #000 82%, transparent);
-          mask-image: linear-gradient(180deg, transparent, #000 18%, #000 82%, transparent);
+  left: 0; right: 0; top: 0; height: 180px;
+  background: linear-gradient(180deg, rgba(18, 24, 33, .38), rgba(18, 24, 33, 0));
 }
 
-.hero-in {
-  position: relative; z-index: 1;
-  width: 100%;
-  display: grid; grid-template-columns: minmax(0, 40fr) minmax(0, 60fr);
-  gap: clamp(28px, 3.4vw, 60px); align-items: center;
-}
+.hero-in { position: relative; z-index: 2; width: 100%; }
 
-/* Текст відсунутий від краю сторінки: притиснутий до самого поля він
-   читався як службовий підпис, а не як початок розмови. */
+/* Текст відсунутий від краю сторінки й обмежений по ширині, щоб на
+   будь-якому десктопі лишатись над порожнім тлом, лівіше за торт. */
 .hero-txt {
   padding-left: clamp(0px, 3.4vw, 64px);
+  max-width: 600px;
   display: flex; flex-direction: column; align-items: flex-start;
   gap: clamp(14px, 1.6vw, 22px);
 }
-/* Назва в один рядок — кегль підібраний так, щоб вона вміщалась у
-   свою колонку цілою й не переносилась. */
-.hero .t-hero { font-size: clamp(26px, 3.1vw, 52px); }
+.hero .t-hero { font-size: clamp(30px, 3.6vw, 60px); }
 .hero-lead {
-  font-size: clamp(14px, 1.05vw, 17px); line-height: 1.65;
-  color: var(--muted); max-width: 44ch;
+  font-size: clamp(14px, 1.1vw, 18px); line-height: 1.65;
+  color: rgba(255, 255, 255, .9); max-width: 42ch;
 }
 
 .hero-btns { margin-top: clamp(4px, 1vw, 12px); display: flex; flex-wrap: wrap; gap: 12px; }
@@ -248,24 +253,19 @@ a, button { -webkit-tap-highlight-color: transparent; }
               color 160ms linear, transform 120ms ease;
 }
 .btn:active { transform: scale(.985); }
-.btn-fill { background: var(--ink); color: #FFF; }
-.btn-fill:hover { background: var(--ink-hover); color: #FFF; }
-/* Обводка грубша за волосяну: поруч із чорною заливкою сусідньої
-   кнопки тонка риска просто губилась, і друга дія читалась як текст. */
-.btn-line { border: 2px solid #D0D0D0; }
-.btn-line:hover { border-color: var(--ink); }
+/* Кнопки стоять на фото, тож інвертовані: біла заливка й біла обводка.
+   Чорна кнопка на темній заслоні просто губилась би. */
+.btn-fill { background: #FFF; color: var(--ink); }
+.btn-fill:hover { background: rgba(255, 255, 255, .86); color: var(--ink); }
+.btn-line { border: 2px solid rgba(255, 255, 255, .72); color: #FFF; }
+.btn-line:hover { border-color: #FFF; color: #FFF; }
 
-/* Підказка прокрутки. Майже весь час мовчить і раз на кілька секунд
-   коротко підстрибує: рух ловить око, але не тримає його. Клікати
-   нема чого, тож і подій вона не ловить. */
-/* Просто слово. Кружечок зі стрілкою тут сперечався зі стрілками
-   каруселі трохи вище — виходило три однакові кнопки поспіль, з яких
-   тільки дві щось роблять. */
+/* Підказка прокрутки — просто слово. Майже весь час мовчить і раз на
+   кілька секунд коротко підстрибує: рух ловить око, але не тримає.
+   Клікати нема чого, тож і подій вона не ловить. */
 .hero-scroll {
-  position: absolute; left: 50%; bottom: clamp(14px, 2.6vh, 30px);
-  color: var(--muted); pointer-events: none;
-  /* Дрібніше за решту мікротексту: це найтихіша річ на екрані, вона
-     має ловитись боковим зором і не більше. */
+  position: absolute; z-index: 2; left: 50%; bottom: clamp(14px, 2.6vh, 30px);
+  color: rgba(255, 255, 255, .75); pointer-events: none;
   font-size: 9px; letter-spacing: .1em;
   transform: translateX(-50%);
 }
@@ -281,125 +281,33 @@ a, button { -webkit-tap-highlight-color: transparent; }
   97% { transform: translate(-50%, 3px); }
 }
 
-/* ---------- карусель ---------- */
+/* Вузький екран — телефон і планшет у портреті. Тут кадр ріже вузьку
+   вертикальну смугу, і тла зліва від неї майже не лишається, тож
+   текст іде вниз, під торт. 81% — центр відрізка «лівий край торта ↔
+   праве плече»: так у кадр влазять і торт, і обличчя на 375×667,
+   390×844 і 430×932.
 
-/* Передній десерт опущений трохи нижче за сусідів — так він читається
-   як найближчий до глядача, а не як третій у ряду. Рядок з назвою
-   з'їжджає на стільки ж, щоб відстань під тортом лишалась тією самою. */
-.hero-stage { min-width: 0; --drop: 14px; }
-
-/* Усі кадри лежать один на одному, а місце в «колі» їм дає лише
-   клас: так перехід між позиціями анімується сам, без перебудови
-   розмітки. */
-/* Рамка кадру більше не квадрат. Знімки обрізані впритул до десерту
-   (у файлі не лишилось прозорих полів), а самі торти лежать упоперек
-   — співвідношення від 1,25 до 1,7. Рамка 1,3 близька до найвищих із
-   них, тож вони заповнюють її майже цілком, а найширші впираються в
-   ширину. */
-/* Розмір задає ширина сцени, а не висота вікна: рамка тепер помітно
-   нижча за ширину, тож міряти її у vh — значить дарма стискати торт
-   на широких, але невисоких екранах. Низькі вікна ловить окремий
-   запит нижче. */
-/* Одиниця тут саме vw, а не відсоток: із цієї змінної рахується і
-   ширина кадру, і його висота, а відсоток у висоті міряється від
-   батька — висота якого сама залежить від змінної, і вся конструкція
-   складається в нуль. */
-.hero-slides {
-  --w: min(580px, 42vw);
-  --sh: calc(var(--w) / 1.3);
-  position: relative; height: var(--sh);
-}
-@media (max-height: 820px) { .hero-slides { --w: min(510px, 42vw); } }
-@media (max-height: 700px) { .hero-slides { --w: min(430px, 42vw); } }
-
-/* Кадр міряється від власної ширини, а не від ширини сцени: зсуви
-   задані у відсотках від нього, і якби кадр був завширшки з усю сцену,
-   бокові десерти від'їжджали б за екран замість того, щоб визирати
-   з-за переднього. */
-.hero-slide {
-  position: absolute; top: 0;
-  left: 50%; width: var(--w); height: var(--sh); margin-left: calc(var(--w) / -2);
-  display: flex; align-items: flex-end; justify-content: center;
-  /* Зменшуємо від низу, а не від центру, щоб усі три десерти стояли
-     на одній лінії, як на полиці. */
-  transform-origin: center bottom;
-  transition: transform 640ms cubic-bezier(.22, .61, .36, 1),
-              opacity 640ms cubic-bezier(.22, .61, .36, 1);
-  will-change: transform, opacity;
-}
-/* Низом до низу рамки. Що б не лишилось вільного від пропорцій —
-   іде вгору, у порожнє поле, а не між тортом і його назвою. */
-.hero-slide img { width: 100%; height: 100%; object-fit: contain; object-position: center bottom; }
-
-.hero-slide.is-front { transform: translateY(var(--drop)) scale(1); opacity: 1;  z-index: 3; }
-.hero-slide.is-right { transform: translateX(44%) scale(.62);  opacity: .5; z-index: 2; }
-.hero-slide.is-left  { transform: translateX(-44%) scale(.62); opacity: .5; z-index: 2; }
-
-/* Глибина кільця. Десерт, що йде з плеча, повертається в центр і
-   меншає — тобто відступає ЗА передній, а не вилітає за екран; звідти
-   ж він і виходить на протилежне плече. Саме це робить рух круговим,
-   а не «проїхав і зник». */
-.hero-slide.is-back {
-  transform: translateX(0) scale(.42);
-  opacity: 0; z-index: 1; pointer-events: none;
-}
-
-/* Рядок під тортом: назва по центру, стрілки обабіч. Стрілки не в
-   потоці — вони на сталій відстані від центру, тож назва будь-якої
-   довжини їх не рухає. */
-.hero-nav {
-  position: relative;
-  margin-top: calc(var(--drop) + clamp(10px, 1.4vw, 18px));
-  min-height: 44px;
-  display: flex; align-items: center; justify-content: center;
-}
-.hero-arrow {
-  position: absolute; top: 50%; left: 50%;
-  width: 34px; height: 34px; border-radius: 50%;
-  border: 1px solid var(--line); background: var(--bg);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 17px; line-height: 1;
-  transition: border-color 140ms linear, color 140ms linear;
-}
-.hero-arrow.prev { transform: translate(calc(-50% - 120px), -50%); }
-.hero-arrow.next { transform: translate(calc(-50% + 120px), -50%); }
-.hero-arrow:hover { border-color: var(--ink); }
-
-/* Ширину назви обмежуємо навмисно: так вона фізично не дотягнеться до
-   стрілок і в найдовшому випадку просто перенесеться в два рядки.
-   190px — найдовша назва в каталозі («Червоний оксамит») плюс запас. */
-.hero-meta { text-align: center; max-width: 190px; }
-.hero-name  { display: block; font-size: 15px; font-weight: 600; line-height: 1.3; }
-.hero-price { display: block; font-size: 14px; color: var(--muted); margin-top: 3px; }
-
-@media (max-height: 780px) { .hero .t-hero { font-size: clamp(36px, 6vh, 76px); } }
-@media (prefers-reduced-motion: reduce) { .hero-slide { transition: none; } }
-
-/* рухомі стрічки */
-.strips { margin-top: clamp(48px, 7vw, 96px); display: flex; flex-direction: column; gap: 40px; }
-.strip  { overflow: hidden; }
-.strip-track { display: flex; gap: 40px; width: max-content; }
-.strip-half  { display: flex; gap: 40px; }
-.strip img { width: 260px; height: 260px; object-fit: contain; flex: 0 0 auto; }
-
-/* Повільний, майже непомітний хід — стрічка має бути тлом, а не
-   атракціоном. Вона живе сама по собі: не спиняється під курсором і
-   не гортається руками, тож цикл ніколи не «доїжджає до кінця».
-   Тому й pointer-events прибрано — на стрічку неможливо натрапити. */
-.strip { pointer-events: none; }
-.strip-l .strip-track { animation: sm-left  90s linear infinite; }
-.strip-r .strip-track { animation: sm-right 105s linear infinite; }
-
-@keyframes sm-left  { from { transform: translate3d(0,0,0); }                 to { transform: translate3d(calc(-50% - 20px),0,0); } }
-@keyframes sm-right { from { transform: translate3d(calc(-50% - 20px),0,0); } to { transform: translate3d(0,0,0); } }
-
-@media (max-width: 640px) { .strip img { width: 180px; height: 180px; } }
-
-/* Якщо рух вимкнено системно, стрічка стоїть — тоді єдиний спосіб
-   побачити решту фото це прогорнути її, тож повертаємо їй події. */
-@media (prefers-reduced-motion: reduce) {
-  .strip { overflow-x: auto; pointer-events: auto; }
-  .strip-track { animation: none !important; }
+   Внизу кадру — біла сукня, і білий текст на ній без затемнення має
+   1.8:1. Тому нижня заслона тут щільна: згасає вище за середину, щоб
+   обличчя й торт лишались у світлій частині кадру. Назву не
+   повторюємо — вона вже стоїть у шапці; у розмітці лишається для
+   читалок і пошуку. */
+@media (max-width: 900px) {
+  .hero-bg { object-position: 81% center; }
+  .hero { align-items: flex-end; }
+  .hero::before {
+    background: linear-gradient(180deg,
+      rgba(18, 24, 33, 0) 54%, rgba(18, 24, 33, .72) 74%, rgba(18, 24, 33, .86) 100%);
+  }
+  .hero-txt { padding-left: 0; max-width: none; }
+  .hero-lead { max-width: none; }
+  .hero-btns { width: 100%; }
+  .hero-btns .btn { flex: 1 1 0; padding: 0 12px; }
+  .hero .t-hero {
+    position: absolute; width: 1px; height: 1px;
+    margin: -1px; padding: 0; overflow: hidden;
+    clip-path: inset(50%); white-space: nowrap;
+  }
 }
 
 /* ---------- блок «про кондитерку» (головна) ---------- */
@@ -971,41 +879,6 @@ a, button { -webkit-tap-highlight-color: transparent; }
 
 @media (max-width: 640px) {
 
-  /* Герой на телефоні поки просто складається в колонку: карусель
-     робилась під десктоп, під вузький екран її ще належить окремо
-     обіграти. */
-  /* На телефоні порядок інший: спершу самі десерти, під ними опис,
-     кнопки — в самому низу. Назву не повторюємо — вона вже стоїть у
-     шапці, а другий раз тим самим шрифтом займала пів екрана перед
-     тим, заради чого сюди прийшли. Лишаємо її для читалок і пошуку. */
-  .hero-in { grid-template-columns: 1fr; gap: clamp(20px, 4vh, 34px); }
-  .hero-stage { order: -1; }
-
-  /* Відступ тексту зліва задуманий для десктопа, де текст стоїть
-     поруч із каруселлю. У колонку він лише зсував опис і кнопки на
-     13px відносно каруселі й решти сторінки. */
-  .hero-txt { padding-left: 0; }
-
-  /* Вміст притиснутий догори, а не відцентрований: при центруванні над
-     каруселлю лишалось ~150px порожнечі, і перший екран починався з
-     білого поля. Тепер вільне місце збирається внизу, над підказкою. */
-  .hero { align-items: flex-start; padding-top: clamp(12px, 2.4vh, 28px); }
-
-  /* Дві кнопки однієї ширини на весь рядок — розміром 162 і 129px
-     поруч вони виглядали випадково. */
-  .hero-btns { width: 100%; }
-  .hero-btns .btn { flex: 1 1 0; padding: 0 12px; }
-
-  .hero .t-hero {
-    position: absolute; width: 1px; height: 1px;
-    margin: -1px; padding: 0; overflow: hidden;
-    clip-path: inset(50%); white-space: nowrap;
-  }
-
-  /* Міняємо саме --w, а не height: із неї рахується й ширина кадру,
-     інакше він лишається десктопним і вилазить за екран. */
-  .hero-slides { --w: min(300px, 76vw); }
-  .hero-lead { max-width: none; }
   .hero-scroll { font-size: 8px; }
 
   /* Порядок керування: спершу чіпи категорій, сортування під ними

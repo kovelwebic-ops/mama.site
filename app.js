@@ -19,7 +19,6 @@
     sort: 'name',
     q: '',
     gi: 0,          // індекс поточного фото в галереї
-    hi: 0,          // активний десерт у каруселі на головній
     sel: {},        // вибрані варіанти на сторінці товару
     open: null,     // 'menu' | 'search' | 'modal' | null
     ftr: {}         // розгорнуті блоки умов у футері (тільки мобільна)
@@ -302,17 +301,6 @@
 
   /* ---------------- головна ---------------- */
 
-  function stripHTML(items, dir) {
-    var half = items.map(function (p) {
-      return '<img src="' + esc(p.photos[0]) + '" alt="" loading="lazy">';
-    }).join('');
-    return '<div class="strip strip-' + dir + '">'
-      + '<div class="strip-track">'
-      + '<div class="strip-half">' + half + '</div>'
-      + '<div class="strip-half" aria-hidden="true">' + half + '</div>'
-      + '</div></div>';
-  }
-
   /* Блок «про кондитерку»: фото і текст міняються місцями через рядок.
      Замість фото поки рамка-заглушка — щоб замінити, постав на її
      місце <img class="about-ph" src="..."> з тим самим класом. */
@@ -325,153 +313,34 @@
       + '</div></div>';
   }
 
-  /* ---------------- карусель на головній ----------------
-     Десерти по колу: один спереду, два приглушені по плечах, решта —
-     в глибині за переднім. Скільки їх — вирішує список HERO_CUT
-     нижче. Позицію кожного задає лише клас, тож переїзд анімує CSS,
-     а нам лишається переставляти класи. */
+  /* Герой — знімок самої кондитерки на весь перший екран. Вона стоїть
+     у правій третині кадру, ліва частина — рівне тло, тож текст іде
+     туди й нікого не перекриває. Кадр знятий із запасом: на телефоні
+     з нього вирізається вузька вертикальна смуга довкола неї й торта
+     (див. object-position у style.css). Шапка на цьому екрані лежить
+     поверх фото й біла — див. watchHero(). */
+  var HERO_PHOTO = 'hero.jpg';
 
-  /* Для каруселі є окремі знімки з вирізаним фоном (папка «Без фону»,
-     WebP з альфа-каналом, названі за id товару). Саме вони дають тортам
-     стояти внапуск: у звичайного JPG білий квадрат накривав би сусідів
-     невидимим прямокутником, зрізаючи їх на дві третини.
-
-     Список нарощується сам: щойно в папці з'явиться ще один id —
-     досить дописати його сюди, і десерт стане в коло на своє місце за
-     порядком каталогу. */
-  var HERO_CUT_DIR = 'Без фону/';
-  var HERO_CUT = ['cake1', 'cake2', 'cake3', 'cake4', 'cake5', 'cake7', 'cake17'];
-
-  function heroPhoto(p) { return encodeURI(HERO_CUT_DIR + p.id + '.webp'); }
-
-  var HERO_ITEMS = [];
-  var HERO_TIMER = null;
-  var HERO_STEP = 5200;
-
-  /* Кільце, а не стрічка: спереду один десерт, по плечах два, решта —
-     позаду нього, в глибині. Той, що йде з лівого плеча, не вилітає за
-     екран, а відступає назад і повертається з правого боку. Тому всі
-     проміжні позиції — одна й та сама «глибина» в центрі. */
-  function heroSlot(rel, n) {
-    if (rel === 0) return 'is-front';
-    if (rel === 1) return 'is-right';
-    if (rel === n - 1) return 'is-left';
-    return 'is-back';
-  }
-
-  /* Оновлюємо на місці, а не перемальовуємо: інакше нові вузли
-     з'явилися б одразу в кінцевій позиції й переходу не було б. */
-  function heroSync() {
-    var n = HERO_ITEMS.length;
-    if (!n) return;
-
-    [].forEach.call(document.querySelectorAll('.hero-slide'), function (el, i) {
-      var rel = (i - S.hi + n) % n;
-      el.className = 'hero-slide ' + heroSlot(rel, n);
-      /* За кадром картка не має ловити ні палець, ні Tab. */
-      el.setAttribute('aria-hidden', rel === 0 ? 'false' : 'true');
-      el.tabIndex = rel === 0 ? 0 : -1;
-    });
-
-    var p = HERO_ITEMS[S.hi];
-    var nmEl = document.querySelector('.hero-name');
-    var prEl = document.querySelector('.hero-price');
-    if (nmEl) nmEl.textContent = nm(p);
-    if (prEl) prEl.textContent = priceText(p);
-  }
-
-  function heroGo(d) {
-    var n = HERO_ITEMS.length;
-    if (!n) return;
-    S.hi = (S.hi + d + n) % n;
-    heroSync();
-  }
-
-  /* Саме обертання і є причиною тут затриматись, тож воно йде саме.
-     Курсор над каруселлю й будь-який ручний крок відсувають таймер —
-     інакше воно поїхало б з-під пальця. */
-  function heroAuto() {
-    clearInterval(HERO_TIMER);
-    try { if (matchMedia('(prefers-reduced-motion: reduce)').matches) return; } catch (e) {}
-    if (HERO_ITEMS.length < 2) return;
-    HERO_TIMER = setInterval(function () { heroGo(1); }, HERO_STEP);
-  }
-
-  function bindHero() {
-    var stage = document.querySelector('.hero-stage');
-    if (!stage) return;
-    stage.addEventListener('mouseenter', function () { clearInterval(HERO_TIMER); });
-    stage.addEventListener('mouseleave', heroAuto);
-    heroAuto();
-  }
-
-  function heroHTML() {
-    var slides = HERO_ITEMS.map(function (p, i) {
-      var rel = (i - S.hi + HERO_ITEMS.length) % HERO_ITEMS.length;
-      return '<a class="hero-slide ' + heroSlot(rel, HERO_ITEMS.length) + '"'
-        + ' data-i="' + i + '" href="' + prodHref(p) + '" tabindex="' + (rel === 0 ? 0 : -1) + '">'
-        /* Передній кадр тягнемо першим, обидва сусідні — звичайним
-           порядком: вони теж одразу на екрані. Ліниві тільки ті, що
-           стоять за кадром. */
-        + '<img src="' + heroPhoto(p) + '" alt="' + esc(nm(p)) + '"'
-        + (rel === 0 ? ' fetchpriority="high"'
-           : (rel === 1 || rel === HERO_ITEMS.length - 1) ? '' : ' loading="lazy"')
-        + ' decoding="async">'
-        + '</a>';
-    }).join('');
-
-    var cur = HERO_ITEMS[S.hi];
-
-    /* Стрілки стоять під тортом, обабіч назви, але не в одному потоці
-       з нею: вони прибиті на сталу відстань від центру, тож довша
-       назва їх не зсуває. Сама назва обмежена по ширині, щоб ніколи
-       до них не дотягнутись. */
-    return '<div class="hero-stage">'
-      + '<div class="hero-slides">' + slides + '</div>'
-      + '<div class="hero-nav">'
-      + '<button class="hero-arrow prev" type="button" data-act="hero" data-v="-1" aria-label="&larr;">&lsaquo;</button>'
-      + '<div class="hero-meta">'
-      + '<span class="hero-name">' + esc(nm(cur)) + '</span>'
-      + '<span class="hero-price">' + esc(priceText(cur)) + '</span>'
-      + '</div>'
-      + '<button class="hero-arrow next" type="button" data-act="hero" data-v="1" aria-label="&rarr;">&rsaquo;</button>'
-      + '</div></div>';
-  }
-
-  /* Головна: герой → дві стрічки → блок про кондитерку → футер. */
+  /* Головна: герой → блок про кондитерку → футер. */
   function renderHome() {
-    var a = PRODUCTS.filter(function (p) { return p.cat === 'cakes'; }).slice(0, 10);
-    var b = PRODUCTS.filter(function (p) { return p.cat !== 'cakes'; }).slice(0, 10);
-
-    /* У вітрину йдуть ті торти, для яких є знімок без фону, і саме в
-       порядку каталогу — тобто в тому, який виставила замовниця. */
-    HERO_ITEMS = sortItems(inCat('cakes'), true).filter(function (p) {
-      return HERO_CUT.indexOf(p.id) !== -1;
-    });
-    if (S.hi >= HERO_ITEMS.length) S.hi = 0;
-
     document.getElementById('main').innerHTML =
-      '<section class="hero"><div class="wrap hero-in">'
-      + '<div class="hero-txt">'
+      '<section class="hero">'
+      + '<img class="hero-bg" src="' + HERO_PHOTO + '" alt="" fetchpriority="high" decoding="async">'
+      + '<div class="wrap hero-in"><div class="hero-txt">'
       + '<h1 class="t-hero">SŁODKIE MARZENIA</h1>'
       + '<p class="hero-lead">' + esc(L('heroLead')) + '</p>'
       + '<div class="hero-btns">'
       + '<a class="btn btn-fill" href="' + catHref('cakes') + '">' + esc(L('chooseDessert')) + '</a>'
       + '<button class="btn btn-line" type="button" data-act="modal">' + esc(L('contacts')) + '</button>'
       + '</div>'
-      + '</div>'
-      + heroHTML()
-      + '</div>'
+      + '</div></div>'
       + '<div class="hero-scroll t-micro">' + esc(L('scroll')) + '</div>'
       + '</section>'
-
-      + '<section class="strips">' + stripHTML(a, 'l') + stripHTML(b, 'r') + '</section>'
 
       + '<section class="wrap about">'
       + aboutRow(1, '') + aboutRow(2, ' is-flipped')
       + '</section>';
 
-    bindHero();
     document.title = 'Słodkie Marzenia — ' + L('tagline');
   }
 
@@ -975,19 +844,6 @@
     var noop = e.target.closest && e.target.closest('a[aria-disabled]');
     if (noop) { e.preventDefault(); return; }
 
-    /* Клік по боковому десерту в каруселі повертає його наперед, а не
-       веде на сторінку: спершу людина хоче роздивитись. Перевірка йде
-       найпершою — картка це <a>, і без неї її перехопив би загальний
-       обробник посилань нижче. */
-    var slide = e.target.closest && e.target.closest('.hero-slide');
-    if (slide && !slide.classList.contains('is-front')) {
-      e.preventDefault();
-      S.hi = +slide.dataset.i;
-      heroSync();
-      heroAuto();
-      return;
-    }
-
     /* Будь-який перехід між сторінками сайту — спершу плитка, потім
        навігація: картка товару, розділ у шапці, чіп, «Назад», вордмарк.
        Модифікатори й середню кнопку не чіпаємо: «відкрити в новій
@@ -1014,8 +870,6 @@
     if (act === 'modal')    { S.open = 'modal';  renderOverlays(); return; }
     if (act === 'close')    { S.open = null; S.q = ''; renderOverlays(); return; }
     if (act === 'backdrop') { if (e.target === el) { S.open = null; renderOverlays(); } return; }
-
-    if (act === 'hero') { heroGo(+el.dataset.v); heroAuto(); return; }
 
     if (act === 'ftr')  { S.ftr[el.dataset.v] = !S.ftr[el.dataset.v]; renderFooter(); return; }
 
@@ -1092,6 +946,26 @@
     set(window.scrollY > 4);
   }
 
+  /* Шапка прозора й біла, поки під нею фото героя, і звичайна — щойно
+     воно прокручене. Поріг рахуємо від висоти самого героя, а не від
+     сталого числа: герой міряється у vh і на кожному екрані різний.
+
+     Героя шукаємо щоразу заново, а не запам'ятовуємо: перемикання
+     мови перемальовує сторінку, і запам'ятований елемент лишився б
+     відірваним від неї — з нульовою висотою, через що шапка ставала
+     звичайною просто над фото. */
+  function watchHero() {
+    var hdr = document.getElementById('hdr');
+    if (!hdr || document.body.dataset.page !== 'home') return;
+    function upd() {
+      var hero = document.querySelector('.hero');
+      hdr.classList.toggle('is-over', !!hero && window.scrollY < hero.offsetHeight - 72);
+    }
+    window.addEventListener('scroll', upd, { passive: true });
+    window.addEventListener('resize', upd);
+    upd();
+  }
+
   /* ---------------- старт ---------------- */
 
   document.documentElement.lang = (S.lang === 'pl') ? 'pl' : 'uk';
@@ -1109,6 +983,7 @@
   var arrived = tilesArrive();
   renderAll();
   watchScroll();
+  watchHero();
   tilesReveal(arrived);
 
   /* Кнопка «Назад» у браузері часто не перезавантажує сторінку, а
