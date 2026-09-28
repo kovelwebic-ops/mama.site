@@ -963,7 +963,15 @@
     }
     window.addEventListener('scroll', upd, { passive: true });
     window.addEventListener('resize', upd);
+
+    /* Перший стан ставимо без анімації. Браузер міг устигнути
+       намалювати шапку звичайною ще до цього скрипта, і тоді при кожному
+       відкритті головної вона б помітно «згасала» з білої в прозору.
+       Примусовий reflow фіксує новий стан, поки переходи вимкнені. */
+    hdr.classList.add('no-fx');
     upd();
+    void hdr.offsetWidth;
+    hdr.classList.remove('no-fx');
   }
 
   /* ---------------- старт ---------------- */

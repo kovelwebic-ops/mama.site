@@ -115,9 +115,19 @@ a, button { -webkit-tap-highlight-color: transparent; }
   height: 72px; background: var(--bg);
   display: flex; align-items: center;
   border-bottom: 1px solid transparent;
-  transition: border-color 160ms linear;
+  transition: background-color 320ms ease, border-color 160ms linear;
 }
 .hdr.is-scrolled { border-bottom-color: var(--line); }
+
+/* Коли фото героя прокручене, шапка перемикається з прозорої білої на
+   звичайну. Без переходу це був різкий стрибок кольору — тепер і тло,
+   і написи перетікають за ті самі 320 мс, тож жодного кадру з білим
+   текстом на білому тлі немає. */
+.hdr .mark, .hdr .icon, .hdr-cats a, .hdr .lang button, .hdr .lang .sep {
+  transition: color 320ms ease;
+}
+.hdr .burger span { transition: background-color 320ms ease; }
+.hdr.no-fx, .hdr.no-fx * { transition: none !important; }
 
 /* Поки шапка лежить над фото героя — вона прозора й біла. Клас ставить
    і знімає watchHero() в app.js. Правило стоїть після .is-scrolled
@@ -220,7 +230,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
 .hero::before {
   inset: 0;
   background: linear-gradient(90deg,
-    rgba(18, 24, 33, .62) 0%, rgba(18, 24, 33, .5) 42%, rgba(18, 24, 33, 0) 58%);
+    rgba(18, 24, 33, .62) 0%, rgba(18, 24, 33, .52) 45%, rgba(18, 24, 33, 0) 58%);
 }
 .hero::after {
   left: 0; right: 0; top: 0; height: 180px;
@@ -281,6 +291,20 @@ a, button { -webkit-tap-highlight-color: transparent; }
   97% { transform: translate(-50%, 3px); }
 }
 
+/* Десктоп: трохи ближче й крупніше. На повному кадрі вона займала
+   лише праву третину, а текст губився в порожньому полі. Фото
+   збільшене від точки біля неї (72% / 58%), тож обрізається порожнє
+   тло по краях, а не вона: після збільшення торт починається з ~59%
+   ширини, плече закінчується на ~96%. Лівіше торта — назва, текст і
+   кнопки, всі на ступінь крупніші. */
+@media (min-width: 901px) {
+  .hero-bg { transform: scale(1.14); transform-origin: 72% 58%; }
+  .hero-txt { max-width: 720px; gap: clamp(18px, 1.9vw, 28px); }
+  .hero .t-hero { font-size: clamp(36px, 4.4vw, 78px); }
+  .hero-lead { font-size: clamp(15px, 1.3vw, 21px); }
+  .hero-btns .btn { height: 56px; padding: 0 30px; font-size: 13px; }
+}
+
 /* Вузький екран — телефон і планшет у портреті. Тут кадр ріже вузьку
    вертикальну смугу, і тла зліва від неї майже не лишається, тож
    текст іде вниз, під торт. 81% — центр відрізка «лівий край торта ↔
@@ -302,7 +326,10 @@ a, button { -webkit-tap-highlight-color: transparent; }
   .hero-txt { padding-left: 0; max-width: none; }
   .hero-lead { max-width: none; }
   .hero-btns { width: 100%; }
-  .hero-btns .btn { flex: 1 1 0; padding: 0 12px; }
+  /* Порівну, але не вужче за власний підпис: на вузькому екрані
+     «Обрати десерт» ламалось у два рядки. Тепер якщо двом кнопкам
+     тісно в ряд, друга просто переходить нижче й теж на всю ширину. */
+  .hero-btns .btn { flex: 1 1 0; min-width: max-content; white-space: nowrap; padding: 0 16px; }
   .hero .t-hero {
     position: absolute; width: 1px; height: 1px;
     margin: -1px; padding: 0; overflow: hidden;
