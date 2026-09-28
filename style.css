@@ -337,6 +337,33 @@ a, button { -webkit-tap-highlight-color: transparent; }
   }
 }
 
+/* рухомі стрічки */
+.strips { margin-top: clamp(48px, 7vw, 96px); display: flex; flex-direction: column; gap: 40px; }
+.strip  { overflow: hidden; }
+.strip-track { display: flex; gap: 40px; width: max-content; }
+.strip-half  { display: flex; gap: 40px; }
+.strip img { width: 260px; height: 260px; object-fit: contain; flex: 0 0 auto; }
+
+/* Повільний, майже непомітний хід — стрічка має бути тлом, а не
+   атракціоном. Вона живе сама по собі: не спиняється під курсором і
+   не гортається руками, тож цикл ніколи не «доїжджає до кінця».
+   Тому й pointer-events прибрано — на стрічку неможливо натрапити. */
+.strip { pointer-events: none; }
+.strip-l .strip-track { animation: sm-left  90s linear infinite; }
+.strip-r .strip-track { animation: sm-right 105s linear infinite; }
+
+@keyframes sm-left  { from { transform: translate3d(0,0,0); }                 to { transform: translate3d(calc(-50% - 20px),0,0); } }
+@keyframes sm-right { from { transform: translate3d(calc(-50% - 20px),0,0); } to { transform: translate3d(0,0,0); } }
+
+@media (max-width: 640px) { .strip img { width: 180px; height: 180px; } }
+
+/* Якщо рух вимкнено системно, стрічка стоїть — тоді єдиний спосіб
+   побачити решту фото це прогорнути її, тож повертаємо їй події. */
+@media (prefers-reduced-motion: reduce) {
+  .strip { overflow-x: auto; pointer-events: auto; }
+  .strip-track { animation: none !important; }
+}
+
 /* ---------- блок «про кондитерку» (головна) ---------- */
 
 .about { margin-top: var(--sect); display: flex; flex-direction: column; gap: clamp(56px, 7vw, 104px); }
@@ -358,6 +385,18 @@ a, button { -webkit-tap-highlight-color: transparent; }
   display: flex; align-items: center; justify-content: center;
   border: 1px solid var(--line); background: #FAFAFA;
   object-fit: cover;
+}
+
+/* Справжнє фото замість заглушки — без рамки й сірого тла: знімок і так
+   на чисто білому й має «плавати», як усюди на сайті. Рамка 4:3 з
+   квадратного кадру зрізає лише білі поля зверху й знизу (торт займає
+   ~17–88% висоти), тож сам торт лишається цілим і стає крупнішим.
+   Пропорція та сама й на телефоні: у 3:2 вже підрізалась би нижня
+   кромка торта. */
+.about-ph.is-photo {
+  display: block; aspect-ratio: 4 / 3;
+  border: 0; background: none;
+  object-fit: cover; object-position: center;
 }
 .about-txt { display: flex; flex-direction: column; gap: 16px; }
 .about-txt p { font-size: 14px; line-height: 1.65; max-width: 46ch; }
@@ -602,6 +641,15 @@ a, button { -webkit-tap-highlight-color: transparent; }
   max-width: var(--max); margin: 0 auto; padding: 0 var(--pad);
   display: grid; grid-template-columns: 1.3fr 1.1fr 1.1fr .7fr;
   gap: 22px clamp(20px, 2.4vw, 40px);
+}
+
+/* Широкий екран: бренд ліворуч, три колонки — праворуч, упритул до
+   краю, тож контакти закінчуються там само, де «Created by» рядком
+   нижче, а не висять посеред правої частини. На вужчих десктопах
+   колонки лишаються розтягнутими: поруч із брендом довгі рядки умов
+   там просто не вмістились би. */
+@media (min-width: 1360px) {
+  .ftr-in { grid-template-columns: 1fr repeat(3, auto); column-gap: clamp(48px, 4.5vw, 96px); }
 }
 /* Одна колонка рівно там, де умови стають акордеоном: розкривний
    блок має сенс лише у вертикальному списку — у двох колонках сусідні

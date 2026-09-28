@@ -301,12 +301,32 @@
 
   /* ---------------- головна ---------------- */
 
+  function stripHTML(items, dir) {
+    var half = items.map(function (p) {
+      return '<img src="' + esc(p.photos[0]) + '" alt="" loading="lazy">';
+    }).join('');
+    return '<div class="strip strip-' + dir + '">'
+      + '<div class="strip-track">'
+      + '<div class="strip-half">' + half + '</div>'
+      + '<div class="strip-half" aria-hidden="true">' + half + '</div>'
+      + '</div></div>';
+  }
+
   /* Блок «про кондитерку»: фото і текст міняються місцями через рядок.
-     Замість фото поки рамка-заглушка — щоб замінити, постав на її
-     місце <img class="about-ph" src="..."> з тим самим класом. */
+     Фото — два найвиразніші торти каталогу: фісташка-малина, з якої
+     каталог і починається, та червоний оксамит — яскравий, святковий,
+     поруч із текстом «Під ваше свято». Беремо їх за id, тож зміна
+     порядку в каталозі цих місць не зачепить. Якщо товару з таким id
+     не стане, лишається рамка-заглушка, а не порожнє місце. */
+  var ABOUT_PHOTOS = { 1: 'cake1', 2: 'cake7' };
+
   function aboutRow(n, mod) {
+    var p = prodById(ABOUT_PHOTOS[n]);
+    var ph = p
+      ? '<img class="about-ph is-photo" src="' + esc(p.photos[0]) + '" alt="' + esc(nm(p)) + '" loading="lazy" decoding="async">'
+      : '<div class="about-ph"><span class="t-micro muted">' + esc(L('photoStub')) + '</span></div>';
     return '<div class="about-row rv' + mod + '">'
-      + '<div class="about-ph"><span class="t-micro muted">' + esc(L('photoStub')) + '</span></div>'
+      + ph
       + '<div class="about-txt">'
       + '<h2 class="t-sect">' + esc(L('aboutTitle' + n)) + '</h2>'
       + '<p>' + esc(L('aboutText' + n)) + '</p>'
@@ -321,8 +341,11 @@
      поверх фото й біла — див. watchHero(). */
   var HERO_PHOTO = 'hero.jpg';
 
-  /* Головна: герой → блок про кондитерку → футер. */
+  /* Головна: герой → дві рухомі стрічки фото → блок про кондитерку → футер. */
   function renderHome() {
+    var a = PRODUCTS.filter(function (p) { return p.cat === 'cakes'; }).slice(0, 10);
+    var b = PRODUCTS.filter(function (p) { return p.cat !== 'cakes'; }).slice(0, 10);
+
     document.getElementById('main').innerHTML =
       '<section class="hero">'
       + '<img class="hero-bg" src="' + HERO_PHOTO + '" alt="" fetchpriority="high" decoding="async">'
@@ -336,6 +359,8 @@
       + '</div></div>'
       + '<div class="hero-scroll t-micro">' + esc(L('scroll')) + '</div>'
       + '</section>'
+
+      + '<section class="strips">' + stripHTML(a, 'l') + stripHTML(b, 'r') + '</section>'
 
       + '<section class="wrap about">'
       + aboutRow(1, '') + aboutRow(2, ' is-flipped')
