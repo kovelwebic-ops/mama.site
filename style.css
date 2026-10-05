@@ -545,13 +545,17 @@ a, button { -webkit-tap-highlight-color: transparent; }
 }
 .btn-order:hover { background: var(--ink-hover); color: #FFF; }
 
-/* Дрібний рядок під кнопкою — має лягати в один рядок, тож кегль
-   менший за решту мікротексту, а трекінг мінімальний. */
+/* Дрібний рядок під кнопкою. Колись мав лягати в один рядок, і для
+   цього стояв заборонний перенос, але фраза стала довшою («особисто»
+   → «індивідуально»), а права колонка на ширинах 1100–1250px лише
+   ~220px: підпис вилазив за край екрана й обрізався. Тепер він
+   переноситься, а text-wrap: balance ділить його на два рівні рядки,
+   а не на довгий і одне слово. */
 .made-to-order {
   margin-top: -6px;
   font-size: 10px; font-weight: 500;
   letter-spacing: .04em; text-transform: uppercase;
-  line-height: 1.4; white-space: nowrap;
+  line-height: 1.4; text-wrap: balance;
 }
 
 /* Прості лінки без рамок і без постійного підкреслення: у стовпчику
