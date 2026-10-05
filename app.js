@@ -263,7 +263,7 @@
 
   /* Копірайт лишається англійською в обох мовах — так просив замовник.
      Рік беремо поточний, щоб футер не застарів у січні. */
-  var SITE_DOMAIN = 'Slodkiemarzenia.pl';
+  var SITE_DOMAIN = 'Slodkiemarzenia.com.pl';
   var AUTHOR = { name: 'Andrii Voitiuk', href: 'https://t.me/kovelwebic' };
 
   function renderFooter() {
