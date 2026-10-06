@@ -153,7 +153,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
 .hdr-l { display: flex; align-items: center; gap: 20px; min-width: 0; }
 .hdr-r { display: flex; align-items: center; justify-content: flex-end; gap: 18px; }
 
-/* Пунктів стало шість — відступи трохи тісніші, щоб рядок лишався
+/* Пунктів стало сім — відступи трохи тісніші, щоб рядок лишався
    рядком і не тиснув вордмарк посередині. */
 .hdr-cats { display: flex; gap: 13px; min-width: 0; font-size: 11px; }
 .hdr-cats a { white-space: nowrap; color: var(--muted); }
@@ -186,8 +186,11 @@ a, button { -webkit-tap-highlight-color: transparent; }
 
 /* На телефоні в шапці лишається один значок — слухавка (контакти),
    бо це головна дія сайту. Пошук нікуди не зник: він першим рядком
-   у меню під бургером. */
-@media (max-width: 1100px) {
+   у меню під бургером.
+   Поріг вищий за мобільні 1100px: із сьомим пунктом («Корпусні»)
+   польський рядок меню займає ~475px і до 1240px заходить під
+   вордмарк. Решта мобільної верстки й далі вмикається з 1100px. */
+@media (max-width: 1240px) {
   .hdr-cats, .hdr-search, .hdr-lang { display: none; }
   .burger { display: flex; }
 }
@@ -970,11 +973,14 @@ a, button { -webkit-tap-highlight-color: transparent; }
      поле, через що ряд виглядав зсунутим. Без рамок п'ять назв
      вміщаються з запасом, тож ряд розтягується від краю до краю, а
      поточний розділ позначає риска під ним.
-     min-width:0 — щоб flex-елемент міг стиснутись вужче за свій вміст
-     і на найвужчих екранах зсувався пальцем, а не вилазив за екран. */
+     max-width:100% — щоб ряд не ширшав за екран, а на найвужчих
+     екранах зсувався пальцем. Саме max-width, а не min-width:0: .bar
+     тут колонка, і ширину ряду задає поперечна вісь, де min-width не
+     діє. Шість польських назв (з «Monoporcje») займають ~362px, тож на
+     375px ряд уже прокручується, а не розпирає сторінку. */
   .chips {
     flex-wrap: nowrap; justify-content: space-between; gap: 8px;
-    min-width: 0; overflow-x: auto;
+    min-width: 0; max-width: 100%; overflow-x: auto;
     scrollbar-width: none; -ms-overflow-style: none;
   }
   .chips::-webkit-scrollbar { width: 0; height: 0; }

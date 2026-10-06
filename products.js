@@ -30,7 +30,8 @@
     { id: 'cakes',       name: 'Торти',    name_pl: 'Torty' },
     { id: 'cheesecakes', name: 'Чізкейки', name_pl: 'Serniki' },
     { id: 'mousse',      name: 'Мусові',   name_pl: 'Musowe' },
-    { id: 'zefir',       name: 'Зефір',    name_pl: 'Pianki' },
+    { id: 'shells',      name: 'Корпусні', name_pl: 'Monoporcje' },
+    { id: 'zefir',      name: 'Зефір',    name_pl: 'Pianki' },
     { id: 'candybar',    name: 'Кендібар', name_pl: 'Candy bar' }
   ];
 
@@ -267,6 +268,34 @@
     });
   });
 
+  /* ---------- 6. Корпусні — 6 позицій, 25 zł/шт, від 4 шт — 20 ----------
+     Тексти й ціни з повідомлення замовниці від 06.10.2026.
+     Знижку від 4 шт показуємо приміткою: price — одне число, а
+     сітка й сортування мають рахувати від звичайної ціни.          */
+
+  /* Порядок — кольори через один, щоб у сітці не стояли поруч два
+     червоні: вишня, манго, малина, ожина, полуниця, лимони. */
+  [
+    ['Вишня', 'Вишня.jpg', 'Збитий ганаш на білому і молочному шоколаді з пюре вишні, начинка з цілої вишні і пюре, хрумкий корпус з білого шоколаду і какао-масла'],
+    ['Манго', 'Манго.jpg', 'Збитий ганаш на білому шоколаді з пюре манго, начинка з пюре маракуї зі шматочками манго, хрумкий корпус з білого шоколаду і какао-масла'],
+    ['Малина', 'Малина.jpg', 'Збитий ганаш на білому шоколаді з пюре малини без кісточок, начинка з малинового пюре, хрумкий корпус з білого шоколаду і какао-масла'],
+    ['Ожина', 'Ожина.jpg', 'Збитий ганаш на білому шоколаді з крем-чизом і ожиновим пюре, начинка з ожини без кісточок, хрумкий корпус з білого шоколаду і какао-масла'],
+    ['Полуниця', 'Полуниця.jpg', 'Збитий ганаш на білому шоколаді з полуничним пюре, начинка з полуничного пюре, хрумкий корпус з білого шоколаду і какао-масла', 3],
+    ['Лимони', 'Лимони.jpg', 'Збитий ганаш на білому шоколаді з цедрою лимона, начинка з лимонного курду, хрумкий корпус з білого шоколаду і какао-масла', 2]
+  ].forEach(function (c, i) {
+    /* Лимони й полуниці дрібні — замовниця радить брати по 2–3 на порцію. */
+    var per = c[3] ? ' На одну порцію — ' + c[3] + ' шт' : '';
+    var per_pl = c[3] ? ' Na jedną porcję — ' + c[3] + ' szt.' : '';
+    P.push({
+      id: 'shl' + (i + 1), cat: 'shells', order: i + 1,
+      name: c[0], name_pl: '', desc: c[2], desc_pl: '',
+      photos: [img('Корпусні', c[1])],
+      price: 25, unit: '/шт',
+      note: 'Від 4 шт — 20 zł/шт.' + per,
+      note_pl: 'Od 4 szt. — 20 zł/szt.' + per_pl
+    });
+  });
+
   /* Фото Zefiry/«Коробочка 5.jpg» і «Коробочка 6.jpg» лишаються в папці,
      але на сайті не показані — опису й ціни для них немає. Щоб додати,
      заведи для них звичайні позиції в блоці 4в вище. */
@@ -319,6 +348,14 @@
     'mousse|Снікерс': ['Snickers', 'Biszkopt czekoladowy, solony karmel, orzeszki ziemne, mus na czekoladzie mlecznej'],
     'mousse|Апельсинова ніжність': ['Pomarańczowa delikatność', 'Biszkopt mleczny, krem pomarańczowy, chrupiąca warstwa, mus jogurtowy'],
     'mousse|Лимонно полуничний': ['Cytrynowo-truskawkowy', 'Biszkopt mleczny, konfitura truskawkowa, mus truskawkowy, mus cytrynowy'],
+
+    /* корпусні */
+    'shells|Вишня': ['Wiśnia', 'Bita ganache na białej i mlecznej czekoladzie z puree wiśniowym, nadzienie z całej wiśni i puree, chrupiąca skorupka z białej czekolady i masła kakaowego'],
+    'shells|Манго': ['Mango', 'Bita ganache na białej czekoladzie z puree z mango, nadzienie z puree z marakui z kawałkami mango, chrupiąca skorupka z białej czekolady i masła kakaowego'],
+    'shells|Малина': ['Malina', 'Bita ganache na białej czekoladzie z puree malinowym bez pestek, nadzienie z puree malinowego, chrupiąca skorupka z białej czekolady i masła kakaowego'],
+    'shells|Ожина': ['Jeżyna', 'Bita ganache na białej czekoladzie z serkiem kremowym i puree z jeżyn, nadzienie z jeżyn bez pestek, chrupiąca skorupka z białej czekolady i masła kakaowego'],
+    'shells|Полуниця': ['Truskawka', 'Bita ganache na białej czekoladzie z puree truskawkowym, nadzienie z puree truskawkowego, chrupiąca skorupka z białej czekolady i masła kakaowego'],
+    'shells|Лимони': ['Cytryny', 'Bita ganache na białej czekoladzie ze skórką cytrynową, nadzienie z lemon curd, chrupiąca skorupka z białej czekolady i masła kakaowego'],
 
     /* зефір */
     'zefir|Зефір поштучно': ['Pianki na sztuki', 'Cukier, woda, syrop inwertowany, przecier owocowy, agar-agar'],

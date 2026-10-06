@@ -440,6 +440,16 @@
       + body
       + '</section>';
 
+    /* На вузькому телефоні ряд розділів прокручується (див. .chips у
+       style.css). Якщо поточний розділ опинився за краєм — підкручуємо
+       ряд, щоб людина бачила, де вона. */
+    var row = document.querySelector('#main .chips');
+    var on = row && row.querySelector('.chip.on');
+    if (on) {
+      var over = on.getBoundingClientRect().right - row.getBoundingClientRect().right;
+      if (over > 0) row.scrollLeft += over;
+    }
+
     document.title = nm(cat) + ' — Słodkie Marzenia';
   }
 
