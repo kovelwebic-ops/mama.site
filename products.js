@@ -67,13 +67,13 @@
 
   var P = [];
 
-  /* ---------- 1. Торти — 21 позиція, без варіантів, ціна за кг ---------- */
+  /* ---------- 1. Торти — 24 позиції, без варіантів, ціна за кг ---------- */
 
   /* Порядок у масиві = порядок на сайті (order береться з індексу).
      Перші шість вибрала замовниця, решта — за яскравістю зрізу:
      контрастні й кольорові вище, однотонні бежеві в кінці. */
   [
-    ['Фісташка малина', 'Фісташка малина.jpg', 'Фісташковий бісквіт, фісташковий мус, малинове конфі, фісташковий крем чіз', 125],
+    ['Фісташка малина', 'Фісташка малина.jpg', 'Фісташковий бісквіт, фісташковий холодний чізкейк, хрумкий прошарок, малинове конфі', 125],
     ['Снікерс', 'Снікерс.jpg', 'Шоколадний бісквіт, солона карамель, арахіс, крем чіз', 115],
     ['Шпинат полуниця', 'Шпинат полуниця.jpg', 'Шпинатний бісквіт, м’ятний мус, полуничне конфі, крем чіз маскарпоне', 125],
     ['Полуничне тріо', 'Полуничне тріо.jpg', 'Молочний бісквіт, полуничний мус, полуничне конфі, полуничне кюлі, крем чіз', 120],
@@ -93,10 +93,16 @@
     ['Медовик класичний', 'Медовик класичний.jpg', 'Медові коржі, вершково-сметанний крем', 80],
     ['Мед груша горгонзола', 'Мед груша горгонзола.jpg', 'Тонкі медово-мигдалеві коржі, карамелізована груша, сир горгонзола, сметанно медовий крем', 120],
     ['Наполеон', 'Наполеон.jpg', 'Листові коржі, крем пломбір', 80],
-    ['Апельсиновий', 'Апельсиновий.jpg', 'Бісквіт з апельсиновою цедрою, легкий шоколадний крем, апельсиновий мус, апельсинове конфі', 110]
+    ['Апельсиновий', 'Апельсиновий.jpg', 'Бісквіт з апельсиновою цедрою, легкий шоколадний крем, апельсиновий мус, апельсинове конфі', 110],
+    /* Додані 20.10.2026. Ідуть у кінці масиву, щоб id старих тортів
+       (cake1…cake21) не зсунулись — на них уже ведуть посилання. Місце
+       на сайті задає п'яте поле: дробовий order ставить торт між сусідами. */
+    ['Малиновий рафаєло', 'Малиновий рафаєло.jpg', 'Молочний бісквіт, малиновий мус, збитий кокосовий ганаш, малинове конфі, хрумкий прошарок', 130, 10.5],
+    ['Спартак', 'Спартак.jpg', 'Медово-шоколадні коржі, вершково-сметанний крем', 90, 17.5],
+    ['Лимонно-імбирний медівник', 'Лимонно-імбирний медівник.jpg', 'Медово-лимонні коржі, лимонно-імбирний курд, крем зі сметани, вершків і крем чізу', 115, 18.5]
   ].forEach(function (c, i) {
     P.push({
-      id: 'cake' + (i + 1), cat: 'cakes', order: i + 1,
+      id: 'cake' + (i + 1), cat: 'cakes', order: c[4] || i + 1,
       name: c[0], name_pl: '', desc: c[2], desc_pl: '',
       photos: [img('Cakes', c[1])],
       price: c[3], unit: '/кг'
@@ -268,20 +274,23 @@
     });
   });
 
-  /* ---------- 6. Корпусні — 6 позицій, 25 zł/шт, від 4 шт — 20 ----------
+  /* ---------- 6. Корпусні — 7 позицій, 25 zł/шт, від 4 шт — 20 ----------
      Тексти й ціни з повідомлення замовниці від 06.10.2026.
      Знижку від 4 шт показуємо приміткою: price — одне число, а
      сітка й сортування мають рахувати від звичайної ціни.          */
 
   /* Порядок — кольори через один, щоб у сітці не стояли поруч два
-     червоні: вишня, манго, малина, ожина, полуниця, лимони. */
+     червоні: вишня, манго, малина, ожина, полуниця, лимони, лохина. */
   [
     ['Вишня', 'Вишня.jpg', 'Збитий ганаш на білому і молочному шоколаді з пюре вишні, начинка з цілої вишні і пюре, хрумкий корпус з білого шоколаду і какао-масла'],
     ['Манго', 'Манго.jpg', 'Збитий ганаш на білому шоколаді з пюре манго, начинка з пюре маракуї зі шматочками манго, хрумкий корпус з білого шоколаду і какао-масла'],
     ['Малина', 'Малина.jpg', 'Збитий ганаш на білому шоколаді з пюре малини без кісточок, начинка з малинового пюре, хрумкий корпус з білого шоколаду і какао-масла'],
     ['Ожина', 'Ожина.jpg', 'Збитий ганаш на білому шоколаді з крем-чизом і ожиновим пюре, начинка з ожини без кісточок, хрумкий корпус з білого шоколаду і какао-масла'],
     ['Полуниця', 'Полуниця.jpg', 'Збитий ганаш на білому шоколаді з полуничним пюре, начинка з полуничного пюре, хрумкий корпус з білого шоколаду і какао-масла', 3],
-    ['Лимони', 'Лимони.jpg', 'Збитий ганаш на білому шоколаді з цедрою лимона, начинка з лимонного курду, хрумкий корпус з білого шоколаду і какао-масла', 2]
+    ['Лимони', 'Лимони.jpg', 'Збитий ганаш на білому шоколаді з цедрою лимона, начинка з лимонного курду, хрумкий корпус з білого шоколаду і какао-масла', 2],
+    /* Лохина — з повідомлення від 20.10.2026. Про знижку від 4 шт там
+       не сказано, тож примітки немає (п'яте поле = true). */
+    ['Лохина', 'Лохина.jpg', 'Збитий ганаш на білому шоколаді з лохиновим пюре, лохинове конфі, корпус з білого шоколаду і какао-масла', 0, true]
   ].forEach(function (c, i) {
     /* Лимони й полуниці дрібні — замовниця радить брати по 2–3 на порцію. */
     var per = c[3] ? ' На одну порцію — ' + c[3] + ' шт' : '';
@@ -291,8 +300,8 @@
       name: c[0], name_pl: '', desc: c[2], desc_pl: '',
       photos: [img('Корпусні', c[1])],
       price: 25, unit: '/шт',
-      note: 'Від 4 шт — 20 zł/шт.' + per,
-      note_pl: 'Od 4 szt. — 20 zł/szt.' + per_pl
+      note: c[4] ? '' : 'Від 4 шт — 20 zł/шт.' + per,
+      note_pl: c[4] ? '' : 'Od 4 szt. — 20 zł/szt.' + per_pl
     });
   });
 
@@ -325,7 +334,7 @@
     'cakes|Орео': ['Oreo', 'Biszkopt czekoladowy, sernik Oreo, mus Oreo, krem serkowy'],
     'cakes|Полуничне тріо': ['Truskawkowe trio', 'Biszkopt mleczny, mus truskawkowy, konfitura truskawkowa, coulis truskawkowe, krem serkowy'],
     'cakes|Снікерс': ['Snickers', 'Biszkopt czekoladowy, solony karmel, orzeszki ziemne, krem serkowy'],
-    'cakes|Фісташка малина': ['Pistacja i malina', 'Biszkopt pistacjowy, mus pistacjowy, konfitura malinowa, pistacjowy krem serkowy'],
+    'cakes|Фісташка малина': ['Pistacja i malina', 'Biszkopt pistacjowy, pistacjowy sernik na zimno, chrupiąca warstwa, konfitura malinowa'],
     'cakes|Червоний оксамит': ['Red Velvet', 'Biszkopt Red Velvet, konfitura wiśniowa, ganache truskawkowy, krem serkowy, mascarpone'],
     'cakes|Чорниця лимон': ['Jagoda i cytryna', 'Biszkopt cytrynowy, mus jagodowy, konfitura jagodowa, ganache cytrynowy, krem serkowy'],
     'cakes|Шпинат полуниця': ['Szpinak i truskawka', 'Biszkopt szpinakowy, mus miętowy, konfitura truskawkowa, krem serkowy z mascarpone'],
@@ -333,6 +342,9 @@
     'cakes|Лайм абрикос': ['Limonka i morela', 'Biszkopt szpinakowo-limonkowy, krem śmietankowy, konfitura morelowa'],
     'cakes|Монастирська вежа': ['Wieża klasztorna', 'Kruche rurki z wiśniami, krem śmietankowy'],
     'cakes|Лісові ягоди - шоколад': ['Owoce leśne i czekolada', 'Biszkopt mleczny, konfitura z owoców leśnych, mus na gorzkiej czekoladzie'],
+    'cakes|Малиновий рафаєло': ['Malinowe Raffaello', 'Biszkopt mleczny, mus malinowy, bita ganache kokosowa, konfitura malinowa, chrupiąca warstwa'],
+    'cakes|Спартак': ['Spartak', 'Blaty miodowo-czekoladowe, krem śmietankowy'],
+    'cakes|Лимонно-імбирний медівник': ['Miodownik cytrynowo-imbirowy', 'Blaty miodowo-cytrynowe, curd cytrynowo-imbirowy, krem ze śmietany, śmietanki i serka kremowego'],
 
     /* чізкейки */
     'cheesecakes|Полуниця-лайм': ['Truskawka-limonka', 'Kruchy spód, sernik ze skórką z limonki, konfitura truskawkowa'],
@@ -356,6 +368,7 @@
     'shells|Ожина': ['Jeżyna', 'Bita ganache na białej czekoladzie z serkiem kremowym i puree z jeżyn, nadzienie z jeżyn bez pestek, chrupiąca skorupka z białej czekolady i masła kakaowego'],
     'shells|Полуниця': ['Truskawka', 'Bita ganache na białej czekoladzie z puree truskawkowym, nadzienie z puree truskawkowego, chrupiąca skorupka z białej czekolady i masła kakaowego'],
     'shells|Лимони': ['Cytryny', 'Bita ganache na białej czekoladzie ze skórką cytrynową, nadzienie z lemon curd, chrupiąca skorupka z białej czekolady i masła kakaowego'],
+    'shells|Лохина': ['Borówka', 'Bita ganache na białej czekoladzie z puree z borówek, konfitura z borówek, skorupka z białej czekolady i masła kakaowego'],
 
     /* зефір */
     'zefir|Зефір поштучно': ['Pianki na sztuki', 'Cukier, woda, syrop inwertowany, przecier owocowy, agar-agar'],
