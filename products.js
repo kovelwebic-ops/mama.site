@@ -274,13 +274,14 @@
     });
   });
 
-  /* ---------- 6. Корпусні — 7 позицій, 25 zł/шт, від 4 шт — 20 ----------
+  /* ---------- 6. Корпусні — 10 позицій, 25 zł/шт (апельсин — 20), від 4 шт — 20 ----------
      Тексти й ціни з повідомлення замовниці від 06.10.2026.
      Знижку від 4 шт показуємо приміткою: price — одне число, а
      сітка й сортування мають рахувати від звичайної ціни.          */
 
   /* Порядок — кольори через один, щоб у сітці не стояли поруч два
-     червоні: вишня, манго, малина, ожина, полуниця, лимони, лохина. */
+     червоні: вишня, манго, малина, ожина, полуниця, лимони, лохина,
+     груша, апельсин, кава. */
   [
     ['Вишня', 'Вишня.jpg', 'Збитий ганаш на білому і молочному шоколаді з пюре вишні, начинка з цілої вишні і пюре, хрумкий корпус з білого шоколаду і какао-масла'],
     ['Манго', 'Манго.jpg', 'Збитий ганаш на білому шоколаді з пюре манго, начинка з пюре маракуї зі шматочками манго, хрумкий корпус з білого шоколаду і какао-масла'],
@@ -290,7 +291,12 @@
     ['Лимони', 'Лимони.jpg', 'Збитий ганаш на білому шоколаді з цедрою лимона, начинка з лимонного курду, хрумкий корпус з білого шоколаду і какао-масла', 2],
     /* Лохина — з повідомлення від 20.10.2026. Про знижку від 4 шт там
        не сказано, тож примітки немає (п'яте поле = true). */
-    ['Лохина', 'Лохина.jpg', 'Збитий ганаш на білому шоколаді з лохиновим пюре, лохинове конфі, корпус з білого шоколаду і какао-масла', 0, true]
+    ['Лохина', 'Лохина.jpg', 'Збитий ганаш на білому шоколаді з лохиновим пюре, лохинове конфі, корпус з білого шоколаду і какао-масла', 0, true],
+    /* Груша, апельсин, кава — з повідомлення від 15.11.2026. Знижки від 4 шт
+       там теж немає; апельсин коштує 20 zł (шосте поле — ціна). */
+    ['Груша', 'Груша.jpg', 'Збитий ганаш на заварній основі і білому шоколаді, начинка зі шматочків груші в білому вині з корицею, хрумкий прошарок з волоських горіхів і пісочного печива, корпус з білого шоколаду і какао-масла', 0, true],
+    ['Апельсин', 'Апельсин.jpg', 'Мус на білому шоколаді з апельсиновим пюре, апельсинова начинка, хрумкий корпус з білого шоколаду і какао-масла', 0, true, 20],
+    ['Кава', 'Кава.jpg', 'Кавовий мус на молочному шоколаді, печиво савоярді, хрумкий корпус з молочного шоколаду і какао-масла', 0, true]
   ].forEach(function (c, i) {
     /* Лимони й полуниці дрібні — замовниця радить брати по 2–3 на порцію. */
     var per = c[3] ? ' На одну порцію — ' + c[3] + ' шт' : '';
@@ -299,7 +305,7 @@
       id: 'shl' + (i + 1), cat: 'shells', order: i + 1,
       name: c[0], name_pl: '', desc: c[2], desc_pl: '',
       photos: [img('Корпусні', c[1])],
-      price: 25, unit: '/шт',
+      price: c[5] || 25, unit: '/шт',
       note: c[4] ? '' : 'Від 4 шт — 20 zł/шт.' + per,
       note_pl: c[4] ? '' : 'Od 4 szt. — 20 zł/szt.' + per_pl
     });
@@ -369,6 +375,9 @@
     'shells|Полуниця': ['Truskawka', 'Bita ganache na białej czekoladzie z puree truskawkowym, nadzienie z puree truskawkowego, chrupiąca skorupka z białej czekolady i masła kakaowego'],
     'shells|Лимони': ['Cytryny', 'Bita ganache na białej czekoladzie ze skórką cytrynową, nadzienie z lemon curd, chrupiąca skorupka z białej czekolady i masła kakaowego'],
     'shells|Лохина': ['Borówka', 'Bita ganache na białej czekoladzie z puree z borówek, konfitura z borówek, skorupka z białej czekolady i masła kakaowego'],
+    'shells|Груша': ['Gruszka', 'Bita ganache na bazie kremu parzonego i białej czekolady, nadzienie z kawałków gruszki w białym winie z cynamonem, chrupiąca warstwa z orzechów włoskich i kruchych ciasteczek, skorupka z białej czekolady i masła kakaowego'],
+    'shells|Апельсин': ['Pomarańcza', 'Mus na białej czekoladzie z puree pomarańczowym, nadzienie pomarańczowe, chrupiąca skorupka z białej czekolady i masła kakaowego'],
+    'shells|Кава': ['Kawa', 'Mus kawowy na czekoladzie mlecznej, biszkopty savoiardi, chrupiąca skorupka z czekolady mlecznej i masła kakaowego'],
 
     /* зефір */
     'zefir|Зефір поштучно': ['Pianki na sztuki', 'Cukier, woda, syrop inwertowany, przecier owocowy, agar-agar'],
