@@ -28,6 +28,7 @@
 
   var CATS = [
     { id: 'cakes',       name: 'Торти',    name_pl: 'Torty' },
+    { id: 'bakes',       name: 'Випічка',  name_pl: 'Ciasta' },
     { id: 'cheesecakes', name: 'Чізкейки', name_pl: 'Serniki' },
     { id: 'mousse',      name: 'Мусові',   name_pl: 'Musowe' },
     { id: 'shells',      name: 'Корпусні', name_pl: 'Monoporcje' },
@@ -274,6 +275,40 @@
     });
   });
 
+  /* Мікс печива — з повідомлення від 16.11.2026: 50 zł за 0,5 кг. Складу
+     замовниця не дала; ⚠ ЧЕРНЕТКА — перелік печива взято з фото. */
+  P.push({
+    id: 'cb9', cat: 'candybar', order: 9,
+    name: 'Мікс печива', name_pl: '',
+    desc: 'Квіточки з джемом, безе, горішки, рогалики, печиво-сендвічі з кремом', desc_pl: '',
+    photos: [img('Кендібар', 'Мікс печива.jpg')],
+    price: 50, unit: '/0,5 кг'
+  });
+
+  /* ---------- 7. Випічка (Ciasta) — 7 позицій ----------
+     Тексти й ціни з повідомлення замовниці від 16.11.2026. Частина
+     продається бляшкою (ціна за всю бляшку, вага — у примітці),
+     решта — на вагу, за кг. Порядок — як у замовниці. */
+  [
+    ['Пляцок «Скубанець»', 'Скубанець.jpg', 'Пісочне тісто класичне і шоколадне, яблука, волоські горіхи, родзинки, вишні', '/бляшка', '~1,8 кг'],
+    ['Перекладенець «Червоний мак»', 'Червоний мак.jpg', 'Коржі з французького тіста, вишні, бісквітні рулети з маковою начинкою, крем чіз', '/кг', ''],
+    ['Маково-апельсиновий з персиком', 'Маково-апельсиновий з персиком.jpg', 'Маковий бісквіт, апельсиновий бісквіт, консервовані персики, крем чіз', '/кг', ''],
+    ['Бісквітний медівник', 'Бісквітний медівник.jpg', 'Медовий бісквіт, сметанно-вершковий крем', '/кг', ''],
+    ['Сирник королівський', 'Сирник королівський.jpg', 'Пісочна основа (біла або шоколадна), кисломолочний сир', '/бляшка', '1,7–1,8 кг'],
+    ['Бісквітний з полуничним мусом', 'Бісквітний з полуничним мусом.jpg', 'Бісквіт на гарячому молоці, полуничний мус', '/кг', ''],
+    ['Шоколадний', 'Шоколадний.jpg', 'Шоколадна основа, макова маса, сирно-кокосова маса, вишня', '/бляшка', '1,6–1,8 кг']
+  ].forEach(function (c, i) {
+    var tray = c[3] === '/бляшка';
+    P.push({
+      id: 'bk' + (i + 1), cat: 'bakes', order: i + 1,
+      name: c[0], name_pl: '', desc: c[2], desc_pl: '',
+      photos: [img('Випічка', c[1])],
+      price: tray ? 100 : 80, unit: c[3],
+      note: tray ? 'Вага бляшки ' + c[4] : '',
+      note_pl: tray ? 'Waga blachy ' + c[4].replace('~', 'ok. ').replace('кг', 'kg') : ''
+    });
+  });
+
   /* ---------- 6. Корпусні — 10 позицій, 25 zł/шт, від 4 шт — 20 (апельсин — 20 завжди) ----------
      Тексти й ціни з повідомлення замовниці від 06.10.2026.
      Знижку від 4 шт показуємо приміткою: price — одне число, а
@@ -404,7 +439,17 @@
     'candybar|Трайфл «Снікерс»': ['Trifle «Snickers»', 'Biszkopt czekoladowy, solony karmel, orzeszki ziemne, krem'],
     'candybar|Трайфл «Червоний оксамит»': ['Trifle «Red Velvet»', 'Biszkopt Red Velvet, truskawki, krem'],
     'candybar|Капкейки класичні': ['Babeczki klasyczne', 'Biszkopt klasyczny, nadzienie truskawkowe, krem'],
-    'candybar|Капкейки шоколадні': ['Babeczki czekoladowe', 'Biszkopt czekoladowy, nadzienie wiśniowe, krem czekoladowy']
+    'candybar|Капкейки шоколадні': ['Babeczki czekoladowe', 'Biszkopt czekoladowy, nadzienie wiśniowe, krem czekoladowy'],
+    'candybar|Мікс печива': ['Mix ciastek', 'Kwiatki z dżemem, bezy, orzeszki, rogaliki, kanapki z kremem'],
+
+    /* випічка */
+    'bakes|Пляцок «Скубанець»': ['Placek «Skubaniec»', 'Kruche ciasto klasyczne i czekoladowe, jabłka, orzechy włoskie, rodzynki, wiśnie'],
+    'bakes|Перекладенець «Червоний мак»': ['Przekładaniec «Czerwony mak»', 'Blaty z ciasta francuskiego, wiśnie, biszkoptowe rolady z masą makową, krem serkowy'],
+    'bakes|Маково-апельсиновий з персиком': ['Makowo-pomarańczowy z brzoskwinią', 'Biszkopt makowy, biszkopt pomarańczowy, brzoskwinie z puszki, krem serkowy'],
+    'bakes|Бісквітний медівник': ['Miodownik biszkoptowy', 'Biszkopt miodowy, krem śmietankowy'],
+    'bakes|Сирник королівський': ['Sernik królewski', 'Kruchy spód (jasny lub czekoladowy), twaróg'],
+    'bakes|Бісквітний з полуничним мусом': ['Biszkopt z musem truskawkowym', 'Biszkopt na gorącym mleku, mus truskawkowy'],
+    'bakes|Шоколадний': ['Czekoladowy', 'Spód czekoladowy, masa makowa, masa twarogowo-kokosowa, wiśnie']
   };
 
   /* Примітки, які пишуться прямо в даних товару. */

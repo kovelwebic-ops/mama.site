@@ -153,7 +153,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
 .hdr-l { display: flex; align-items: center; gap: 20px; min-width: 0; }
 .hdr-r { display: flex; align-items: center; justify-content: flex-end; gap: 18px; }
 
-/* Пунктів стало сім — відступи трохи тісніші, щоб рядок лишався
+/* Пунктів стало вісім — відступи трохи тісніші, щоб рядок лишався
    рядком і не тиснув вордмарк посередині. */
 .hdr-cats { display: flex; gap: 13px; min-width: 0; font-size: 11px; }
 .hdr-cats a { white-space: nowrap; color: var(--muted); }
@@ -187,10 +187,10 @@ a, button { -webkit-tap-highlight-color: transparent; }
 /* На телефоні в шапці лишається один значок — слухавка (контакти),
    бо це головна дія сайту. Пошук нікуди не зник: він першим рядком
    у меню під бургером.
-   Поріг вищий за мобільні 1100px: із сьомим пунктом («Корпусні»)
-   польський рядок меню займає ~475px і до 1240px заходить під
+   Поріг вищий за мобільні 1100px: з восьмим пунктом («Випічка»)
+   польський рядок меню займає ~530px і до 1340px заходить під
    вордмарк. Решта мобільної верстки й далі вмикається з 1100px. */
-@media (max-width: 1240px) {
+@media (max-width: 1340px) {
   .hdr-cats, .hdr-search, .hdr-lang { display: none; }
   .burger { display: flex; }
 }

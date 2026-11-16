@@ -78,6 +78,7 @@
   function units(s) {
     if (S.lang !== 'pl' || !s) return s;
     return String(s)
+      .replace(/бляшка/g, 'blacha')
       .replace(/кг/g, 'kg')
       .replace(/мл/g, 'ml')
       .replace(/шт/g, 'szt')
