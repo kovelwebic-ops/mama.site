@@ -79,6 +79,7 @@
     if (S.lang !== 'pl' || !s) return s;
     return String(s)
       .replace(/бляшка/g, 'blacha')
+      .replace(/коробочка/g, 'pudełko')
       .replace(/кг/g, 'kg')
       .replace(/мл/g, 'ml')
       .replace(/шт/g, 'szt')
